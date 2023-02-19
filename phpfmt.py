@@ -14,7 +14,7 @@ sys.path.insert(0, dist_dir)
 from diff_match_patch.python3.diff_match_patch import diff_match_patch
 
 def print_debug(*msg):
-     if getSetting(sublime.active_window().active_view(), sublime.load_settings('phpfmt.sublime-settings'), "debug", False):
+     if getSetting(sublime.active_window().active_view(), sublime.load_settings('phpfmt8.sublime-settings'), "debug", False):
         print(msg)
 
 def getSetting( view, settings, key, default ):
@@ -28,7 +28,7 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
 
     self = eself
     view = eview
-    s = sublime.load_settings('phpfmt.sublime-settings')
+    s = sublime.load_settings('phpfmt8.sublime-settings')
 
 
     additional_extensions = getSetting( view, s, "additional_extensions", [])
@@ -259,7 +259,7 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
 def dogeneratephpdoc(eself, eview):
     self = eself
     view = eview
-    s = sublime.load_settings('phpfmt.sublime-settings')
+    s = sublime.load_settings('phpfmt8.sublime-settings')
 
     additional_extensions = s.get("additional_extensions", [])
     autoimport = s.get("autoimport", True)
@@ -365,7 +365,7 @@ def dogeneratephpdoc(eself, eview):
 def doreordermethod(eself, eview):
     self = eself
     view = eview
-    s = sublime.load_settings('phpfmt.sublime-settings')
+    s = sublime.load_settings('phpfmt8.sublime-settings')
 
     additional_extensions = s.get("additional_extensions", [])
     autoimport = s.get("autoimport", True)
@@ -547,7 +547,7 @@ def hidePanel(name, eself, eedit):
 
 class phpfmt(sublime_plugin.EventListener):
     def on_pre_save(self, view):
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
         format_on_save = s.get("format_on_save", True)
 
         if format_on_save:
@@ -561,7 +561,7 @@ class AnalyseThisCommand(sublime_plugin.TextCommand):
 
         lookTerm = (self.view.substr(self.view.word(self.view.sel()[0].a)))
 
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
         php_bin = s.get("php_bin", "php")
         oraclePath = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "oracle.php")
 
@@ -606,7 +606,7 @@ class CalltipCommand(sublime_plugin.TextCommand):
         dirnm, sfn = os.path.split(uri)
         ext = os.path.splitext(uri)[1][1:]
 
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
 
         additional_extensions = s.get("additional_extensions", [])
         if "php" != ext and not ext in additional_extensions:
@@ -656,7 +656,7 @@ class CalltipCommand(sublime_plugin.TextCommand):
 
 class DebugEnvCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
 
         php_bin = s.get("php_bin", "php")
         formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
@@ -680,7 +680,7 @@ class FmtNowCommand(sublime_plugin.TextCommand):
 
 class TogglePassMenuCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
         php_bin = s.get("php_bin", "php")
         formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
@@ -700,7 +700,7 @@ class TogglePassMenuCommand(sublime_plugin.TextCommand):
 
         def on_done(i):
             if i >= 0 :
-                s = sublime.load_settings('phpfmt.sublime-settings')
+                s = sublime.load_settings('phpfmt8.sublime-settings')
                 passes = s.get('passes', [])
                 chosenPass = descriptions[i].split(' ')
                 option = chosenPass[0]
@@ -719,13 +719,13 @@ class TogglePassMenuCommand(sublime_plugin.TextCommand):
                     sublime.status_message(msg)
 
                 s.set('passes', passes)
-                sublime.save_settings('phpfmt.sublime-settings')
+                sublime.save_settings('phpfmt8.sublime-settings')
 
         self.view.window().show_quick_panel(descriptions, on_done, sublime.MONOSPACE_FONT)
 
 class ToggleExcludeMenuCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
         php_bin = s.get("php_bin", "php")
         formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
@@ -745,7 +745,7 @@ class ToggleExcludeMenuCommand(sublime_plugin.TextCommand):
 
         def on_done(i):
             if i >= 0 :
-                s = sublime.load_settings('phpfmt.sublime-settings')
+                s = sublime.load_settings('phpfmt8.sublime-settings')
                 excludes = s.get('excludes', [])
                 chosenPass = descriptions[i].split(' ')
                 option = chosenPass[0]
@@ -764,13 +764,13 @@ class ToggleExcludeMenuCommand(sublime_plugin.TextCommand):
                     sublime.status_message(msg)
 
                 s.set('excludes', excludes)
-                sublime.save_settings('phpfmt.sublime-settings')
+                sublime.save_settings('phpfmt8.sublime-settings')
 
         self.view.window().show_quick_panel(descriptions, on_done, sublime.MONOSPACE_FONT)
 
 class ToggleCommand(sublime_plugin.TextCommand):
     def run(self, edit, option):
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
         options = {
             "autocomplete":"autocomplete",
             "autoimport":"dependency autoimport",
@@ -785,7 +785,7 @@ class ToggleCommand(sublime_plugin.TextCommand):
             "visibility_order":"visibility order",
             "yoda":"yoda mode",
         }
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
         value = s.get(option, False)
 
         if value:
@@ -799,15 +799,15 @@ class ToggleCommand(sublime_plugin.TextCommand):
             print_debug(msg)
             sublime.status_message(msg)
 
-        sublime.save_settings('phpfmt.sublime-settings')
+        sublime.save_settings('phpfmt8.sublime-settings')
 
 class UpdatePhpBinCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         def execute(text):
-            s = sublime.load_settings('phpfmt.sublime-settings')
+            s = sublime.load_settings('phpfmt8.sublime-settings')
             s.set("php_bin", text)
 
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
         self.view.window().show_input_panel('php binary path:', s.get("php_bin", ""), execute, None, None)
 
 class OrderMethodCommand(sublime_plugin.TextCommand):
@@ -835,7 +835,7 @@ class BuildOracleCommand(sublime_plugin.TextCommand):
         def buildDB():
             if self.msgFile is not None:
                 self.msgFile.window().run_command('close_file')
-            s = sublime.load_settings('phpfmt.sublime-settings')
+            s = sublime.load_settings('phpfmt8.sublime-settings')
             php_bin = s.get("php_bin", "php")
             oraclePath = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "oracle.php")
             cmdOracle = [php_bin]
@@ -860,7 +860,7 @@ class BuildOracleCommand(sublime_plugin.TextCommand):
             sublime.set_timeout_async(buildDB, 0)
 
         view = self.view
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
         php_bin = s.get("php_bin", "php")
 
         uri = view.file_name()
@@ -891,18 +891,18 @@ class BuildOracleCommand(sublime_plugin.TextCommand):
 class IndentWithSpacesCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         def setIndentWithSpace(text):
-            s = sublime.load_settings('phpfmt.sublime-settings')
+            s = sublime.load_settings('phpfmt8.sublime-settings')
             v = text.strip()
             if not v:
                 v = False
             else:
                 v = int(v)
             s.set("indent_with_space", v)
-            sublime.save_settings('phpfmt.sublime-settings')
+            sublime.save_settings('phpfmt8.sublime-settings')
             sublime.status_message("phpfmt (indentation): done")
             sublime.active_window().active_view().run_command("fmt_now")
 
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
         spaces = s.get("indent_with_space", 4)
         if not spaces:
             spaces = ""
@@ -911,7 +911,7 @@ class IndentWithSpacesCommand(sublime_plugin.TextCommand):
 
 class PHPFmtComplete(sublime_plugin.EventListener):
     def on_query_completions(self, view, prefix, locations):
-        s = sublime.load_settings('phpfmt.sublime-settings')
+        s = sublime.load_settings('phpfmt8.sublime-settings')
 
         autocomplete = s.get("autocomplete", False)
         if autocomplete is False:
@@ -1001,16 +1001,16 @@ class PHPFmtComplete(sublime_plugin.EventListener):
 
         return comps
 
-s = sublime.load_settings('phpfmt.sublime-settings')
+s = sublime.load_settings('phpfmt8.sublime-settings')
 version = s.get('version', 1)
 s.set('version', version)
-sublime.save_settings('phpfmt.sublime-settings')
+sublime.save_settings('phpfmt8.sublime-settings')
 
 if version == 2:
     # Convert to version 3
     print_debug("Convert to version 3")
     s.set('version', 3)
-    sublime.save_settings('phpfmt.sublime-settings')
+    sublime.save_settings('phpfmt8.sublime-settings')
 
 if version == 3:
     # Convert to version 3
@@ -1019,11 +1019,11 @@ if version == 3:
     passes = s.get('passes', [])
     passes.append("ReindentSwitchBlocks")
     s.set('passes', passes)
-    sublime.save_settings('phpfmt.sublime-settings')
+    sublime.save_settings('phpfmt8.sublime-settings')
 
 
 # def selfupdate():
-#     s = sublime.load_settings('phpfmt.sublime-settings')
+#     s = sublime.load_settings('phpfmt8.sublime-settings')
 #     php_bin = s.get("php_bin", "php")
 #     formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
@@ -1040,7 +1040,7 @@ if version == 3:
 
 
 def _ct_poller():
-    s = sublime.load_settings('phpfmt.sublime-settings')
+    s = sublime.load_settings('phpfmt8.sublime-settings')
     if s.get("calltip", False):
         try:
             view = sublime.active_window().active_view()

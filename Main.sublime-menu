@@ -15,14 +15,14 @@
                             {
                                 "caption": "Settings – Default",
                                 "args": {
-                                    "file": "${packages}/phpfmt/phpfmt.sublime-settings"
+                                    "file": "${packages}/phpfmt/phpfmt8.sublime-settings"
                                 },
                                 "command": "open_file"
                             },
                             {
                                 "caption": "Settings – User",
                                 "args": {
-                                    "file": "${packages}/User/phpfmt.sublime-settings"
+                                    "file": "${packages}/User/phpfmt8.sublime-settings"
                                 },
                                 "command": "open_file"
                             },
