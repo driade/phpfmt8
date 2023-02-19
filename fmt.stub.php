@@ -1580,6 +1580,16 @@ namespace {
 
 		abstract public function format($source);
 
+        protected function each(array &$ar) {
+            $k = key($ar);
+            if ($k === null) {
+                return false;
+            }
+            $v = current($ar);
+            next($ar);
+            return [$k, $v];
+        }
+
 		protected function alignPlaceholders($origPlaceholder, $contextCounter) {
 			for ($j = 0; $j <= $contextCounter; ++$j) {
 				$placeholder = sprintf($origPlaceholder, $j);
@@ -1792,7 +1802,7 @@ namespace {
 			}
 			$tknids = array_flip($tknids);
 			$touchedLn = false;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->cache = [];
@@ -1809,7 +1819,7 @@ namespace {
 		protected function printAndStopAtEndOfParamBlock() {
 			$count = 1;
 			$paramCount = 1;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->cache = [];
@@ -1844,7 +1854,7 @@ namespace {
 
 		protected function printBlock($start, $end) {
 			$count = 1;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->cache = [];
@@ -1864,7 +1874,7 @@ namespace {
 
 		protected function printCurlyBlock() {
 			$count = 1;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->cache = [];
@@ -1889,7 +1899,7 @@ namespace {
 		}
 
 		protected function printUntil($tknid) {
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->cache = [];
@@ -1907,7 +1917,7 @@ namespace {
 			if (isset($tknids[$this->newLine])) {
 				$whitespaceNewLine = true;
 			}
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->cache = [];
@@ -2249,7 +2259,7 @@ namespace {
 			$tmp = '';
 			$tknCount = 1;
 			$foundPotentialTokens = false;
-			while (list($ptr, $token) = each($tkns)) {
+			while (list($ptr, $token) = $this->each($tkns)) {
 				list($id, $text) = $this->getToken($token);
 				if (isset($lookFor[$id])) {
 					$foundPotentialTokens = true;
@@ -2278,7 +2288,7 @@ namespace {
 			$tmp = '';
 			$tknCount = 1;
 			$foundPotentialTokens = false;
-			while (list($ptr, $token) = each($tkns)) {
+			while (list($ptr, $token) = $this->each($tkns)) {
 				list($id, $text) = $this->getToken($token);
 				if (isset($lookFor[$id])) {
 					$foundPotentialTokens = true;
@@ -2355,7 +2365,7 @@ namespace {
 		protected function walkAndAccumulateCurlyBlock(&$tkns) {
 			$count = 1;
 			$ret = '';
-			while (list($index, $token) = each($tkns)) {
+			while (list($index, $token) = $this->each($tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$ret .= $text;
 
@@ -2380,7 +2390,7 @@ namespace {
 
 		protected function walkAndAccumulateStopAt(&$tkns, $tknid) {
 			$ret = '';
-			while (list($index, $token) = each($tkns)) {
+			while (list($index, $token) = $this->each($tkns)) {
 				list($id, $text) = $this->getToken($token);
 				if ($tknid == $id) {
 					prev($tkns);
@@ -2395,7 +2405,7 @@ namespace {
 			$tknids = array_flip($tknids);
 			$ret = '';
 			$id = null;
-			while (list($index, $token) = each($tkns)) {
+			while (list($index, $token) = $this->each($tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				if (isset($tknids[$id])) {
@@ -2409,7 +2419,7 @@ namespace {
 
 		protected function walkAndAccumulateUntil(&$tkns, $tknid) {
 			$ret = '';
-			while (list($index, $token) = each($tkns)) {
+			while (list($index, $token) = $this->each($tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$ret .= $text;
 				if ($tknid == $id) {
@@ -2422,7 +2432,7 @@ namespace {
 		protected function walkAndAccumulateUntilAny(&$tkns, $tknids) {
 			$tknids = array_flip($tknids);
 			$ret = '';
-			while (list(, $token) = each($tkns)) {
+			while (list(, $token) = $this->each($tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$ret .= $text;
 				if (isset($tknids[$id])) {
@@ -2433,7 +2443,7 @@ namespace {
 		}
 
 		protected function walkUntil($tknid) {
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				if ($id == $tknid) {
@@ -2950,7 +2960,7 @@ namespace {
 		public function format($source = '') {
 			$namespaceCount = 0;
 			$tokens = token_get_all($source);
-			while (list(, $token) = each($tokens)) {
+			while (list(, $token) = $this->each($tokens)) {
 				list($id, $text) = $this->getToken($token);
 				if (T_NAMESPACE == $id && !$this->rightUsefulTokenIs(T_NS_SEPARATOR)) {
 					++$namespaceCount;
@@ -2962,7 +2972,7 @@ namespace {
 
 			$return = '';
 			reset($tokens);
-			while (list($index, $token) = each($tokens)) {
+			while (list($index, $token) = $this->each($tokens)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -2971,7 +2981,7 @@ namespace {
 					if ($this->rightUsefulTokenIs(T_NS_SEPARATOR)) {
 						break;
 					}
-					while (list($index, $token) = each($tokens)) {
+					while (list($index, $token) = $this->each($tokens)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						$return .= $text;
@@ -2981,7 +2991,7 @@ namespace {
 					}
 					$namespaceBlock = '';
 					$curlyCount = 1;
-					while (list($index, $token) = each($tokens)) {
+					while (list($index, $token) = $this->each($tokens)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						$namespaceBlock .= $text;
@@ -3032,10 +3042,10 @@ namespace {
 			$tokens = token_get_all($source);
 			$aliasCount = [];
 			$namespaceName = '';
-			while (list($index, $token) = each($tokens)) {
+			while (list($index, $token) = $this->each($tokens)) {
 				list($id, $text) = $this->getToken($token);
 				if (T_NAMESPACE == $id && !$this->rightUsefulTokenIs(T_NS_SEPARATOR)) {
-					while (list($index, $token) = each($tokens)) {
+					while (list($index, $token) = $this->each($tokens)) {
 						list($id, $text) = $this->getToken($token);
 						if (T_NS_SEPARATOR == $id || T_STRING == $id) {
 							$namespaceName .= $text;
@@ -3046,7 +3056,7 @@ namespace {
 					}
 				}
 				if (T_USE == $id || T_NAMESPACE == $id || T_FUNCTION == $id || T_DOUBLE_COLON == $id || T_OBJECT_OPERATOR == $id) {
-					while (list($index, $token) = each($tokens)) {
+					while (list($index, $token) = $this->each($tokens)) {
 						list($id, $text) = $this->getToken($token);
 						if (ST_SEMI_COLON == $id || ST_PARENTHESES_OPEN == $id || ST_CURLY_OPEN == $id) {
 							break;
@@ -3054,7 +3064,7 @@ namespace {
 					}
 				}
 				if (T_CLASS == $id) {
-					while (list($index, $token) = each($tokens)) {
+					while (list($index, $token) = $this->each($tokens)) {
 						list($id, $text) = $this->getToken($token);
 						if (T_EXTENDS == $id || T_IMPLEMENTS == $id || ST_CURLY_OPEN == $id) {
 							break;
@@ -3076,7 +3086,7 @@ namespace {
 			$touchedNamespace = false;
 			$touchedFunction = false;
 			$return = '';
-			while (list(, $token) = each($tokens)) {
+			while (list(, $token) = $this->each($tokens)) {
 				list($id, $text) = $this->getToken($token);
 
 				if (T_NAMESPACE == $id && !$this->rightUsefulTokenIs(T_NS_SEPARATOR)) {
@@ -3093,7 +3103,7 @@ namespace {
 				}
 				$return .= $text;
 			}
-			while (list(, $token) = each($tokens)) {
+			while (list(, $token) = $this->each($tokens)) {
 				list(, $text) = $this->getToken($token);
 				$return .= $text;
 			}
@@ -3120,7 +3130,7 @@ namespace {
 			$newTokens = [];
 			$nextTokens = [];
 			$touchedNamespace = false;
-			while (list(, $popToken) = each($tokens)) {
+			while (list(, $popToken) = $this->each($tokens)) {
 				$nextTokens[] = $popToken;
 				while (($token = array_shift($nextTokens))) {
 					list($id, $text) = $this->getToken($token);
@@ -3129,7 +3139,7 @@ namespace {
 					}
 					if (T_USE === $id) {
 						$useItem = $text;
-						while (list(, $token) = each($tokens)) {
+						while (list(, $token) = $this->each($tokens)) {
 							list($id, $text) = $this->getToken($token);
 							if (ST_SEMI_COLON === $id) {
 								$useItem .= $text;
@@ -3180,7 +3190,7 @@ namespace {
 					}
 				}
 			}
-			while (list($index, $token) = each($tokens)) {
+			while (list($index, $token) = $this->each($tokens)) {
 				list($id, $text) = $this->getToken($token);
 				$lowerText = strtolower($text);
 				if (T_STRING === $id && isset($aliasList[$lowerText]) && ($this->leftTokenSubsetIsAtIdx($tokens, $index, T_NEW) || $this->rightTokenSubsetIsAtIdx($tokens, $index, T_DOUBLE_COLON))) {
@@ -3230,7 +3240,7 @@ namespace {
 			$touchedFunction = false;
 			$curlyCount = null;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -3241,7 +3251,7 @@ namespace {
 					$touchedFunction = false;
 					$curlyCount = null;
 					$this->appendCode($text);
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						if (ST_CURLY_OPEN == $id) {
@@ -3341,7 +3351,7 @@ namespace {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -3447,7 +3457,7 @@ namespace {
 			$contextStack = [];
 			$touchedBracketOpen = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -3535,7 +3545,7 @@ namespace {
 			$this->code = '';
 			$touchedNonIndentableComment = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				if (self::NON_INDENTABLE_COMMENT === $text) {
@@ -3596,13 +3606,13 @@ namespace {
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
 				case T_WHILE:
 					$str = $text;
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						$str .= $text;
@@ -3647,7 +3657,7 @@ namespace {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$touchedDoubleArrow = false;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -3696,7 +3706,7 @@ namespace {
 			$touchedElseStringParenClose = false;
 			$touchedCurlyClose = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -3757,7 +3767,7 @@ namespace {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -3782,7 +3792,7 @@ namespace {
 
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -3858,7 +3868,7 @@ namespace {
 
 			$foundStack = [];
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->cache = [];
@@ -3977,7 +3987,7 @@ namespace {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -4058,7 +4068,7 @@ namespace {
 			reset($this->commentStack);
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->tkns[$this->ptr] = [$id, $text];
@@ -4289,7 +4299,7 @@ namespace {
 			$maxContextCounter = [];
 			$touchedParenOpen = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -4558,7 +4568,7 @@ namespace {
 			$touchedGroupedUse = false;
 			$hasEchoAfterOpenTag = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->memoPtr();
@@ -5000,7 +5010,7 @@ namespace {
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -5015,7 +5025,7 @@ namespace {
 					$touchedFunction = false;
 					$curlyCount = null;
 					$this->appendCode($text);
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						if (ST_CURLY_OPEN == $id) {
@@ -5130,7 +5140,7 @@ namespace {
 			if ($this->rightUsefulTokenIs(ST_EQUAL)) {
 				return $this->printAndStopAt(ST_SEMI_COLON);
 			}
-			each($this->tkns);
+			next($this->tkns);
 		}
 	}
 
@@ -5141,7 +5151,7 @@ namespace {
 			}
 
 			$this->tkns = token_get_all($source);
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -5161,7 +5171,7 @@ namespace {
 			$blockStack = [];
 			$touchedBlock = null;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -5272,7 +5282,7 @@ namespace {
 			$contextStack = [];
 			$touchedListArrayString = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -5326,7 +5336,7 @@ namespace {
 			$this->code = '';
 			$touchedSemicolon = true;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -5401,7 +5411,7 @@ namespace {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$ucConst = false;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -5438,7 +5448,7 @@ namespace {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$foundClass = false;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -5484,7 +5494,7 @@ namespace {
 			$this->code = '';
 			$foundMethod = false;
 			$methodReplaceList = [];
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -5517,7 +5527,7 @@ namespace {
 
 			$this->tkns = token_get_all($this->code);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -5545,7 +5555,7 @@ namespace {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$touchedComment = false;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -5603,7 +5613,7 @@ namespace {
 			$this->code = '';
 			$contextCounter = 0;
 			$contextMetaCount = [];
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -5681,7 +5691,7 @@ namespace {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -5700,7 +5710,7 @@ namespace {
 					if ($this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
 						break;
 					}
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						if (ST_CURLY_OPEN === $id) {
@@ -5715,7 +5725,7 @@ namespace {
 					if (!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_PARENTHESES_OPEN, ST_COMMA]) && $this->rightUsefulTokenIs([T_STRING, ST_REFERENCE])) {
 						$this->appendCode($text);
 						$touchedLn = false;
-						while (list($index, $token) = each($this->tkns)) {
+						while (list($index, $token) = $this->each($this->tkns)) {
 							list($id, $text) = $this->getToken($token);
 							$this->ptr = $index;
 							if (T_WHITESPACE == $id && $this->hasLn($text)) {
@@ -5772,7 +5782,7 @@ namespace {
 			$spaces = str_repeat(' ', (int) $this->size);
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -5819,7 +5829,7 @@ namespace {
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				if (
@@ -5887,7 +5897,7 @@ namespace {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -5900,7 +5910,7 @@ namespace {
 						$this->appendCode($this->getCrlf());
 					}
 					$this->appendCode($text);
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						$this->appendCode($text);
@@ -5948,7 +5958,7 @@ namespace {
 			$static = null;
 			$skipWhitespaces = false;
 			$touchedClassInterfaceTrait = false;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -6089,7 +6099,7 @@ namespace {
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$tokenCount = count($this->tkns) - 1;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id) = $this->getToken($token);
 				$this->ptr = $index;
 				if (T_INLINE_HTML == $id && $this->ptr != $tokenCount) {
@@ -6157,7 +6167,7 @@ namespace {
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -6234,7 +6244,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->checkIfEmptyNS($id);
@@ -6252,7 +6262,7 @@ EOT;
 		}
 
 		public function format($source) {
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->checkIfEmptyNS($id);
@@ -6335,7 +6345,7 @@ EOT;
 			$contextCounter = 0;
 			$touchedVisibilityConst = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -6453,7 +6463,7 @@ EOT;
 			$contextCounter = [];
 			$maxContextCounter = [];
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -6613,7 +6623,7 @@ EOT;
 			$contextCounter = 0;
 			$touchedNonAlignableComment = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -6690,7 +6700,7 @@ EOT;
 			$bracketCount = 0;
 			$contextCounter = 0;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -6771,7 +6781,7 @@ EOT;
 			$contextCounter = [];
 			$maxContextCounter = [];
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -6894,7 +6904,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -6911,7 +6921,7 @@ EOT;
 					$placeholders = [];
 					$strings = [];
 					$stack = $text;
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 
@@ -6992,7 +7002,7 @@ EOT;
 
 			$contextCounter = 0;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -7082,7 +7092,7 @@ EOT;
 			$touchedCaseOrDefault = false;
 			$touchedSwitch = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -7388,7 +7398,7 @@ EOT;
 			$lastCurly = null;
 			$ternary = 0;
 			$touchedSingleColon = false;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -7720,7 +7730,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$levelTouched = null;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -7793,7 +7803,7 @@ EOT;
 		private function mergeEqualsWithReference($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -7813,7 +7823,7 @@ EOT;
 		private function removeSpaceAfterCasts($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -7854,7 +7864,7 @@ EOT;
 		private function resizeSpaces($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -8034,7 +8044,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -8076,7 +8086,7 @@ EOT;
 			$this->useCache = true;
 
 			$touchedOpenTag = false;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->tkns[$this->ptr] = [$id, $text];
@@ -8128,7 +8138,7 @@ EOT;
 		}
 
 		protected function walkAndNormalizeUntil($tknid) {
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				$this->ptr = $index;
 				$this->cache = [];
 				if ($token[0] == $tknid) {
@@ -8218,7 +8228,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -8275,7 +8285,7 @@ EOT;
 
 		public function format($source) {
 			$this->tkns = token_get_all($source);
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -8331,7 +8341,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -8400,7 +8410,7 @@ EOT;
 			$touchedVisibility = false;
 			$touchedDocComment = false;
 			$visibilityIdx = 0;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -8477,7 +8487,7 @@ EOT;
 					$paramStack = [];
 					$tmp = ['type' => '', 'name' => ''];
 					$count = 1;
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 
@@ -8509,7 +8519,7 @@ EOT;
 					if (!$this->rightUsefulTokenIs(ST_SEMI_COLON)) {
 						$this->walkUntil(ST_CURLY_OPEN);
 						$count = 1;
-						while (list($index, $token) = each($this->tkns)) {
+						while (list($index, $token) = $this->each($this->tkns)) {
 							list($id, $text) = $this->getToken($token);
 							$this->ptr = $index;
 
@@ -8613,7 +8623,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -8691,7 +8701,7 @@ EOT;
 			$this->code = '';
 
 			$currentLineLength = 0;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -8749,7 +8759,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 
 			$contextStack = [];
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -8829,7 +8839,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -8886,7 +8896,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -8931,7 +8941,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -8946,7 +8956,7 @@ EOT;
 					break;
 				}
 			}
-			while (list(, $token) = each($this->tkns)) {
+			while (list(, $token) = $this->each($this->tkns)) {
 				list(, $text) = $this->getToken($token);
 				$this->appendCode($text);
 			}
@@ -8990,7 +9000,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -9044,7 +9054,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -9109,7 +9119,7 @@ EOT;
 			$return = '';
 			$classBlock = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -9191,7 +9201,7 @@ EOT;
 			$touchedDocComment = false;
 			$useStack = '';
 
-			while (list($index, $token) = each($tokens)) {
+			while (list($index, $token) = $this->each($tokens)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -9439,7 +9449,7 @@ EOT;
 			$aliasCount = [];
 			$unusedImport = [];
 
-			while (list($index, $token) = each($tokens)) {
+			while (list($index, $token) = $this->each($tokens)) {
 				list($id, $text) = $this->getToken($token);
 
 				if (T_DOUBLE_COLON == $id) {
@@ -9453,7 +9463,7 @@ EOT;
 					!$touchedDoubleColon
 				) {
 					$newTokens[] = $token;
-					while (list(, $token) = each($tokens)) {
+					while (list(, $token) = $this->each($tokens)) {
 						list($id, $text) = $this->getToken($token);
 						$newTokens[] = $token;
 					}
@@ -9590,7 +9600,7 @@ EOT;
 			$namespaceCount = 0;
 			$tokens = token_get_all($source);
 			$touchedTUse = false;
-			while (list(, $token) = each($tokens)) {
+			while (list(, $token) = $this->each($tokens)) {
 				list($id, $text) = $this->getToken($token);
 				if (T_USE === $id) {
 					$touchedTUse = true;
@@ -9612,13 +9622,13 @@ EOT;
 
 			$return = '';
 			reset($tokens);
-			while (list($index, $token) = each($tokens)) {
+			while (list($index, $token) = $this->each($tokens)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
 				case T_NAMESPACE:
 					$return .= $text;
-					while (list($index, $token) = each($tokens)) {
+					while (list($index, $token) = $this->each($tokens)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						$return .= $text;
@@ -9629,7 +9639,7 @@ EOT;
 					$namespaceBlock = '';
 					if (ST_CURLY_OPEN === $id) {
 						$curlyCount = 1;
-						while (list($index, $token) = each($tokens)) {
+						while (list($index, $token) = $this->each($tokens)) {
 							list($id, $text) = $this->getToken($token);
 							$this->ptr = $index;
 							$namespaceBlock .= $text;
@@ -9645,7 +9655,7 @@ EOT;
 							}
 						}
 					} elseif (ST_SEMI_COLON === $id) {
-						while (list($index, $token) = each($tokens)) {
+						while (list($index, $token) = $this->each($tokens)) {
 							list($id, $text) = $this->getToken($token);
 							$this->ptr = $index;
 
@@ -9729,7 +9739,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -9746,13 +9756,13 @@ EOT;
 					$foundReturn = '';
 					list(, $docBlock) = $this->leftToken();
 					$words = explode(' ', $docBlock);
-					while (list(, $word) = each($words)) {
+					while (list(, $word) = $this->each($words)) {
 						$word = trim(strtolower($word));
 						switch ($word) {
 						case '@param':
 							$foundType = '';
 							$foundName = '';
-							while (list(, $word) = each($words)) {
+							while (list(, $word) = $this->each($words)) {
 								$word = trim(strtolower($word));
 								if ('$' == $word[0]) {
 									$foundName = $word;
@@ -9763,14 +9773,14 @@ EOT;
 							}
 							$foundParams[$foundName] = $foundType;
 						case '@return':
-							while (list(, $word) = each($words)) {
+							while (list(, $word) = $this->each($words)) {
 								$word = trim(strtolower($word));
 								$foundReturn = $word;
 								break;
 							}
 						}
 					}
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						if (ST_CURLY_OPEN == $id && '' != $foundReturn) {
@@ -9839,7 +9849,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				if (T_DOC_COMMENT == $id) {
@@ -9976,7 +9986,7 @@ EOT;
 
 			$seqdetect = 0;
 			reset($lines);
-			while (list($idx, $line) = each($lines)) {
+			while (list($idx, $line) = $this->each($lines)) {
 				$weight = substr(strrchr($line, ':'), 1);
 				$line = substr($line, 0, -1 * (strlen($line) - strrpos($line, ':')));
 				if ($weight != $seqdetect) {
@@ -9986,7 +9996,7 @@ EOT;
 
 				++$seqdetect;
 			}
-			while (list($idx, $line) = each($lines)) {
+			while (list($idx, $line) = $this->each($lines)) {
 				$weight = substr(strrchr($line, ':'), 1);
 				$line = substr($line, 0, -1 * (strlen($line) - strrpos($line, ':')));
 				if (empty($line)) {
@@ -10038,7 +10048,7 @@ EOT;
 						$columnCount = 0;
 						$maxColumnCount = $patternsColumns[$pattern];
 						foreach ($maxColumn as $rightMost) {
-							while ((list(, $word) = each($words))) {
+							while ((list(, $word) = $this->each($words))) {
 								if (trim($word)) {
 									break;
 								}
@@ -10052,7 +10062,7 @@ EOT;
 								break;
 							}
 						}
-						while ((list(, $word) = each($words))) {
+						while ((list(, $word) = $this->each($words))) {
 							if (!trim($word)) {
 								continue;
 							}
@@ -10100,7 +10110,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -10157,7 +10167,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -10166,7 +10176,7 @@ EOT;
 					$this->printUntil(ST_PARENTHESES_OPEN);
 					$this->appendCode(self::LINE_BREAK);
 					$touchedComma = false;
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 
@@ -10258,7 +10268,7 @@ EOT;
 			$touchedParenOpen = false;
 			$touchedFunction = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -10693,7 +10703,7 @@ EOT;
 			$touchedSwitch = false;
 			$foundStack = [];
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -10798,7 +10808,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$parenCount = 0;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -10865,7 +10875,7 @@ EOT;
 			$this->code = '';
 			$curlyStack = [];
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -10953,7 +10963,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$lastTouchedToken = null;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -11014,7 +11024,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -11052,7 +11062,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$this->useCache = true;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->cache = [];
@@ -11103,7 +11113,7 @@ EOT;
 			reset($this->commentStack);
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->tkns[$this->ptr] = [$id, $text];
@@ -11138,7 +11148,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$this->useCache = true;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->cache = [];
@@ -11147,7 +11157,7 @@ EOT;
 					$parenCount = 1;
 					$touchedAnotherValidToken = false;
 					$stack = $text;
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						$this->cache = [];
@@ -11228,7 +11238,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$foundParen = [];
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -11288,7 +11298,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -11298,7 +11308,7 @@ EOT;
 					$stack = '';
 					$foundLineBreak = false;
 					$hasLnAfter = $this->hasLnAfter();
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						$stack .= $text;
@@ -11411,7 +11421,7 @@ EOT;
 			$this->code = '';
 			$isComment = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -11530,7 +11540,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -11584,7 +11594,7 @@ if ( ! true) foo();
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -11655,7 +11665,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -11744,7 +11754,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -11792,7 +11802,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 
 			$contextStack = [];
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -11875,7 +11885,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -11935,7 +11945,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -11994,7 +12004,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -12014,7 +12024,7 @@ EOT;
 
 					$count = 1;
 					$block = '';
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 
 						if (ST_CURLY_OPEN == $id) {
@@ -12080,7 +12090,7 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -12134,7 +12144,7 @@ EOT;
 			$this->code = '';
 			$touchedDo = false;
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -12153,7 +12163,7 @@ EOT;
 					$this->printUntil(ST_CURLY_OPEN);
 
 					if ($this->hasLnAfter()) {
-						each($this->tkns);
+						next($this->tkns);
 						$this->appendCode($this->newLine);
 						continue;
 					}
@@ -12173,7 +12183,7 @@ EOT;
 						$this->printUntil(ST_CURLY_OPEN);
 
 						if ($this->hasLnAfter()) {
-							each($this->tkns);
+							next($this->tkns);
 							$this->appendCode($this->newLine);
 							continue;
 						}
@@ -12185,7 +12195,7 @@ EOT;
 					$this->appendCode($text);
 					$this->printUntil(ST_COLON);
 
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						if (T_WHITESPACE != $id) {
@@ -12254,7 +12264,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$whitespaces = " \t";
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -12264,7 +12274,7 @@ EOT;
 					}
 					list($nextId, $nextText) = $this->inspectToken(+1);
 					if (T_WHITESPACE == $nextId && !$this->hasln($nextText) && !$this->rightUsefulTokenIs([T_LNUMBER, T_DNUMBER])) {
-						each($this->tkns);
+						next($this->tkns);
 					}
 				default:
 					$this->appendCode($text);
@@ -12302,7 +12312,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$isComment = false;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -12380,7 +12390,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				$this->tkns[$this->ptr] = [$id, $text];
@@ -12496,7 +12506,7 @@ $var = preg_split("/[A-Z]/Di", $var);
 
 			$currentLineLength = 0;
 			$detectedTab = false;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 
@@ -12567,7 +12577,7 @@ $var = preg_split("/[A-Z]/Di", $var);
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$touchedNamespace = false;
-			while (list($index, $token) = each($this->tkns)) {
+			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
@@ -12586,7 +12596,7 @@ $var = preg_split("/[A-Z]/Di", $var);
 						break;
 					}
 					$classLocalName = '';
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						$this->appendCode($text);
@@ -12598,7 +12608,7 @@ $var = preg_split("/[A-Z]/Di", $var);
 						}
 					}
 					$count = 1;
-					while (list($index, $token) = each($this->tkns)) {
+					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 
@@ -12701,7 +12711,7 @@ EOT;
 
 		protected function yodise($source) {
 			$tkns = $this->aggregateVariables($source);
-			while (list($ptr, $token) = each($tkns)) {
+			while (list($ptr, $token) = $this->each($tkns)) {
 				if (is_null($token)) {
 					continue;
 				}
@@ -12770,7 +12780,7 @@ EOT;
 
 		private function aggregateVariables($source) {
 			$tkns = token_get_all($source);
-			while (list($ptr, $token) = each($tkns)) {
+			while (list($ptr, $token) = $this->each($tkns)) {
 				list($id, $text) = $this->getToken($token);
 
 				if (ST_PARENTHESES_OPEN == $id) {
@@ -12782,7 +12792,7 @@ EOT;
 				if (ST_QUOTE == $id) {
 					$stack = $text;
 					$initialPtr = $ptr;
-					while (list($ptr, $token) = each($tkns)) {
+					while (list($ptr, $token) = $this->each($tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$stack .= $text;
 						$tkns[$ptr] = null;
@@ -12809,7 +12819,7 @@ EOT;
 					)) {
 						continue;
 					}
-					while (list($ptr, $token) = each($tkns)) {
+					while (list($ptr, $token) = $this->each($tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$tkns[$ptr] = null;
 						if (ST_CURLY_OPEN == $id) {
