@@ -10,7 +10,7 @@
                 "id": "package-settings",
                 "children": [
                     {
-                        "caption": "phpfmt",
+                        "caption": "phpfmt8",
                         "children": [
                             {
                                 "caption": "Settings – Default",
