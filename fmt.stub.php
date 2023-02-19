@@ -5781,6 +5781,7 @@ namespace {
 			'throw' => 1, 'trait' => 1, 'try' => 1,
 			'unset' => 1, 'use' => 1, 'var' => 1,
 			'while' => 1, 'xor' => 1,
+            'match' => 1, 'enum' => 1, 'readonly' => 1
 		];
 
 		public function candidate($source, $foundTokens) {
