@@ -50,7 +50,7 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
     excludes = getSetting( view, s, "excludes", [])
 
     php_bin = getSetting( view, s, "php_bin", "php")
-    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.phar")
+    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
     config_file = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "php.tools.ini")
 
@@ -277,7 +277,7 @@ def dogeneratephpdoc(eself, eview):
     passes = s.get("passes", [])
 
     php_bin = s.get("php_bin", "php")
-    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.phar")
+    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
     config_file = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "php.tools.ini")
 
@@ -383,7 +383,7 @@ def doreordermethod(eself, eview):
     passes = s.get("passes", [])
 
     php_bin = s.get("php_bin", "php")
-    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.phar")
+    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
     config_file = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "php.tools.ini")
 
@@ -508,9 +508,9 @@ def debugEnvironment(php_bin, formatter_path):
     else:
         p = subprocess.Popen(cmd_ver, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
     res, err = p.communicate()
-    ret += ("phpfmt (fmt.phar version):\n"+res.decode('utf-8'))
+    ret += ("phpfmt (fmt.stub.php version):\n"+res.decode('utf-8'))
     if err.decode('utf-8'):
-        ret += ("phpfmt (fmt.phar version) err:\n"+err.decode('utf-8'))
+        ret += ("phpfmt (fmt.stub.php version) err:\n"+err.decode('utf-8'))
     ret += "\n"
 
     return ret
@@ -659,7 +659,7 @@ class DebugEnvCommand(sublime_plugin.TextCommand):
         s = sublime.load_settings('phpfmt.sublime-settings')
 
         php_bin = s.get("php_bin", "php")
-        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.phar")
+        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
         s = debugEnvironment(php_bin, formatter_path)
         sublime.message_dialog(s)
@@ -682,7 +682,7 @@ class TogglePassMenuCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         s = sublime.load_settings('phpfmt.sublime-settings')
         php_bin = s.get("php_bin", "php")
-        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.phar")
+        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
         cmd_passes = [php_bin,formatter_path,'--list-simple'];
         print_debug(cmd_passes)
@@ -727,7 +727,7 @@ class ToggleExcludeMenuCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         s = sublime.load_settings('phpfmt.sublime-settings')
         php_bin = s.get("php_bin", "php")
-        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.phar")
+        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
         cmd_passes = [php_bin,formatter_path,'--list-simple'];
         print_debug(cmd_passes)
@@ -1025,7 +1025,7 @@ if version == 3:
 # def selfupdate():
 #     s = sublime.load_settings('phpfmt.sublime-settings')
 #     php_bin = s.get("php_bin", "php")
-#     formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.phar")
+#     formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
 #     print_debug("Selfupdate")
 #     cmd_update = [php_bin, formatter_path, '--selfupdate']
