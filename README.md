@@ -1,4 +1,8 @@
-# [phpfmt](https://github.com/nanch/phpfmt_stable) support for Sublime Text 3
+# [phpfmt](https://github.com/driade/phpfmt-8) support for Sublime Text 3
+
+*** This is a clone of https://github.com/nanch/phpfmt_stable with PHP 8.x support ***
+
+*** STILL UNDER DEVELOPMENT ***
 
 ## Installation
 
@@ -11,7 +15,7 @@ Plugin runs with PHP 7.0 or newer installed in the machine running the plugin.
 
 - In Sublime Text press `ctrl+shift+P`
 - Choose `Package Control: Install Package`
-- Choose `phpfmt`
+- Choose `phpfmt8`
 
 #### Configuration (Windows)
 
