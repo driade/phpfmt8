@@ -10,7 +10,7 @@ class BasicTest extends TestCase
 
         $file = file_get_contents(__DIR__ . '/fixtures/one.php');
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $output = implode("\n", explode($output));
+            $output = explode("\n", implode(PHP_EOL, $output));
         }
 
         $this->assertSame($file, implode("\n", $output));
