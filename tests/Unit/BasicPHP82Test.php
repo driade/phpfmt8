@@ -6,7 +6,7 @@ class BasicPHP82Test extends TestCase
 {
     public function testItParsesAGenericFile()
     {
-        if (PHP_VERSION_ID < 82000) {
+        if (PHP_VERSION_ID < 80200) {
             $this->markTestSkipped();
         }
         exec("php " . __DIR__ . "/../../fmt.stub.php -o=- " . __DIR__ . '/fixtures/three.txt', $output);
