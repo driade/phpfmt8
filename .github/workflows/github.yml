@@ -3,12 +3,12 @@ name: PHPFmt
 on:
   push:
     branches:
-      - main
+      - master
       - dev
       - feature/*
   pull_request:
     branches:
-      - main
+      - master
       - dev
       - feature/*
 
