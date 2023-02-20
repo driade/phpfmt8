@@ -10836,11 +10836,17 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$curlyStack = [];
+            $curlyStackMatchIndex = false;
 
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
+
+                case T_MATCH:
+                    $this->appendCode($text);
+                    $curlyStackMatchIndex = count($curlyStack);
+                    break;
 
 				case T_NAMESPACE:
 				case T_CLASS:
@@ -10877,9 +10883,14 @@ EOT;
 					$curlyType = array_pop($curlyStack);
 					$this->appendCode($text);
 
-					if (self::LAMBDA_CURLY_OPEN != $curlyType && $this->rightUsefulTokenIs(ST_SEMI_COLON)) {
-						$this->walkUntil(ST_SEMI_COLON);
-					}
+                    if ($curlyStackMatchIndex !== count($curlyStack)) {
+    					if (self::LAMBDA_CURLY_OPEN != $curlyType && $this->rightUsefulTokenIs(ST_SEMI_COLON)) {
+    						$this->walkUntil(ST_SEMI_COLON);
+    					}
+                    } else {
+                        $curlyStackMatchIndex = false;
+                    }
+                    
 					break;
 
 				default:
