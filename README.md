@@ -13,6 +13,8 @@ Plugin runs with PHP 7.0 or newer installed in the machine running the plugin.
 
 #### Install this plugin through Package Manager.
 
+*** WAITING FOR SUBLIME TEXT PACKAGE MANAGERS TO APPROVE IT ***
+
 - In Sublime Text press `ctrl+shift+P`
 - Choose `Package Control: Install Package`
 - Choose `phpfmt8`
