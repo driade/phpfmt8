@@ -6593,7 +6593,7 @@ EOT;
 					if (LeftAlignComment::NON_INDENTABLE_COMMENT == $text) {
 						$touchedNonAlignableComment = true;
 						$this->appendCode($text);
-						continue;
+						break;
 					}
 
 					$prefix = '';
@@ -7417,7 +7417,7 @@ EOT;
 				case T_WHITESPACE:
 					if (!$this->hasLn($text)) {
 						$this->appendCode($text);
-						continue;
+						break;
 					}
 					if ($touchedSingleColon && $ternary) {
 						$touchedSingleColon = false;
@@ -7534,7 +7534,7 @@ EOT;
 						])
 					) {
 						$this->appendCode($text);
-						continue;
+						break;
 					}
 					if (
 						$this->rightUsefulTokenIs([
@@ -7574,7 +7574,7 @@ EOT;
 						])
 					) {
 						$this->appendCode($text);
-						continue;
+						break;
 					}
 
 					if (
@@ -7582,7 +7582,7 @@ EOT;
 						ST_PARENTHESES_OPEN != $lastParen
 					) {
 						$this->appendCode($text);
-						continue;
+						break;
 					}
 
 					if (
@@ -7594,12 +7594,12 @@ EOT;
 						)
 					) {
 						$this->appendCode($text);
-						continue;
+						break;
 					}
 
 					if (0 != $ternary) {
 						$this->appendCode($text);
-						continue;
+						break;
 					}
 
 					$this->appendCode(ST_SEMI_COLON . $text);
@@ -8324,7 +8324,7 @@ EOT;
 						}
 						$this->appendCode($this->getCrlf() . ST_CURLY_CLOSE . $this->getCrlf());
 						prev($this->tkns);
-						continue;
+						break;
 					}
 					break;
 				default:
@@ -9708,10 +9708,10 @@ EOT;
 				case T_FUNCTION:
 					$this->appendCode($text);
 					if (!$this->rightUsefulTokenIs(T_STRING)) {
-						continue;
+						break;
 					}
 					if (!$this->leftTokenIs(T_DOC_COMMENT)) {
-						continue;
+						break;
 					}
 
 					$foundParams = [];
@@ -10936,7 +10936,7 @@ EOT;
 					$lastTouchedToken = $id;
 				case T_NS_SEPARATOR:
 					if (T_NAMESPACE == $lastTouchedToken && $this->leftTokenIs([T_USE])) {
-						continue;
+						break;
 					}
 				default:
 					$this->appendCode($text);
@@ -12127,7 +12127,7 @@ EOT;
 					if ($this->hasLnAfter()) {
 						next($this->tkns);
 						$this->appendCode($this->newLine);
-						continue;
+						break;
 					}
 
 					break;
@@ -12147,7 +12147,7 @@ EOT;
 						if ($this->hasLnAfter()) {
 							next($this->tkns);
 							$this->appendCode($this->newLine);
-							continue;
+							break;
 						}
 					}
 
@@ -12171,7 +12171,7 @@ EOT;
 				case ST_CURLY_CLOSE:
 					if ($this->hasLnBefore()) {
 						$this->rtrimAndAppendCode($this->newLine . $text);
-						continue;
+						break;
 					}
 
 					$this->appendCode($text);
@@ -12687,7 +12687,7 @@ EOT;
 					list($leftId) = $tkns[$left];
 					list($rightId) = $tkns[$right];
 					if ($leftId == $rightId) {
-						continue;
+						break;
 					}
 
 					$leftPureVariable = $this->isPureVariable($leftId);
