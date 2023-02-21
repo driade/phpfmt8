@@ -7382,6 +7382,7 @@ EOT;
 					$this->appendCode($text);
 					break;
 
+                case T_MATCH:
 				case T_FUNCTION:
 					$foundId = $id;
 					if ($this->rightUsefulTokenIs(ST_PARENTHESES_OPEN)) {
