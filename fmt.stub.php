@@ -5971,11 +5971,15 @@ namespace {
 					}
 					break;
                 case T_STRING:
-                        if ($this->leftUsefulTokenIs([T_EXTENDS]) || $this->rightUsefulTokenIs([ST_CURLY_OPEN])) {
-                            $this->appendCode($text);
-                        } else {
-                            $type = $text;
-                        }
+                    if (
+                        null !== $visibility ||
+                        null !== $finalOrAbstract ||
+                        null !== $static
+                    ) {
+                        $type = $text;
+                    } else {
+                        $this->appendCode($text);
+                    }
                     break;
 				case T_VAR:
 					$text = 'public';
