@@ -9560,7 +9560,7 @@ EOT;
 			}
 
 			foreach ($unusedImport as $v) {
-				$return = str_ireplace($aliasList[$v] . $this->newLine, null, $return);
+				$return = str_ireplace($aliasList[$v] . $this->newLine, "", $return);
 			}
 
 			return $return;
