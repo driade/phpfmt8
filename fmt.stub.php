@@ -6050,7 +6050,7 @@ namespace {
 					$visibility = null;
 					$static = null;
 					$skipWhitespaces = false;
-					if ('abstract' == strtolower($finalOrAbstract)) {
+					if ($finalOrAbstract !== null && 'abstract' == strtolower($finalOrAbstract)) {
 						$finalOrAbstract = null;
 						$this->printUntil(ST_SEMI_COLON);
 						break;
