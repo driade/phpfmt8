@@ -8,3 +8,11 @@ abstract class FOO {
 
 	}
 }
+
+class Cache extends BaseConfig {
+
+}
+
+class Cache extends BaseConfig implements B {
+
+}
