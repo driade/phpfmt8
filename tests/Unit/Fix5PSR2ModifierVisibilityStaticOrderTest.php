@@ -6,9 +6,6 @@ class Fix5PSR2ModifierVisibilityStaticOrderTest extends TestCase
 {
     public function testItParsesAGenericFile()
     {
-        if (PHP_VERSION_ID < 80200) {
-            $this->markTestSkipped();
-        }
         exec("php " . __DIR__ . "/../../fmt.stub.php --passes=PSR2ModifierVisibilityStaticOrder -o=- " . __DIR__ . '/fixtures/six.txt', $output);
 
         $file = file_get_contents(__DIR__ . '/fixtures/six.php');
