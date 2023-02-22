@@ -298,7 +298,7 @@ $d = new D();
 
 ### Troubleshooting
 - Be sure you can run PHP from the command line.
-- If you need support, please open an issue at [fmt issues](https://github.com/nanch/phpfmt_stable/issues)
+- If you need support, please open an issue at [fmt issues](https://github.com/driade/phpfmt-8/issues)
 
 ### The Most FAQ
 
