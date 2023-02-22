@@ -5918,6 +5918,7 @@ namespace {
 			$visibility = null;
 			$finalOrAbstract = null;
 			$static = null;
+            $type = null;
 			$skipWhitespaces = false;
 			$touchedClassInterfaceTrait = false;
 			while (list($index, $token) = $this->each($this->tkns)) {
@@ -5969,6 +5970,9 @@ namespace {
 						$this->appendCode($text);
 					}
 					break;
+                case T_STRING:
+                        $type = $text;
+                    break;
 				case T_VAR:
 					$text = 'public';
 				case T_PUBLIC:
@@ -6002,14 +6006,17 @@ namespace {
 					if (
 						null !== $visibility ||
 						null !== $finalOrAbstract ||
-						null !== $static
+						null !== $static ||
+                        null !== $type
 					) {
 						null !== $finalOrAbstract && $this->appendCode($finalOrAbstract . $this->getSpace());
 						null !== $visibility && $this->appendCode($visibility . $this->getSpace());
 						null !== $static && $this->appendCode($static . $this->getSpace());
+                        null !== $type && $this->appendCode($type . $this->getSpace());
 						$finalOrAbstract = null;
 						$visibility = null;
 						$static = null;
+                        $type = null;
 						$skipWhitespaces = false;
 					}
 					$this->appendCode($text);
