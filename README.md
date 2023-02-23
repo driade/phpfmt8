@@ -1,4 +1,4 @@
-# [phpfmt](https://github.com/driade/phpfmt8) support for Sublime Text 3
+# [phpfmt](https://github.com/driade/phpfmt8) support for Sublime Text 3 with PHP 8.x support
 
 [![PHPFmt](https://github.com/driade/phpfmt8/actions/workflows/github.yml/badge.svg)](https://github.com/driade/phpfmt8/actions/workflows/github.yml)
 
