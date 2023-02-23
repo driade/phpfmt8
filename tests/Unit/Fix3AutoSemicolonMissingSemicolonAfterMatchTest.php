@@ -6,7 +6,7 @@ class Fix3AutoSemicolonMissingSemicolonAfterMatchTest extends TestCase
 {
     public function testItParsesAGenericFile()
     {
-        if (PHP_VERSION_ID < 80200) {
+        if (PHP_VERSION_ID < 80000) {
             $this->markTestSkipped();
         }
         exec("php " . __DIR__ . "/../../fmt.stub.php --passes=AutoSemicolon -o=- " . __DIR__ . '/fixtures/five.txt', $output);
