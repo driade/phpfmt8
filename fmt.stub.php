@@ -7418,6 +7418,12 @@ EOT;
 				case ST_CURLY_CLOSE:
 					$lastCurly = array_pop($curlyStack);
 					$this->appendCode($text);
+                    // is "}" the last token in the file? (no spaces, return carriages)
+                    if ($index === count($this->tkns) -1) {
+                        if (T_MATCH == $lastCurly || self::ST_CLOSURE == $lastCurly) {
+                            $this->appendCode(ST_SEMI_COLON);
+                        }
+                    }
 					break;
 				case ST_QUESTION:
 					++$ternary;
