@@ -1,6 +1,6 @@
-# [phpfmt](https://github.com/driade/phpfmt-8) support for Sublime Text 3
+# [phpfmt](https://github.com/driade/phpfmt8) support for Sublime Text 3
 
-[![PHPFmt](https://github.com/driade/phpfmt-8/actions/workflows/github.yml/badge.svg)](https://github.com/driade/phpfmt-8/actions/workflows/github.yml)
+[![PHPFmt](https://github.com/driade/phpfmt8/actions/workflows/github.yml/badge.svg)](https://github.com/driade/phpfmt8/actions/workflows/github.yml)
 
 *** This is a clone of https://github.com/nanch/phpfmt_stable with PHP 8.x support ***
 
@@ -298,7 +298,7 @@ $d = new D();
 
 ### Troubleshooting
 - Be sure you can run PHP from the command line.
-- If you need support, please open an issue at [fmt issues](https://github.com/driade/phpfmt-8/issues)
+- If you need support, please open an issue at [fmt issues](https://github.com/driade/phpfmt8/issues)
 
 ### The Most FAQ
 
