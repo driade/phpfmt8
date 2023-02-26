@@ -7624,6 +7624,11 @@ EOT;
 						break;
 					}
 
+                    if ($this->rightUsefulTokenIs(ST_CURLY_CLOSE)) {
+                        $this->appendCode($text);
+                        break;
+                    }
+
 					$this->appendCode(ST_SEMI_COLON . $text);
 					break;
 				default:
