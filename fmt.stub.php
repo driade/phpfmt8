@@ -4709,6 +4709,7 @@ namespace {
 					$this->appendCode($this->getSpace($this->leftMemoTokenIs(ST_PARENTHESES_CLOSE)) . $text . ' ');
 					break;
 
+                case T_NAME_FULLY_QUALIFIED:
 				case T_NAMESPACE:
 					$this->appendCode($text . $this->getSpace(!$this->rightTokenIs([ST_SEMI_COLON, T_NS_SEPARATOR, T_DOUBLE_COLON])));
 					break;
