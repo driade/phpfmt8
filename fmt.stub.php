@@ -1509,6 +1509,9 @@ namespace {
     if (!defined("T_ENUM")) {
         define("T_ENUM", "enum");
     }
+    if (!defined("T_NAME_FULLY_QUALIFIED")) {
+        define("T_NAME_FULLY_QUALIFIED", "namespace");
+    }
 
 	define('ST_PARENTHESES_BLOCK', 'ST_PARENTHESES_BLOCK');
 	define('ST_BRACKET_BLOCK', 'ST_BRACKET_BLOCK');
