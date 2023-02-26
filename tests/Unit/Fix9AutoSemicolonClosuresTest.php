@@ -6,6 +6,10 @@ class Fix9AutoSemicolonClosuresTest extends TestCase
 {
     public function testItWorks()
     {
+        if (PHP_VERSION_ID < 80000) {
+            $this->markTestSkipped();
+        }
+
         exec("php " . __DIR__ . "/../../fmt.stub.php --passes=AutoSemicolon -o=- " . __DIR__ . '/fixtures/ten.txt', $output);
 
         $file = file_get_contents(__DIR__ . '/fixtures/ten.php');
