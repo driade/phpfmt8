@@ -11,7 +11,7 @@
 #### Requirements
 - **You must have a running copy of PHP on the machine you are running Sublime Text**
 
-Plugin runs with PHP 7.0 or newer installed in the machine running the plugin.
+Plugin runs with PHP 5.6 or newer installed in the machine running the plugin.
 
 #### Install this plugin through Package Manager.
 
