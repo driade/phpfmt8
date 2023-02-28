@@ -5975,6 +5975,7 @@ namespace {
 					}
 					break;
                 case T_STRING:
+                case T_ARRAY:
                     if (
                         null !== $visibility ||
                         null !== $finalOrAbstract ||
