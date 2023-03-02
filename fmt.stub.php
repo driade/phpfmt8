@@ -5974,6 +5974,13 @@ namespace {
 						$this->appendCode($text);
 					}
 					break;
+                case '?':
+                    if ($this->rightTokenIs([T_STRING, T_ARRAY])) {
+                        $type = '?';
+                    } else {
+                        $this->appendCode($text);
+                    }
+                    break;
                 case T_STRING:
                 case T_ARRAY:
                     if (
@@ -5981,7 +5988,7 @@ namespace {
                         null !== $finalOrAbstract ||
                         null !== $static
                     ) {
-                        $type = $text;
+                        $type .= $text;
                     } else {
                         $this->appendCode($text);
                     }
