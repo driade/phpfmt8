@@ -13516,5 +13516,3 @@ EOT;
 
 	}
 }
-
-__HALT_COMPILER();
