@@ -10889,8 +10889,17 @@ EOT;
                     $curlyStackMatchIndex = count($curlyStack);
                     break;
 
+                case T_CLASS:
+                	if ($this->leftUsefulTokenIs([T_NEW])) {
+                		$touchedFunction = false;
+						$this->appendCode($text);
+						break;
+                	}
+                	$touchedFunction = true;
+					$this->appendCode($text);
+                	break;
+
 				case T_NAMESPACE:
-				case T_CLASS:
 				case T_TRAIT:
 				case T_INTERFACE:
 
@@ -10898,6 +10907,7 @@ EOT;
 				case T_IF:
 				case T_SWITCH:
 				case T_FOR:
+				case T_FOREACH:
 				case T_FOREACH:
 					$touchedFunction = true;
 					$this->appendCode($text);
