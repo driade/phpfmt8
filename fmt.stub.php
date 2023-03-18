@@ -5841,7 +5841,9 @@ namespace {
 					) ||
 					isset(static::$reservedWords[$lcText])
 				) {
-					$text = $lcText;
+					if ($lcText !== 'enum' || $this->leftUsefulToken()[0] !== T_EXTENDS) {
+						$text = $lcText;
+					}
 				}
 				$this->appendCode($text);
 			}

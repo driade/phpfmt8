@@ -9,7 +9,7 @@ class BasicPHP82Test extends TestCase
         if (PHP_VERSION_ID < 80200) {
             $this->markTestSkipped();
         }
-        exec("php " . __DIR__ . "/../../fmt.stub.php -o=- " . __DIR__ . '/fixtures/three.txt', $output);
+        exec("php " . __DIR__ . "/../../fmt.stub.php --passes=PSR2KeywordsLowerCase -o=- " . __DIR__ . '/fixtures/three.txt', $output);
 
         $file = file_get_contents(__DIR__ . '/fixtures/three.php');
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
