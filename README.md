@@ -44,28 +44,28 @@ Prefer using the toggle options at command palette. However you might find yours
 
 **The following features are available through command palette (`ctrl+shift+P` or `cmd+shift+P`) :**
 
- *  phpfmt8: format now
- *  phpfmt8: indentation with spaces
- *  phpfmt8: toggle additional transformations
- *  phpfmt8: toggle excluded transformations
- *  phpfmt8: toggle skip execution when .php.tools.ini is missing
- *  phpfmt8: toggle autocomplete
- *  phpfmt8: toggle dependency autoimport
- *  phpfmt8: toggle format on save
- *  phpfmt8: toggle PSR1 - Class and Methods names
- *  phpfmt8: toggle PSR1
- *  phpfmt8: toggle PSR2
- *  phpfmt8: analyse this
- *  phpfmt8: build autocomplete database
- *  phpfmt8: getter and setter (camelCase)
- *  phpfmt8: getter and setter (Go)
- *  phpfmt8: getter and setter (snake_case)
- *  phpfmt8: generate PHPDoc block
- *  phpfmt8: look for .php.tools.ini
- *  phpfmt8: reorganize content of class
- *  phpfmt8: enable/disable additional transformations
- *  phpfmt8: troubleshoot information
- *  phpfmt8: update PHP binary path
+ *  phpfmt: format now
+ *  phpfmt: indentation with spaces
+ *  phpfmt: toggle additional transformations
+ *  phpfmt: toggle excluded transformations
+ *  phpfmt: toggle skip execution when .php.tools.ini is missing
+ *  phpfmt: toggle autocomplete
+ *  phpfmt: toggle dependency autoimport
+ *  phpfmt: toggle format on save
+ *  phpfmt: toggle PSR1 - Class and Methods names
+ *  phpfmt: toggle PSR1
+ *  phpfmt: toggle PSR2
+ *  phpfmt: analyse this
+ *  phpfmt: build autocomplete database
+ *  phpfmt: getter and setter (camelCase)
+ *  phpfmt: getter and setter (Go)
+ *  phpfmt: getter and setter (snake_case)
+ *  phpfmt: generate PHPDoc block
+ *  phpfmt: look for .php.tools.ini
+ *  phpfmt: reorganize content of class
+ *  phpfmt: enable/disable additional transformations
+ *  phpfmt: troubleshoot information
+ *  phpfmt: update PHP binary path
 
 
 ### Currently Supported Transformations:

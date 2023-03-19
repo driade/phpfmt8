@@ -23,7 +23,7 @@ def getSetting( view, settings, key, default ):
 
 def dofmt(eself, eview, sgter = None, src = None, force = False):
     if int(sublime.version()) < 3000:
-        print_debug("phpfmt8: ST2 not supported")
+        print_debug("phpfmt: ST2 not supported")
         return False
 
     self = eself
@@ -59,7 +59,7 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
     ext = os.path.splitext(uri)[1][1:]
 
     if force is False and "php" != ext and not ext in additional_extensions:
-        print_debug("phpfmt8: not a PHP file")
+        print_debug("phpfmt: not a PHP file")
         return False
 
     if "" != ignore_list:
@@ -68,7 +68,7 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
         for v in ignore_list:
             pos = uri.find(v)
             if -1 != pos and v != "":
-                print_debug("phpfmt8: skipping file")
+                print_debug("phpfmt: skipping file")
                 return False
 
     if not os.path.isfile(php_bin) and not php_bin == "php":
@@ -252,7 +252,7 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
 
         return res.decode('utf-8')
     else:
-        sublime.status_message("phpfmt8: format failed - syntax errors found")
+        sublime.status_message("phpfmt: format failed - syntax errors found")
         print_debug("lint error: ", lint_out)
 
 
@@ -286,15 +286,15 @@ def dogeneratephpdoc(eself, eview):
     ext = os.path.splitext(uri)[1][1:]
 
     if "php" != ext and not ext in additional_extensions:
-        print_debug("phpfmt8: not a PHP file")
-        sublime.status_message("phpfmt8: not a PHP file")
+        print_debug("phpfmt: not a PHP file")
+        sublime.status_message("phpfmt: not a PHP file")
         return False
 
     if not os.path.isfile(php_bin) and not php_bin == "php":
         print_debug("Can't find PHP binary file at "+php_bin)
         sublime.error_message("Can't find PHP binary file at "+php_bin)
 
-    print_debug("phpfmt8:", uri)
+    print_debug("phpfmt:", uri)
     if enable_auto_align:
         print_debug("auto align: enabled")
     else:
@@ -392,8 +392,8 @@ def doreordermethod(eself, eview):
     ext = os.path.splitext(uri)[1][1:]
 
     if "php" != ext and not ext in additional_extensions:
-        print_debug("phpfmt8: not a PHP file")
-        sublime.status_message("phpfmt8: not a PHP file")
+        print_debug("phpfmt: not a PHP file")
+        sublime.status_message("phpfmt: not a PHP file")
         return False
 
     if not os.path.isfile(php_bin) and not php_bin == "php":
@@ -401,7 +401,7 @@ def doreordermethod(eself, eview):
         sublime.error_message("Can't find PHP binary file at "+php_bin)
 
 
-    print_debug("phpfmt8:", uri)
+    print_debug("phpfmt:", uri)
     if enable_auto_align:
         print_debug("auto align: enabled")
     else:
@@ -709,12 +709,12 @@ class TogglePassMenuCommand(sublime_plugin.TextCommand):
 
                 if option in passes:
                     passes.remove(option)
-                    msg = "phpfmt8: "+passDesc+" disabled"
+                    msg = "phpfmt: "+passDesc+" disabled"
                     print_debug(msg)
                     sublime.status_message(msg)
                 else:
                     passes.append(option)
-                    msg = "phpfmt8: "+passDesc+" enabled"
+                    msg = "phpfmt: "+passDesc+" enabled"
                     print_debug(msg)
                     sublime.status_message(msg)
 
@@ -754,12 +754,12 @@ class ToggleExcludeMenuCommand(sublime_plugin.TextCommand):
 
                 if option in excludes:
                     excludes.remove(option)
-                    msg = "phpfmt8: "+passDesc+" disabled"
+                    msg = "phpfmt: "+passDesc+" disabled"
                     print_debug(msg)
                     sublime.status_message(msg)
                 else:
                     excludes.append(option)
-                    msg = "phpfmt8: "+passDesc+" enabled"
+                    msg = "phpfmt: "+passDesc+" enabled"
                     print_debug(msg)
                     sublime.status_message(msg)
 
@@ -790,12 +790,12 @@ class ToggleCommand(sublime_plugin.TextCommand):
 
         if value:
             s.set(option, False)
-            msg = "phpfmt8: "+options[option]+" disabled"
+            msg = "phpfmt: "+options[option]+" disabled"
             print_debug(msg)
             sublime.status_message(msg)
         else:
             s.set(option, True)
-            msg = "phpfmt8: "+options[option]+" enabled"
+            msg = "phpfmt: "+options[option]+" enabled"
             print_debug(msg)
             sublime.status_message(msg)
 
@@ -944,7 +944,7 @@ class PHPFmtComplete(sublime_plugin.EventListener):
 
 
         if not os.path.isfile(oracleFname):
-            sublime.status_message("phpfmt8: autocomplete database not found")
+            sublime.status_message("phpfmt: autocomplete database not found")
             return []
 
         if prefix in "namespace":
