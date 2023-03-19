@@ -5785,7 +5785,7 @@ namespace {
 			'throw' => 1, 'trait' => 1, 'try' => 1,
 			'unset' => 1, 'use' => 1, 'var' => 1,
 			'while' => 1, 'xor' => 1,
-            'match' => 1, 'enum' => 1, 'readonly' => 1
+            'match' => 1, 'readonly' => 1
 		];
 
 		public function candidate($source, $foundTokens) {
@@ -5818,6 +5818,11 @@ namespace {
 					continue;
 				}
 
+                if (T_ENUM === $id) {
+                    $this->appendCode(strtolower($text));
+                    continue;
+                }
+
 				if (T_START_HEREDOC == $id) {
 					$this->appendCode($text);
 					$this->printUntil(ST_SEMI_COLON);
@@ -5841,9 +5846,7 @@ namespace {
 					) ||
 					isset(static::$reservedWords[$lcText])
 				) {
-					if ($lcText !== 'enum' || $this->leftUsefulToken()[0] !== T_EXTENDS) {
-						$text = $lcText;
-					}
+					$text = $lcText;
 				}
 				$this->appendCode($text);
 			}
