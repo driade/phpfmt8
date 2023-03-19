@@ -6419,6 +6419,9 @@ EOT;
 	class AlignDoubleArrow extends AdditionalPass {
 		const ALIGNABLE_EQUAL = "\x2 EQUAL%d.%d.%d \x3";
 
+        private $strposFunc;
+        private $substrCountFunc;
+
 		public function __construct() {
 			$this->strposFunc = 'strpos';
 			$this->substrCountFunc = 'substr_count';
