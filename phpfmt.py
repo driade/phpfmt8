@@ -14,11 +14,11 @@ sys.path.insert(0, dist_dir)
 from diff_match_patch.python3.diff_match_patch import diff_match_patch
 
 def print_debug(*msg):
-     if getSetting(sublime.active_window().active_view(), sublime.load_settings('phpfmt8.sublime-settings'), "debug", False):
+     if getSetting(sublime.active_window().active_view(), sublime.load_settings('phpfmt.sublime-settings'), "debug", False):
         print(msg)
 
 def getSetting( view, settings, key, default ):
-    local = 'phpfmt8.' + key
+    local = 'phpfmt.' + key
     return view.settings().get( local, settings.get( key, default ) )
 
 def dofmt(eself, eview, sgter = None, src = None, force = False):
@@ -28,7 +28,7 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
 
     self = eself
     view = eview
-    s = sublime.load_settings('phpfmt8.sublime-settings')
+    s = sublime.load_settings('phpfmt.sublime-settings')
 
 
     additional_extensions = getSetting( view, s, "additional_extensions", [])
@@ -50,9 +50,9 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
     excludes = getSetting( view, s, "excludes", [])
 
     php_bin = getSetting( view, s, "php_bin", "php")
-    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "fmt.stub.php")
+    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
-    config_file = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "php.tools.ini")
+    config_file = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "php.tools.ini")
 
     uri = view.file_name()
     dirnm, sfn = os.path.split(uri)
@@ -88,10 +88,10 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
                 break
 
         if not os.path.isfile(oracleFname):
-            print_debug("phpfmt8 (oracle file): not found")
+            print_debug("phpfmt (oracle file): not found")
             oracleFname = None
         else:
-            print_debug("phpfmt8 (oracle file): "+oracleFname)
+            print_debug("phpfmt (oracle file): "+oracleFname)
 
         if readini:
             iniDirNm = dirnm
@@ -105,10 +105,10 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
                     break
 
             if os.path.isfile(iniFname):
-                print_debug("phpfmt8 (ini file): "+iniFname)
+                print_debug("phpfmt (ini file): "+iniFname)
                 config_file = iniFname
             elif skip_if_ini_missing:
-                print_debug("phpfmt8 (ini file): not found - skipping")
+                print_debug("phpfmt (ini file): not found - skipping")
                 return False
     else:
         oracleFname = None
@@ -121,9 +121,9 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
     else:
         p = subprocess.Popen(cmd_ver, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
     res, err = p.communicate()
-    print_debug("phpfmt8 (php_ver) cmd:\n", cmd_ver)
-    print_debug("phpfmt8 (php_ver) out:\n", res.decode('utf-8'))
-    print_debug("phpfmt8 (php_ver) err:\n", err.decode('utf-8'))
+    print_debug("phpfmt (php_ver) cmd:\n", cmd_ver)
+    print_debug("phpfmt (php_ver) out:\n", res.decode('utf-8'))
+    print_debug("phpfmt (php_ver) err:\n", err.decode('utf-8'))
     if ('PHP 5.3' in res.decode('utf-8') or 'PHP 5.3' in err.decode('utf-8') or 'PHP 5.4' in res.decode('utf-8') or 'PHP 5.4' in err.decode('utf-8') or 'PHP 5.5' in res.decode('utf-8') or 'PHP 5.5' in err.decode('utf-8') or 'PHP 5.6' in res.decode('utf-8') or 'PHP 5.6' in err.decode('utf-8')):
         s = debugEnvironment(php_bin, formatter_path)
         sublime.message_dialog('Warning.\nPHP 7.0 or newer is required.\nPlease, upgrade your local PHP installation.\nDebug information:'+s)
@@ -259,7 +259,7 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
 def dogeneratephpdoc(eself, eview):
     self = eself
     view = eview
-    s = sublime.load_settings('phpfmt8.sublime-settings')
+    s = sublime.load_settings('phpfmt.sublime-settings')
 
     additional_extensions = s.get("additional_extensions", [])
     autoimport = s.get("autoimport", True)
@@ -277,9 +277,9 @@ def dogeneratephpdoc(eself, eview):
     passes = s.get("passes", [])
 
     php_bin = s.get("php_bin", "php")
-    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "fmt.stub.php")
+    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
-    config_file = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "php.tools.ini")
+    config_file = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "php.tools.ini")
 
     uri = view.file_name()
     dirnm, sfn = os.path.split(uri)
@@ -365,7 +365,7 @@ def dogeneratephpdoc(eself, eview):
 def doreordermethod(eself, eview):
     self = eself
     view = eview
-    s = sublime.load_settings('phpfmt8.sublime-settings')
+    s = sublime.load_settings('phpfmt.sublime-settings')
 
     additional_extensions = s.get("additional_extensions", [])
     autoimport = s.get("autoimport", True)
@@ -383,9 +383,9 @@ def doreordermethod(eself, eview):
     passes = s.get("passes", [])
 
     php_bin = s.get("php_bin", "php")
-    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "fmt.stub.php")
+    formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
-    config_file = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "php.tools.ini")
+    config_file = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "php.tools.ini")
 
     uri = view.file_name()
     dirnm, sfn = os.path.split(uri)
@@ -479,9 +479,9 @@ def debugEnvironment(php_bin, formatter_path):
     else:
         p = subprocess.Popen(cmd_ver, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
     res, err = p.communicate()
-    ret += ("phpfmt8 (php version):\n"+res.decode('utf-8'))
+    ret += ("phpfmt (php version):\n"+res.decode('utf-8'))
     if err.decode('utf-8'):
-        ret += ("phpfmt8 (php version) err:\n"+err.decode('utf-8'))
+        ret += ("phpfmt (php version) err:\n"+err.decode('utf-8'))
     ret += "\n"
 
     cmd_ver = [php_bin,"-m"];
@@ -493,11 +493,11 @@ def debugEnvironment(php_bin, formatter_path):
         p = subprocess.Popen(cmd_ver, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
     res, err = p.communicate()
     if res.decode('utf-8').find("tokenizer") != -1:
-        ret += ("phpfmt8 (php tokenizer) found\n")
+        ret += ("phpfmt (php tokenizer) found\n")
     else:
-        ret += ("phpfmt8 (php tokenizer):\n"+res.decode('utf-8'))
+        ret += ("phpfmt (php tokenizer):\n"+res.decode('utf-8'))
         if err.decode('utf-8'):
-            ret += ("phpfmt8 (php tokenizer) err:\n"+err.decode('utf-8'))
+            ret += ("phpfmt (php tokenizer) err:\n"+err.decode('utf-8'))
     ret += "\n"
 
     cmd_ver = [php_bin,formatter_path,"--version"];
@@ -508,9 +508,9 @@ def debugEnvironment(php_bin, formatter_path):
     else:
         p = subprocess.Popen(cmd_ver, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
     res, err = p.communicate()
-    ret += ("phpfmt8 (fmt.stub.php version):\n"+res.decode('utf-8'))
+    ret += ("phpfmt (fmt.stub.php version):\n"+res.decode('utf-8'))
     if err.decode('utf-8'):
-        ret += ("phpfmt8 (fmt.stub.php version) err:\n"+err.decode('utf-8'))
+        ret += ("phpfmt (fmt.stub.php version) err:\n"+err.decode('utf-8'))
     ret += "\n"
 
     return ret
@@ -547,7 +547,7 @@ def hidePanel(name, eself, eedit):
 
 class phpfmt(sublime_plugin.EventListener):
     def on_pre_save(self, view):
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
         format_on_save = s.get("format_on_save", True)
 
         if format_on_save:
@@ -561,9 +561,9 @@ class AnalyseThisCommand(sublime_plugin.TextCommand):
 
         lookTerm = (self.view.substr(self.view.word(self.view.sel()[0].a)))
 
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
         php_bin = s.get("php_bin", "php")
-        oraclePath = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "oracle.php")
+        oraclePath = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "oracle.php")
 
         uri = self.view.file_name()
         dirNm, sfn = os.path.split(uri)
@@ -592,8 +592,8 @@ class AnalyseThisCommand(sublime_plugin.TextCommand):
             p = subprocess.Popen(cmdOracle, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=oracleDirNm, shell=False)
         res, err = p.communicate()
 
-        print_debug("phpfmt8 (introspect): "+res.decode('utf-8'))
-        print_debug("phpfmt8 (introspect) err: "+err.decode('utf-8'))
+        print_debug("phpfmt (introspect): "+res.decode('utf-8'))
+        print_debug("phpfmt (introspect) err: "+err.decode('utf-8'))
 
         outputToPanel("phpfmtintrospect", self, edit, "Analysis:\n"+res.decode('utf-8'));
 
@@ -606,7 +606,7 @@ class CalltipCommand(sublime_plugin.TextCommand):
         dirnm, sfn = os.path.split(uri)
         ext = os.path.splitext(uri)[1][1:]
 
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
 
         additional_extensions = s.get("additional_extensions", [])
         if "php" != ext and not ext in additional_extensions:
@@ -622,7 +622,7 @@ class CalltipCommand(sublime_plugin.TextCommand):
         lastCalltip = lookTerm
 
         php_bin = s.get("php_bin", "php")
-        oraclePath = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "oracle.php")
+        oraclePath = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "oracle.php")
 
         uri = self.view.file_name()
         dirNm, sfn = os.path.split(uri)
@@ -652,14 +652,14 @@ class CalltipCommand(sublime_plugin.TextCommand):
 
         output = res.decode('utf-8');
 
-        self.view.set_status("phpfmt8", output)
+        self.view.set_status("phpfmt", output)
 
 class DebugEnvCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
 
         php_bin = s.get("php_bin", "php")
-        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "fmt.stub.php")
+        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
         s = debugEnvironment(php_bin, formatter_path)
         sublime.message_dialog(s)
@@ -680,9 +680,9 @@ class FmtNowCommand(sublime_plugin.TextCommand):
 
 class TogglePassMenuCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
         php_bin = s.get("php_bin", "php")
-        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "fmt.stub.php")
+        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
         cmd_passes = [php_bin,formatter_path,'--list-simple'];
         print_debug(cmd_passes)
@@ -700,7 +700,7 @@ class TogglePassMenuCommand(sublime_plugin.TextCommand):
 
         def on_done(i):
             if i >= 0 :
-                s = sublime.load_settings('phpfmt8.sublime-settings')
+                s = sublime.load_settings('phpfmt.sublime-settings')
                 passes = s.get('passes', [])
                 chosenPass = descriptions[i].split(' ')
                 option = chosenPass[0]
@@ -719,15 +719,15 @@ class TogglePassMenuCommand(sublime_plugin.TextCommand):
                     sublime.status_message(msg)
 
                 s.set('passes', passes)
-                sublime.save_settings('phpfmt8.sublime-settings')
+                sublime.save_settings('phpfmt.sublime-settings')
 
         self.view.window().show_quick_panel(descriptions, on_done, sublime.MONOSPACE_FONT)
 
 class ToggleExcludeMenuCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
         php_bin = s.get("php_bin", "php")
-        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "fmt.stub.php")
+        formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
         cmd_passes = [php_bin,formatter_path,'--list-simple'];
         print_debug(cmd_passes)
@@ -745,7 +745,7 @@ class ToggleExcludeMenuCommand(sublime_plugin.TextCommand):
 
         def on_done(i):
             if i >= 0 :
-                s = sublime.load_settings('phpfmt8.sublime-settings')
+                s = sublime.load_settings('phpfmt.sublime-settings')
                 excludes = s.get('excludes', [])
                 chosenPass = descriptions[i].split(' ')
                 option = chosenPass[0]
@@ -764,13 +764,13 @@ class ToggleExcludeMenuCommand(sublime_plugin.TextCommand):
                     sublime.status_message(msg)
 
                 s.set('excludes', excludes)
-                sublime.save_settings('phpfmt8.sublime-settings')
+                sublime.save_settings('phpfmt.sublime-settings')
 
         self.view.window().show_quick_panel(descriptions, on_done, sublime.MONOSPACE_FONT)
 
 class ToggleCommand(sublime_plugin.TextCommand):
     def run(self, edit, option):
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
         options = {
             "autocomplete":"autocomplete",
             "autoimport":"dependency autoimport",
@@ -785,7 +785,7 @@ class ToggleCommand(sublime_plugin.TextCommand):
             "visibility_order":"visibility order",
             "yoda":"yoda mode",
         }
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
         value = s.get(option, False)
 
         if value:
@@ -799,15 +799,15 @@ class ToggleCommand(sublime_plugin.TextCommand):
             print_debug(msg)
             sublime.status_message(msg)
 
-        sublime.save_settings('phpfmt8.sublime-settings')
+        sublime.save_settings('phpfmt.sublime-settings')
 
 class UpdatePhpBinCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         def execute(text):
-            s = sublime.load_settings('phpfmt8.sublime-settings')
+            s = sublime.load_settings('phpfmt.sublime-settings')
             s.set("php_bin", text)
 
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
         self.view.window().show_input_panel('php binary path:', s.get("php_bin", ""), execute, None, None)
 
 class OrderMethodCommand(sublime_plugin.TextCommand):
@@ -835,9 +835,9 @@ class BuildOracleCommand(sublime_plugin.TextCommand):
         def buildDB():
             if self.msgFile is not None:
                 self.msgFile.window().run_command('close_file')
-            s = sublime.load_settings('phpfmt8.sublime-settings')
+            s = sublime.load_settings('phpfmt.sublime-settings')
             php_bin = s.get("php_bin", "php")
-            oraclePath = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "oracle.php")
+            oraclePath = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "oracle.php")
             cmdOracle = [php_bin]
             cmdOracle.append(oraclePath)
             cmdOracle.append("flush")
@@ -849,9 +849,9 @@ class BuildOracleCommand(sublime_plugin.TextCommand):
             else:
                 p = subprocess.Popen(cmdOracle, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.dirNm, shell=False)
             res, err = p.communicate()
-            print_debug("phpfmt8 (oracle): "+res.decode('utf-8'))
-            print_debug("phpfmt8 (oracle) err: "+err.decode('utf-8'))
-            sublime.status_message("phpfmt8 (oracle): done")
+            print_debug("phpfmt (oracle): "+res.decode('utf-8'))
+            print_debug("phpfmt (oracle) err: "+err.decode('utf-8'))
+            sublime.status_message("phpfmt (oracle): done")
 
 
         #sublime.set_timeout_async(self.long_command, 0)
@@ -860,7 +860,7 @@ class BuildOracleCommand(sublime_plugin.TextCommand):
             sublime.set_timeout_async(buildDB, 0)
 
         view = self.view
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
         php_bin = s.get("php_bin", "php")
 
         uri = view.file_name()
@@ -878,31 +878,31 @@ class BuildOracleCommand(sublime_plugin.TextCommand):
 
         self.msgFile = None
         if not os.path.isfile(oracleFname):
-            print_debug("phpfmt8 (oracle file): not found -- dialog")
-            self.msgFile = self.view.window().open_file(os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "message"))
+            print_debug("phpfmt (oracle file): not found -- dialog")
+            self.msgFile = self.view.window().open_file(os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "message"))
             self.msgFile.set_read_only(True)
             self.view.window().show_input_panel('location:', originalDirNm, askForDirectory, None, None)
         else:
-            print_debug("phpfmt8 (oracle file): "+oracleFname)
-            print_debug("phpfmt8 (oracle dir): "+oracleDirNm)
+            print_debug("phpfmt (oracle file): "+oracleFname)
+            print_debug("phpfmt (oracle dir): "+oracleDirNm)
             self.dirNm = oracleDirNm
             sublime.set_timeout_async(buildDB, 0)
 
 class IndentWithSpacesCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         def setIndentWithSpace(text):
-            s = sublime.load_settings('phpfmt8.sublime-settings')
+            s = sublime.load_settings('phpfmt.sublime-settings')
             v = text.strip()
             if not v:
                 v = False
             else:
                 v = int(v)
             s.set("indent_with_space", v)
-            sublime.save_settings('phpfmt8.sublime-settings')
-            sublime.status_message("phpfmt8 (indentation): done")
+            sublime.save_settings('phpfmt.sublime-settings')
+            sublime.status_message("phpfmt (indentation): done")
             sublime.active_window().active_view().run_command("fmt_now")
 
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
         spaces = s.get("indent_with_space", 4)
         if not spaces:
             spaces = ""
@@ -911,7 +911,7 @@ class IndentWithSpacesCommand(sublime_plugin.TextCommand):
 
 class PHPFmtComplete(sublime_plugin.EventListener):
     def on_query_completions(self, view, prefix, locations):
-        s = sublime.load_settings('phpfmt8.sublime-settings')
+        s = sublime.load_settings('phpfmt.sublime-settings')
 
         autocomplete = s.get("autocomplete", False)
         if autocomplete is False:
@@ -923,7 +923,7 @@ class PHPFmtComplete(sublime_plugin.EventListener):
             return []
 
 
-        print_debug("phpfmt8 (autocomplete): "+prefix);
+        print_debug("phpfmt (autocomplete): "+prefix);
 
         comps = []
 
@@ -965,7 +965,7 @@ class PHPFmtComplete(sublime_plugin.EventListener):
             ))
 
         php_bin = s.get("php_bin", "php")
-        oraclePath = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "oracle.php")
+        oraclePath = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "oracle.php")
         cmdOracle = [php_bin]
         cmdOracle.append(oraclePath)
         cmdOracle.append("autocomplete")
@@ -978,7 +978,7 @@ class PHPFmtComplete(sublime_plugin.EventListener):
         else:
             p = subprocess.Popen(cmdOracle, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=oracleDirNm, shell=False)
         res, err = p.communicate()
-        print_debug("phpfmt8 (autocomplete) err: "+err.decode('utf-8'))
+        print_debug("phpfmt (autocomplete) err: "+err.decode('utf-8'))
 
         f = res.decode('utf-8').split('\n')
         reader = csv.reader(f, delimiter=',')
@@ -1001,16 +1001,16 @@ class PHPFmtComplete(sublime_plugin.EventListener):
 
         return comps
 
-s = sublime.load_settings('phpfmt8.sublime-settings')
+s = sublime.load_settings('phpfmt.sublime-settings')
 version = s.get('version', 1)
 s.set('version', version)
-sublime.save_settings('phpfmt8.sublime-settings')
+sublime.save_settings('phpfmt.sublime-settings')
 
 if version == 2:
     # Convert to version 3
     print_debug("Convert to version 3")
     s.set('version', 3)
-    sublime.save_settings('phpfmt8.sublime-settings')
+    sublime.save_settings('phpfmt.sublime-settings')
 
 if version == 3:
     # Convert to version 3
@@ -1019,13 +1019,13 @@ if version == 3:
     passes = s.get('passes', [])
     passes.append("ReindentSwitchBlocks")
     s.set('passes', passes)
-    sublime.save_settings('phpfmt8.sublime-settings')
+    sublime.save_settings('phpfmt.sublime-settings')
 
 
 # def selfupdate():
-#     s = sublime.load_settings('phpfmt8.sublime-settings')
+#     s = sublime.load_settings('phpfmt.sublime-settings')
 #     php_bin = s.get("php_bin", "php")
-#     formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt8", "fmt.stub.php")
+#     formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
 
 #     print_debug("Selfupdate")
 #     cmd_update = [php_bin, formatter_path, '--selfupdate']
@@ -1040,7 +1040,7 @@ if version == 3:
 
 
 def _ct_poller():
-    s = sublime.load_settings('phpfmt8.sublime-settings')
+    s = sublime.load_settings('phpfmt.sublime-settings')
     if s.get("calltip", False):
         try:
             view = sublime.active_window().active_view()

@@ -17,13 +17,13 @@ Plugin runs with PHP 7.0 or newer installed in the machine running the plugin.
 
 #### Configuration (Windows)
 
-- Edit configuration file (`%AppData%\Sublime Text\Packages\phpfmt\phpfmt8.sublime-settings`)
+- Edit configuration file (`%AppData%\Sublime Text\Packages\phpfmt\phpfmt.sublime-settings`)
 - For field `"php_bin"` enter the path to the php.exe
   Example: `"php_bin":"c:/PHP/php.exe"`
 
 #### Configuration (OS X and Linux)
 
-- Edit configuration file (`phpfmt8.sublime-settings`)
+- Edit configuration file (`phpfmt.sublime-settings`)
 - For field `"php_bin"` enter the path to the php
   Example: `"php_bin":"/usr/local/bin/php"`
 
