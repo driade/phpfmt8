@@ -2,9 +2,11 @@
 
 [![PHPFmt](https://github.com/driade/phpfmt8/actions/workflows/github.yml/badge.svg)](https://github.com/driade/phpfmt8/actions/workflows/github.yml)
 
-*** This is a clone of https://github.com/nanch/phpfmt_stable with PHP 8.x support ***
+This is project is a clone of https://github.com/nanch/phpfmt_stable with PHP 8 an numerous bugfixes, since the original project is abandoned. 
 
-*** STILL UNDER DEVELOPMENT ***
+## Contributing
+
+Please don't hesitate opening a pull request or an issue in case you find somethign wrong. Provide as much information as you can, with code samples of the expected result, to make it easier to spot the error.
 
 ## Installation
 
@@ -111,6 +113,7 @@ Prefer using the toggle options at command palette. However you might find yours
  * PSR2MultilineFunctionParams       Break function parameters into multiple lines.
  * ReindentAndAlignObjOps            Align object operators.
  * ReindentSwitchBlocks              Reindent one level deeper the content of switch blocks.
+ * ReindentEnumBlocks                Reindent one level deeper the content of enum blocks.
  * RemoveIncludeParentheses          Remove parentheses from include declarations.
  * RemoveSemicolonAfterCurly         Remove semicolon after closing curly brace.
  * RemoveUseLeadingSlash             Remove leading slash in T_USE imports.
@@ -299,14 +302,6 @@ $d = new D();
 ### Troubleshooting
 - Be sure you can run PHP from the command line.
 - If you need support, please open an issue at [fmt issues](https://github.com/driade/phpfmt8/issues)
-
-### The Most FAQ
-
-***I want to use sublime-phpfmt, but it needs PHP 5.6 or newer and on my production
-server I have PHP 5.5 or older. What should I do?***
-
-Consider installing a standalone PHP 5.6 in a separate directory and have it *not*
-configured in the environment. Within the plugin, ensure `php_bin` parameter is pointed to this standalone installation.
 
 ### Acknowledgements
 - GoSublime - for the method to update the formatted buffer
