@@ -18,6 +18,8 @@ class Fix16AutoSemicolonMustAddSemicolonAfterAnonymousClassTest extends TestCase
             $output = explode("\n", implode(PHP_EOL, $output));
         }
 
+        // file_put_contents(__DIR__ . '/fixtures/sixteen.php',implode("\n", $output) );
+
         $this->assertSame($file, implode("\n", $output));
     }
 }

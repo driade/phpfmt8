@@ -7388,7 +7388,7 @@ EOT;
 			$lastCurly = null;
 			$ternary = 0;
 			$touchedSingleColon = false;
-            $isAnonymousClass = false;
+            $isAnonymousClassStack = [];
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
@@ -7420,21 +7420,20 @@ EOT;
 					$curlyStack[] = $foundId;
 					$this->appendCode($text);
 					$this->printUntil(ST_CURLY_OPEN);
+                    $isAnonymousClassStack[] = false;
 					break;
 
 				case T_CURLY_OPEN:
 				case T_DOLLAR_OPEN_CURLY_BRACES:
 				case ST_CURLY_OPEN:
 					$curlyStack[] = $id;
+                    if ($this->leftUsefulTokenIs([T_CLASS])) {
+                        $isAnonymousClassStack[] = true;
+                    } else {
+                        $isAnonymousClassStack[] = false;
+                    }
 					$this->appendCode($text);
 					break;
-
-                case T_CLASS:
-                    if ($this->leftUsefulTokenIs([T_NEW]) && $this->rightUsefulTokenIs([ST_CURLY_OPEN])) {
-                        $isAnonymousClass = true;
-                    }
-                    $this->appendCode($text);
-                    break;
 
 				case ST_CURLY_CLOSE:
 					$lastCurly = array_pop($curlyStack);
@@ -7445,9 +7444,9 @@ EOT;
                             $this->appendCode(ST_SEMI_COLON);
                         }
                     }
+                    $isAnonymousClass = array_pop($isAnonymousClassStack);
                     if ($isAnonymousClass) {
                         $this->appendCode(ST_SEMI_COLON);
-                        $isAnonymousClass = false;
                     }
 					break;
 				case ST_QUESTION:
