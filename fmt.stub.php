@@ -1485,6 +1485,9 @@ namespace {
 	if (!defined('T_COALESCE')) {
 		define('T_COALESCE', '??');
 	}
+    if (!defined ('T_COALESCE_EQUAL')) {
+        define('T_COALESCE_EQUAL', '??=');
+    }
 
     // PHP 8
     if (!defined("T_READONLY")) {
@@ -4788,7 +4791,8 @@ namespace {
 				case T_INSTANCEOF:
 				case T_INSTEADOF:
 				case T_AS:
-				case T_COALESCE:
+                case T_COALESCE:
+                case T_COALESCE_EQUAL:
 					$this->rtrimAndAppendCode(' ' . $text . ' ');
 					break;
 
