@@ -5991,8 +5991,12 @@ namespace {
 				case T_PUBLIC:
 				case T_PRIVATE:
 				case T_PROTECTED:
-					$visibility = $text;
-					$skipWhitespaces = true;
+                    if ($this->rightTokenIs([T_CONST])) {
+                        $this->appendCode($text);
+                    } else {
+                        $visibility = $text;
+                        $skipWhitespaces = true;
+                    }
 					break;
 				case T_FINAL:
 				case T_ABSTRACT:
