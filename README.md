@@ -2,7 +2,7 @@
 
 [![PHPFmt](https://github.com/driade/phpfmt8/actions/workflows/github.yml/badge.svg)](https://github.com/driade/phpfmt8/actions/workflows/github.yml)
 
-This is project is a clone of https://github.com/nanch/phpfmt_stable with PHP 8 an numerous bugfixes, since the original project is abandoned. 
+This is project is a clone of https://github.com/nanch/phpfmt_stable with PHP 8 support and numerous bugfixes, since the original project is abandoned. 
 
 ## Contributing
 
