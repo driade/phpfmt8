@@ -1,0 +1,10 @@
+php.fmt
+=======
+
+Thank you for upgrading.
+
+This package has been transferred by ST to a new maintainer, and you can find the code at https://github.com/driade/phpfmt8 . The goal is to improve it to make it fully support php 7.4 and php 8.x, which the original one lacked.
+
+Please feel fee to open an issue or pull request if you find that something is not correctly working.
+
+This release includes numerous improvements, with support for php 8 . Please check the commit history of the package if you want to know more https://github.com/driade/phpfmt8/commits/master .
