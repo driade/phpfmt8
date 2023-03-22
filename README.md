@@ -23,7 +23,7 @@ Plugin runs with PHP 7.0 or newer installed in the machine running the plugin.
 
 #### Configuration (Windows)
 
-- Edit configuration file (`%AppData%\Sublime Text\Packages\phpfmt\phpfmt.sublime-settings`)
+- Edit configuration file (`%AppData%\Sublime Text\Packages\phpfmt\phpfmt.sublime-nings`)
 - For field `"php_bin"` enter the path to the php.exe
   Example: `"php_bin":"c:/PHP/php.exe"`
 
@@ -38,9 +38,11 @@ Plugin runs with PHP 7.0 or newer installed in the machine running the plugin.
 Prefer using the toggle options at command palette. However you might find yourself in need to setup where PHP is running, use this option below for the configuration file.
 ```
 {
-"php_bin":"/usr/local/bin/php",
+	"php_bin":"/usr/local/bin/php",
 }
 ```
+
+You may find an example configuration in the file driade.sublime-settings
 
 **The following features are available through command palette (`ctrl+shift+P` or `cmd+shift+P`) :**
 
