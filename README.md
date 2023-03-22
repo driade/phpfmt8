@@ -15,9 +15,7 @@ Please don't hesitate opening a pull request or an issue in case you find someth
 
 Plugin runs with PHP 7.0 or newer installed in the machine running the plugin.
 
-#### Install this plugin through Package Manager.
-
-*** WAITING FOR SUBLIME TEXT PACKAGE MANAGERS TO APPROVE IT ***
+#### Install this plugin through Package Manager
 
 - In Sublime Text press `ctrl+shift+P`
 - Choose `Package Control: Install Package`
