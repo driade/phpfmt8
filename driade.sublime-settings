@@ -1,0 +1,30 @@
+{
+    "autocomplete": true,
+    "autoimport": false,
+    "excludes":
+    [
+        "PSR2ModifierVisibilityStaticOrder"
+    ],
+    "format_on_save": true,
+    "passes":
+    [
+        "AlignDoubleArrow",
+        "AlignPHPCode",
+        "SpaceAroundExclamationMark",
+        "AlignConstVisibilityEquals",
+        "AutoSemicolon",
+        "ConvertOpenTagWithEcho",
+        "AlignEquals",
+        "MergeNamespaceWithOpenTag",
+        "RemoveSemicolonAfterCurly",
+        "RestoreComments",
+        "ShortArray"
+    ],
+    "php_bin": "/usr/local/bin/php",
+    "psr1": false,
+    "psr1_naming": false,
+    "psr2": true,
+    "readini": false,
+    "smart_linebreak_after_curly": false,
+    "version": 4,
+}
