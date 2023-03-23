@@ -42,7 +42,7 @@ Prefer using the toggle options at command palette. However you might find yours
 }
 ```
 
-You may find an example configuration in the file https://github.com/driade/phpfmt8/blob/master/driade.sublime-settings
+You may find an example configuration file in https://github.com/driade/phpfmt8/blob/master/driade.sublime-settings
 
 **The following features are available through command palette (`ctrl+shift+P` or `cmd+shift+P`) :**
 
