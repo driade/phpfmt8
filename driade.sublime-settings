@@ -25,6 +25,5 @@
     "psr1_naming": false,
     "psr2": true,
     "readini": false,
-    "smart_linebreak_after_curly": false,
-    "version": 4,
+    "smart_linebreak_after_curly": false
 }

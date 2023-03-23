@@ -1001,43 +1001,6 @@ class PHPFmtComplete(sublime_plugin.EventListener):
 
         return comps
 
-s = sublime.load_settings('phpfmt.sublime-settings')
-version = s.get('version', 1)
-s.set('version', version)
-sublime.save_settings('phpfmt.sublime-settings')
-
-if version == 2:
-    # Convert to version 3
-    print_debug("Convert to version 3")
-    s.set('version', 3)
-    sublime.save_settings('phpfmt.sublime-settings')
-
-if version == 3:
-    # Convert to version 3
-    print_debug("Convert to version 4")
-    s.set('version', 4)
-    passes = s.get('passes', [])
-    passes.append("ReindentSwitchBlocks")
-    s.set('passes', passes)
-    sublime.save_settings('phpfmt.sublime-settings')
-
-
-# def selfupdate():
-#     s = sublime.load_settings('phpfmt.sublime-settings')
-#     php_bin = s.get("php_bin", "php")
-#     formatter_path = os.path.join(dirname(realpath(sublime.packages_path())), "Packages", "phpfmt", "fmt.stub.php")
-
-#     print_debug("Selfupdate")
-#     cmd_update = [php_bin, formatter_path, '--selfupdate']
-#     if os.name == 'nt':
-#         startupinfo = subprocess.STARTUPINFO()
-#         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-#         p = subprocess.Popen(cmd_update, shell=False, startupinfo=startupinfo)
-#     else:
-#         p = subprocess.Popen(cmd_update, shell=False)
-
-# sublime.set_timeout(selfupdate, 3000)
-
 
 def _ct_poller():
     s = sublime.load_settings('phpfmt.sublime-settings')
