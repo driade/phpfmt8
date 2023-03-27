@@ -7658,7 +7658,7 @@ EOT;
 					}
 
                     if ($this->rightUsefulTokenIs(ST_CURLY_CLOSE)) {
-                        if ($this->leftUsefulTokenIs(ST_PARENTHESES_CLOSE)) {
+                        if (! $this->leftUsefulTokenIs(ST_CURLY_CLOSE)) {
                             $this->appendCode(ST_SEMI_COLON);
                         }
                         $this->appendCode($text);

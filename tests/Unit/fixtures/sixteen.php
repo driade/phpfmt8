@@ -17,3 +17,9 @@ return new class {
 		};
 	}
 };
+
+class A {
+	public function B() {
+		$a = $b;
+	}
+}
