@@ -5945,11 +5945,16 @@ namespace {
 					$touchedClassInterfaceTrait = true;
 					$this->appendCode($text);
 					break;
-				case T_TRAIT:
-					$found[] = T_TRAIT;
-					$touchedClassInterfaceTrait = true;
-					$this->appendCode($text);
-					break;
+                case T_TRAIT:
+                    $found[] = T_TRAIT;
+                    $touchedClassInterfaceTrait = true;
+                    $this->appendCode($text);
+                    break;
+                case T_ENUM:
+                    $found[] = T_ENUM;
+                    $touchedClassInterfaceTrait = true;
+                    $this->appendCode($text);
+                    break;
 				case ST_CURLY_OPEN:
 				case ST_PARENTHESES_OPEN:
 					if ($touchedClassInterfaceTrait) {
@@ -6044,7 +6049,7 @@ namespace {
 					$this->printUntil(ST_SEMI_COLON);
 					break;
 				case T_FUNCTION:
-					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0]) && $this->rightUsefulTokenIs([T_STRING, ST_REFERENCE]);
+					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0]) && $this->rightUsefulTokenIs([T_STRING, ST_REFERENCE]);
 					if ($hasFoundClassOrInterface && null !== $finalOrAbstract) {
 						$this->appendCode($finalOrAbstract . $this->getSpace());
 					}
