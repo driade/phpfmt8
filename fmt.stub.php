@@ -1502,6 +1502,9 @@ namespace {
     if (!defined("T_NAME_FULLY_QUALIFIED")) {
         define("T_NAME_FULLY_QUALIFIED", "namespace");
     }
+    if (!defined("T_ATTRIBUTE")) {
+        define("T_ATTRIBUTE", "attribute");
+    }
 
 	define('ST_PARENTHESES_BLOCK', 'ST_PARENTHESES_BLOCK');
 	define('ST_BRACKET_BLOCK', 'ST_BRACKET_BLOCK');
@@ -3885,7 +3888,7 @@ namespace {
 				case ST_PARENTHESES_CLOSE:
 				case ST_BRACKET_CLOSE:
 					$poppedID = array_pop($foundStack);
-					if (false === $poppedID['implicit']) {
+					if ($poppedID !== null && false === $poppedID['implicit']) {
 						$this->setIndent(-1);
 					}
 					$this->appendCode($text);
@@ -4705,8 +4708,12 @@ namespace {
 
                 case T_NAME_FULLY_QUALIFIED:
 				case T_NAMESPACE:
-					$this->appendCode($text . $this->getSpace(!$this->rightTokenIs([ST_SEMI_COLON, T_NS_SEPARATOR, T_DOUBLE_COLON])));
-					break;
+                    if ($this->leftUsefulTokenIs([T_ATTRIBUTE])) {
+    					$this->appendCode($text);
+                    } else {
+                        $this->appendCode($text . $this->getSpace(!$this->rightTokenIs([ST_SEMI_COLON, T_NS_SEPARATOR, T_DOUBLE_COLON])));
+                    }
+                    break;
 
 				case T_ECHO:
 					if ($this->leftMemoUsefulTokenIs(T_OPEN_TAG)) {
@@ -7398,10 +7405,17 @@ EOT;
 			$ternary = 0;
 			$touchedSingleColon = false;
             $isAnonymousClassStack = [];
+            $isAttribute = false;
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
+
+                case T_ATTRIBUTE:
+                    $isAttribute = true;
+                    $this->appendCode($text);
+                    break;
+
 				case T_IF:
 				case T_SWITCH:
 				case T_FOR:
@@ -7662,6 +7676,12 @@ EOT;
                             $this->appendCode(ST_SEMI_COLON);
                         }
                         $this->appendCode($text);
+                        break;
+                    }
+
+                    if ($this->leftUsefulTokenIs(ST_BRACKET_CLOSE) && $isAttribute) {
+                        $this->appendCode($text);
+                        $isAttribute = false;
                         break;
                     }
 
