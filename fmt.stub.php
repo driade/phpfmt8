@@ -3893,6 +3893,10 @@ namespace {
 					}
 					$this->appendCode($text);
 					break;
+                case T_ATTRIBUTE:
+                    $this->appendCode($text);
+                    $this->printUntil(ST_BRACKET_CLOSE);
+                    break;
 
 				case T_DOC_COMMENT:
 					$text = str_replace($this->newLine, $this->newLine . $this->getIndent(), $text);
@@ -5933,6 +5937,10 @@ namespace {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
+                case T_ATTRIBUTE:
+                    $this->appendCode($text);
+                    $this->printUntil(ST_BRACKET_CLOSE);
+                    break;
 				case T_START_HEREDOC:
 					$this->appendCode($text);
 					$this->printUntil(T_END_HEREDOC);
