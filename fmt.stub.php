@@ -7681,7 +7681,17 @@ EOT;
 
                     if ($this->rightUsefulTokenIs(ST_CURLY_CLOSE)) {
                         if (! $this->leftUsefulTokenIs(ST_CURLY_CLOSE)) {
-                            $this->appendCode(ST_SEMI_COLON);
+
+                            $isMatch = false;
+                            if (count($curlyStack) > 0) {
+                                if ($curlyStack[count($curlyStack)-1] === T_MATCH || $curlyStack[count($curlyStack)-1] === self::ST_CLOSURE) {
+                                    $isMatch = true;
+                                }
+                            }
+
+                            if (! $isMatch) {
+                                $this->appendCode(ST_SEMI_COLON);
+                            }
                         }
                         $this->appendCode($text);
                         break;
