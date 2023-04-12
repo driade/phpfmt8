@@ -5998,6 +5998,7 @@ namespace {
                         $this->appendCode($text);
                     }
                     break;
+                case '|':
                 case T_STRING:
                 case T_ARRAY:
                     if (
