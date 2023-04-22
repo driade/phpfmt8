@@ -2551,6 +2551,7 @@ namespace {
 
             'ReindentSwitchBlocks' => false,
             'ReindentEnumBlocks' => false,
+            'ReindentMatchBlocks' => false,
 			'ReindentColonBlocks' => false,
 
 			'SplitCurlyCloseAndTokens' => false,
@@ -6156,6 +6157,7 @@ namespace {
 			$fmt->enablePass('PSR2SingleEmptyLineAndStripClosingTag');
 			$fmt->enablePass('ReindentSwitchBlocks');
             $fmt->enablePass('ReindentEnumBlocks');
+            $fmt->enablePass('ReindentMatchBlocks');
 			$fmt->disablePass('ReindentComments');
 			$fmt->disablePass('StripNewlineWithinClassBody');
 		}
@@ -10859,7 +10861,7 @@ EOT;
 		}
 	}
 
-        final class ReindentEnumBlocks extends AdditionalPass {
+    final class ReindentEnumBlocks extends AdditionalPass {
         public function candidate($source, $foundTokens) {
             if (isset($foundTokens[T_ENUM])) {
                 return true;
@@ -10961,6 +10963,114 @@ case A: "a";
 enum ($a) {
     case A: "a";
 }
+EOT;
+        }
+    }
+
+    final class ReindentMatchBlocks extends AdditionalPass {
+        public function candidate($source, $foundTokens) {
+            if (isset($foundTokens[T_MATCH])) {
+                return true;
+            }
+
+            return false;
+        }
+
+        public function format($source) {
+            $this->tkns = token_get_all($source);
+            $this->code = '';
+
+            $touchedMatch = false;
+            $foundStack = [];
+
+            while (list($index, $token) = $this->each($this->tkns)) {
+                list($id, $text) = $this->getToken($token);
+                $this->ptr = $index;
+                switch ($id) {
+                case ST_QUOTE:
+                    $this->appendCode($text);
+                    $this->printUntilTheEndOfString();
+                    break;
+                case T_CLOSE_TAG:
+                    $this->appendCode($text);
+                    $this->printUntil(T_OPEN_TAG);
+                    break;
+                case T_START_HEREDOC:
+                    $this->appendCode($text);
+                    $this->printUntil(T_END_HEREDOC);
+                    break;
+                case T_CONSTANT_ENCAPSED_STRING:
+                    $this->appendCode($text);
+                    break;
+
+                case T_MATCH:
+                    $touchedMatch = true;
+                    $this->appendCode($text);
+                    break;
+
+                case T_DOLLAR_OPEN_CURLY_BRACES:
+                case T_CURLY_OPEN:
+                case ST_CURLY_OPEN:
+                    $indentToken = $id;
+                    $this->appendCode($text);
+                    $this->setIndent(+1);
+                    if ($touchedMatch) {
+                        $touchedMatch = false;
+                        $indentToken = T_MATCH;
+                    }
+                    $foundStack[] = $indentToken;
+                    break;
+
+                case ST_CURLY_CLOSE:
+                $this->setIndent(-1);
+                    $poppedID = array_pop($foundStack);
+                    if (T_MATCH === $poppedID) {
+                        $this->setIndent(-1);
+                    }
+                    $this->appendCode($text);
+                    break;
+
+                default:
+                    $hasLn = $this->hasLn($text);
+                    if ($hasLn) {
+                        $poppedID = end($foundStack);
+                        if (
+                            T_MATCH == $poppedID &&
+                            $this->rightTokenIs(ST_CURLY_CLOSE)
+                        ) {
+                            $this->setIndent(-1);
+                            $text = str_replace($this->newLine, $this->newLine . $this->getIndent(), $text);
+                            $this->setIndent(+1);
+                        } else {
+                            $text = str_replace($this->newLine, $this->newLine . $this->getIndent(), $text);
+                        }
+                    }
+                    $this->appendCode($text);
+                    break;
+                }
+            }
+
+            return $this->code;
+        }
+
+        public function getDescription() {
+            return 'Reindent one level deeper the content of match blocks.';
+        }
+
+        public function getExample() {
+            return <<<EOT
+<?php
+// From
+match ($a) {
+1 => true,
+default => false
+};
+
+// To
+match ($a) {
+    1 => true,
+    default => false
+};
 EOT;
         }
     }
