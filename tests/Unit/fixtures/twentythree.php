@@ -3,5 +3,5 @@
 match ($x) {
 	$a => 1,
 	$b => function () {},
-	default=> true
+	default => true
 };

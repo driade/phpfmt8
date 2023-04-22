@@ -4669,6 +4669,11 @@ namespace {
 					$this->appendCode($text);
 					break;
 
+                case T_DEFAULT:
+                    if ($this->rightTokenIs(T_DOUBLE_ARROW)) {
+                        $this->appendCode($text . ' ');
+                    }
+                    break;
 				case ST_CURLY_OPEN:
 					$touchedFunction = false;
 					if (!$touchedUse && $this->leftMemoUsefulTokenIs([T_VARIABLE, T_STRING]) && $this->rightUsefulTokenIs([T_VARIABLE, T_STRING])) {
