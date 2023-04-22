@@ -2,15 +2,15 @@
 
 $expressionResult = match ($condition) {
 	1, 2 => foo(),
-	default=> 'b'
+	default => 'b'
 };
 
 $expressionResult = match ($condition) {
 	1, 2 => foo(),
-	default=> function () {
+	default => function () {
 		match ($condition) {
 			1, 2 => foo(),
-			default=> 1
+			default => 1
 		};
 	},
 };

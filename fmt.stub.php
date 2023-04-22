@@ -3897,7 +3897,12 @@ namespace {
                     $this->appendCode($text);
                     $this->printUntil(ST_BRACKET_CLOSE);
                     break;
-                    
+                
+                case T_DEFAULT:
+                    if ($this->rightTokenIs([T_DOUBLE_ARROW])) {
+                        $this->appendCode($this->indentChar);
+                    }
+
 				case T_DOC_COMMENT:
 					$text = str_replace($this->newLine, $this->newLine . $this->getIndent(), $text);
 					$this->appendCode($text);
