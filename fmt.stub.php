@@ -3897,17 +3897,7 @@ namespace {
                     $this->appendCode($text);
                     $this->printUntil(ST_BRACKET_CLOSE);
                     break;
-                case T_BREAK:
-                    $this->appendCode($text);
-                    $this->setIndent(-1);
-                    break;
-                case T_DEFAULT:
-                    if (! $this->rightTokenIs([T_DOUBLE_ARROW])) {
-                        $this->appendCode($text);
-                        $this->setIndent(+1);
-                        break;
-                    }
-
+                    
 				case T_DOC_COMMENT:
 					$text = str_replace($this->newLine, $this->newLine . $this->getIndent(), $text);
 					$this->appendCode($text);
@@ -3930,8 +3920,7 @@ namespace {
 				default:
 					$hasLn = $this->hasLn($text);
 					if ($hasLn) {
-
-						$isNextCurlyParenBracketClose = $this->rightTokenIs([T_CASE, ST_CURLY_CLOSE, ST_PARENTHESES_CLOSE, ST_BRACKET_CLOSE]);
+						$isNextCurlyParenBracketClose = $this->rightTokenIs([T_CASE, T_DEFAULT, ST_CURLY_CLOSE, ST_PARENTHESES_CLOSE, ST_BRACKET_CLOSE]);
 						if (!$isNextCurlyParenBracketClose) {
 							$text = str_replace($this->newLine, $this->newLine . $this->getIndent(), $text);
 						} elseif ($isNextCurlyParenBracketClose) {
