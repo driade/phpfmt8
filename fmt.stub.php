@@ -4670,8 +4670,9 @@ namespace {
 					break;
 
                 case T_DEFAULT:
+                    $this->appendCode($text);
                     if ($this->rightTokenIs(T_DOUBLE_ARROW)) {
-                        $this->appendCode($text . ' ');
+                        $this->appendCode(' ');
                     }
                     break;
 				case ST_CURLY_OPEN:
