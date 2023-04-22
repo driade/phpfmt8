@@ -1,16 +1,16 @@
 <?php
 
 $expressionResult = match ($condition) {
-		1, 2 => foo(),
+	1, 2 => foo(),
 	default=> 'b'
 };
 
 $expressionResult = match ($condition) {
-		1, 2 => foo(),
+	1, 2 => foo(),
 	default=> function () {
-				match ($condition) {
-						1, 2 => foo(),
-					default=> 1
-				};
-		},
+		match ($condition) {
+			1, 2 => foo(),
+			default=> 1
+		};
+	},
 };
