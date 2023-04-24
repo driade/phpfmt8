@@ -4724,7 +4724,7 @@ namespace {
 
                 case T_NAME_FULLY_QUALIFIED:
 				case T_NAMESPACE:
-                    if ($this->leftUsefulTokenIs([T_ATTRIBUTE])) {
+                    if ($this->leftUsefulTokenIs([T_ATTRIBUTE, T_DOUBLE_COLON])) {
     					$this->appendCode($text);
                     } else {
                         $this->appendCode($text . $this->getSpace(!$this->rightTokenIs([ST_SEMI_COLON, T_NS_SEPARATOR, T_DOUBLE_COLON])));
