@@ -125,6 +125,8 @@ You may find an example configuration file in https://github.com/driade/phpfmt8/
  * SmartLnAfterCurlyOpen             Add line break when implicit curly block is added.
  * SortUseNameSpace                  Organize use clauses by length and alphabetic order.
  * SpaceAroundControlStructures      Add space around control structures.
+ * SpaceAfterExclamationMark         Add space after exclamation mark.
+ * SpaceAroundParentheses            Add spaces inside parentheses.
  * SpaceAroundExclamationMark        Add spaces around exclamation mark.
  * SpaceBetweenMethods               Put space between methods.
  * StrictBehavior                    Activate strict option in array_search, base64_decode, in_array, array_keys, mb_detect_encoding. Danger! This pass leads to behavior change.
