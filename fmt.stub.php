@@ -4551,7 +4551,10 @@ namespace {
 					break;
 
 				case T_CALLABLE:
-					$this->appendCode($text . ' ');
+					$this->appendCode($text);
+                    if ($this->rightTokenIs(['|']) === false) { // the parser confuses this with bitwise or later
+                        $this->appendCode(' ');
+                    }
 					break;
 
 				case '+':
