@@ -4578,8 +4578,13 @@ namespace {
 				case ST_QUESTION:
 				case ST_CONCAT:
 					if (ST_QUESTION == $id) {
-						++$inTernaryOperator;
-						$shortTernaryOperator = $this->rightTokenIs(ST_COLON);
+                        if ($this->rightUsefulTokenIs([T_STRING])) { // nullable types 
+                            $this->appendCode($text);
+                            break;
+                        } else {
+						  ++$inTernaryOperator;
+						  $shortTernaryOperator = $this->rightTokenIs(ST_COLON);
+                        }
 					}
 
 					list($prevId) = $this->inspectToken(-1);
