@@ -5698,12 +5698,12 @@ namespace {
 				case T_CLASS:
 					$this->appendCode($text);
 					if ($this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
-						break;
-					}
+                        break;
+                    }
 					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
-						if (ST_CURLY_OPEN === $id) {
+						if (ST_CURLY_OPEN === $id && !$this->leftUsefulTokenIs([T_NAME_QUALIFIED])) {
 							$this->appendCode($this->getCrlfIndent());
 							prev($this->tkns);
 							break;
