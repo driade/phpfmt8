@@ -5707,6 +5707,11 @@ namespace {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
 						if (ST_CURLY_OPEN === $id) {
+                            if ($this->leftUsefulTokenIs([T_NAME_QUALIFIED])) {
+                                $this->appendCode($text);
+                                $this->setIndent(+1);
+                                break;
+                            }
 							$this->appendCode($this->getCrlfIndent());
 							prev($this->tkns);
 							break;
