@@ -4658,7 +4658,10 @@ namespace {
 					} elseif (T_COMMENT == $nextId) {
 						$this->appendCode($text . ' ');
 						break;
-					}
+					} elseif (T_STRING === $prevId) {
+                        $this->appendCode($text . ' ');
+                        break;
+                    }
 					$this->appendCode($text);
 					break;
 

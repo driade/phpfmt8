@@ -1,6 +1,6 @@
 <?php
 
-enum MyEnum:string {
+enum MyEnum: string {
 case FINISH = 'finish';
 case A = 'B';
 	public function a() {}

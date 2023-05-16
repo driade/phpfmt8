@@ -1,6 +1,6 @@
 <?php
 
-enum A:string {
+enum A: string {
 	case A = "a";
 	case B = "b";
 }
