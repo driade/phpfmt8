@@ -40,6 +40,7 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
     psr1 = getSetting( view, s, "psr1", False)
     psr1_naming = getSetting( view, s, "psr1_naming", psr1)
     psr2 = getSetting( view, s, "psr2", False)
+    wp = getSetting( view, s, "wp", False)
     smart_linebreak_after_curly = getSetting( view, s, "smart_linebreak_after_curly", True)
     skip_if_ini_missing = getSetting( view, s, "skip_if_ini_missing", False)
     visibility_order = getSetting( view, s, "visibility_order", False)
@@ -178,6 +179,9 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
         if psr2:
             cmd_fmt.append("--psr2")
 
+        if wp:
+            cmd_fmt.append("--wp")
+
         if indent_with_space is True:
             cmd_fmt.append("--indent_with_space")
         elif indent_with_space > 0:
@@ -270,6 +274,7 @@ def dogeneratephpdoc(eself, eview):
     psr1 = s.get("psr1", False)
     psr1_naming = s.get("psr1_naming", psr1)
     psr2 = s.get("psr2", False)
+    wp = s.get("wp", False)
     smart_linebreak_after_curly = s.get("smart_linebreak_after_curly", True)
     visibility_order = s.get("visibility_order", False)
     yoda = s.get("yoda", False)
@@ -328,6 +333,9 @@ def dogeneratephpdoc(eself, eview):
 
         if psr2:
             cmd_fmt.append("--psr2")
+
+        if wp:
+            cmd_fmt.append("--wp")
 
         if indent_with_space:
             cmd_fmt.append("--indent_with_space")
@@ -376,6 +384,7 @@ def doreordermethod(eself, eview):
     psr1 = s.get("psr1", False)
     psr1_naming = s.get("psr1_naming", psr1)
     psr2 = s.get("psr2", False)
+    wp = s.get("wp", False)
     smart_linebreak_after_curly = s.get("smart_linebreak_after_curly", True)
     visibility_order = s.get("visibility_order", False)
     yoda = s.get("yoda", False)
@@ -435,6 +444,8 @@ def doreordermethod(eself, eview):
 
         if psr2:
             cmd_fmt.append("--psr2")
+        if wp:
+            cmd_fmt.append("--wp")
 
         if indent_with_space:
             cmd_fmt.append("--indent_with_space")
@@ -779,6 +790,7 @@ class ToggleCommand(sublime_plugin.TextCommand):
             "psr1":"PSR1",
             "psr1_naming":"PSR1 Class and Method Naming",
             "psr2":"PSR2",
+            "wp":"WP Coding Standards",
             "readini":"look for .php.tools.ini",
             "smart_linebreak_after_curly":"smart linebreak after curly",
             "skip_if_ini_missing":"skip if ini file is missing",

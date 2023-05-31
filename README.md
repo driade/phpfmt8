@@ -57,6 +57,7 @@ You may find an example configuration file in https://github.com/driade/phpfmt8/
  *  phpfmt: toggle PSR1 - Class and Methods names
  *  phpfmt: toggle PSR1
  *  phpfmt: toggle PSR2
+ *  phpfmt: toggle WP Coding Standards
  *  phpfmt: analyse this
  *  phpfmt: build autocomplete database
  *  phpfmt: getter and setter (camelCase)

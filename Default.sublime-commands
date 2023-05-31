@@ -14,6 +14,7 @@
     {"caption": "phpfmt: toggle PSR1 - Class and Methods names", "command": "toggle", "args": {"option":"psr1_naming"}},
     {"caption": "phpfmt: toggle PSR1", "command": "toggle", "args": {"option":"psr1"}},
     {"caption": "phpfmt: toggle PSR2", "command": "toggle", "args": {"option":"psr2"}},
+    {"caption": "phpfmt: toggle WP Coding Standards", "command": "toggle", "args": {"option":"wp"}},
     {"caption": "phpfmt: analyse this", "command": "analyse_this"},
     {"caption": "phpfmt: build autocomplete database", "command": "build_oracle"},
     {"caption": "phpfmt: getter and setter (camelCase)", "command": "sgter_camel"},
