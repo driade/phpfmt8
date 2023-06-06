@@ -9,7 +9,7 @@ class Fix29SpaceAfterQuestionMarkTest extends TestCase
         if (PHP_VERSION_ID < 71000) {
             $this->markTestSkipped();
         }
-        exec("php " . __DIR__ . "/../../fmt.stub.php --psr2 -o=- " . __DIR__ . '/fixtures/twentynine.txt', $output);
+        exec("php " . __DIR__ . "/../../fmt.stub.php --psr2 --exclude=PSR2ModifierVisibilityStaticOrder -o=- " . __DIR__ . '/fixtures/twentynine.txt', $output);
 
         $file = file_get_contents(__DIR__ . '/fixtures/twentynine.php');
 

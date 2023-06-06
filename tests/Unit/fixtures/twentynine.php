@@ -2,7 +2,7 @@
 
 class Server
 {
-    protected ServerRequestInterface $request;
+    protected ?ServerRequestInterface $request;
 
     public function __construct(protected Merchant $merchant, ?ServerRequestInterface $request)
     {
