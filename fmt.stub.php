@@ -4582,7 +4582,7 @@ namespace {
                 case ST_QUESTION:
                 case ST_CONCAT:
                     if (ST_QUESTION == $id) {
-                        if ($this->rightUsefulTokenIs([T_STRING]) && $this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr+1, [T_VARIABLE])) { // nullable types 
+                        if ($this->rightUsefulTokenIs([T_STRING]) && ($this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr+1, [T_VARIABLE]) ||  $this->leftTokenSubsetIsAtIdx($this->tkns, $this->ptr, [':']))) { // nullable types 
                             $this->appendCode($text);
                             break;
                         } else {
