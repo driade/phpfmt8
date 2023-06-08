@@ -1,0 +1,10 @@
+php.fmt
+=======
+
+This package was transferred by ST to a new maintainer a few months ago, and you can find the code at https://github.com/driade/phpfmt8 . It fully supports php 8 now. Please feel free to open an issue or pull request if you find that something is not correctly working, it really helps me a lot to improve the code.
+
+Please don't forget to give the package a star on Github! ;)
+
+Thanks.
+
+David Fernández david@mundosaparte.com
