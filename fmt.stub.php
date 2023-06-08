@@ -7930,6 +7930,16 @@ EOT;
                     $this->appendCode($text);
                     break;
 
+                case T_OBJECT_OPERATOR:
+                    $this->appendCode($text);
+                    if ($this->rightTokenIs([ST_CURLY_OPEN])) { 
+                        $this->printUntil(ST_CURLY_CLOSE);
+                        if (! $this->rightUsefulTokenIs(ST_SEMI_COLON)) {
+                            $this->appendCode(ST_SEMI_COLON);
+                        }
+                    }
+                    break;
+
 				case T_IF:
 				case T_SWITCH:
 				case T_FOR:
@@ -11555,6 +11565,13 @@ EOT;
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
+
+                case T_OBJECT_OPERATOR:
+                    $this->appendCode($text);
+                    if ($this->rightTokenIs([ST_CURLY_OPEN])) {
+                        $this->printUntil(ST_CURLY_CLOSE);
+                    }
+                    break;
 
                 case T_MATCH:
                     $this->appendCode($text);
