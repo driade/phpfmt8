@@ -1510,6 +1510,11 @@ namespace {
 	define('ST_BRACKET_BLOCK', 'ST_BRACKET_BLOCK');
 	define('ST_CURLY_BLOCK', 'ST_CURLY_BLOCK');
 
+    // 8.1
+    if (!defined("T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG")) {
+        define("T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG", "&$");
+    }
+
 	abstract class FormatterPass {
 		protected $cache = [];
 
@@ -4546,6 +4551,20 @@ namespace {
                 $this->cache = [];
 
                 switch ($id) {
+                case '&':
+                    if ($this->rightTokenIs(T_VARIABLE)) {
+                        if (!$this->leftTokenIs(ST_PARENTHESES_OPEN)) {
+                            $this->appendCode(" ");    
+                        }
+                    }
+                    $this->appendCode($text);
+                    break;
+                case T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG:
+                    if (!$this->leftTokenIs(ST_PARENTHESES_OPEN)) {
+                        $this->appendCode(" ");    
+                    }
+                    $this->appendCode($text);
+                    break;
                 case T_START_HEREDOC:
                     $this->appendCode($text);
                     $this->printUntil(ST_SEMI_COLON);
@@ -4996,6 +5015,20 @@ namespace {
                 $this->cache = [];
 
                 switch ($id) {
+                case '&':
+                    if ($this->rightTokenIs(T_VARIABLE)) {
+                        if (!$this->leftTokenIs(ST_PARENTHESES_OPEN)) {
+                            $this->appendCode(" ");    
+                        }
+                    }
+                    $this->appendCode($text);
+                    break;
+                case T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG:
+                    if (!$this->leftTokenIs(ST_PARENTHESES_OPEN)) {
+                        $this->appendCode(" ");    
+                    }
+                    $this->appendCode($text);
+                    break;
                 case T_START_HEREDOC:
                     $this->appendCode($text);
                     $this->printUntil(ST_SEMI_COLON);
