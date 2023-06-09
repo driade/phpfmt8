@@ -11662,6 +11662,9 @@ EOT;
                     if ($curlyStackMatchIndex !== count($curlyStack)) {
     					if (self::LAMBDA_CURLY_OPEN != $curlyType && $this->rightUsefulTokenIs(ST_SEMI_COLON)) {
     						$this->walkUntil(ST_SEMI_COLON);
+                            if ($this->rightTokenIs(T_COMMENT)) {
+                                $this->appendCode(ST_SEMI_COLON);
+                            }
     					}
                     } else {
                         $curlyStackMatchIndex = false;
