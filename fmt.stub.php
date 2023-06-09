@@ -3932,7 +3932,6 @@ namespace {
 						break;
 					}
 
-
 				default:
 					$hasLn = $this->hasLn($text);
 					if ($hasLn) {
