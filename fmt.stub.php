@@ -1488,6 +1488,9 @@ namespace {
     if (!defined ('T_COALESCE_EQUAL')) {
         define('T_COALESCE_EQUAL', '??=');
     }
+    if (!defined ('T_NAME_QUALIFIED')) {
+        define('T_NAME_QUALIFIED', 'T_NAME_QUALIFIED');
+    }
 
     // PHP 8
     if (!defined("T_READONLY")) {
