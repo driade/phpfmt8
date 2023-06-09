@@ -7934,7 +7934,7 @@ EOT;
                     $this->appendCode($text);
                     if ($this->rightTokenIs([ST_CURLY_OPEN])) { 
                         $this->printUntil(ST_CURLY_CLOSE);
-                        if (! $this->rightUsefulTokenIs(ST_SEMI_COLON)) {
+                        if ($this->rightUsefulTokenIs($this->newLine)) {
                             $this->appendCode(ST_SEMI_COLON);
                         }
                     }
