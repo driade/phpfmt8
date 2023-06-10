@@ -3932,7 +3932,6 @@ namespace {
 						break;
 					}
 
-
 				default:
 					$hasLn = $this->hasLn($text);
 					if ($hasLn) {
@@ -11431,22 +11430,6 @@ EOT;
                 $this->ptr = $index;
 
                 switch ($id) {
-                case ST_QUOTE:
-                    $this->appendCode($text);
-                    $this->printUntilTheEndOfString();
-                    break;
-                case T_CLOSE_TAG:
-                    $this->appendCode($text);
-                    $this->printUntil(T_OPEN_TAG);
-                    break;
-                case T_START_HEREDOC:
-                    $this->appendCode($text);
-                    $this->printUntil(T_END_HEREDOC);
-                    break;
-                case T_CONSTANT_ENCAPSED_STRING:
-                    $this->appendCode($text);
-                    break;
-
                 case T_ENUM:
                     $touchedEnum = true;
                     $this->appendCode($text);
@@ -11473,21 +11456,14 @@ EOT;
                     $this->appendCode($text);
                     break;
 
-                default:
-                    $hasLn = $this->hasLn($text);
-                    if ($hasLn) {
-                        $poppedID = end($foundStack);
-                        if (
-                            T_ENUM == $poppedID &&
-                            $this->rightTokenIs(ST_CURLY_CLOSE)
-                        ) {
-                            $this->setIndent(-1);
-                            $text = str_replace($this->newLine, $this->newLine . $this->getIndent(), $text);
-                            $this->setIndent(+1);
-                        } else {
-                            $text = str_replace($this->newLine, $this->newLine . $this->getIndent(), $text);
-                        }
+                case T_CASE:
+                    if (count($foundStack) && $foundStack[count($foundStack) -1] === T_ENUM) {
+                        $this->appendCode($this->getIndent());
                     }
+                    $this->appendCode($text);
+                    break;
+
+                default:
                     $this->appendCode($text);
                     break;
                 }

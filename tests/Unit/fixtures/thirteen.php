@@ -3,9 +3,24 @@
 enum A: string {
 	case A = "a";
 	case B = "b";
+	public function t() {
+		switch ($a) {
+		case 1:
+			break;
+		case 2:
+			break;
+		}
+	}
 }
 
 enum B {
 	case A;
 	case B;
+}
+
+switch ($a) {
+case 1:
+	break;
+case 2:
+	break;
 }
