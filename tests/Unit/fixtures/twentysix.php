@@ -9,4 +9,9 @@ enum Mq: string {
     {
         return 'ex-' . $queue->value;
     }
+
+    public function getExchangeName2(Mq $queue)
+    {
+        return 'ex-' . $queue->value;
+    }
 }
