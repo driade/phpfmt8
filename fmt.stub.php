@@ -11995,6 +11995,10 @@ EOT;
 				$this->ptr = $index;
 				switch ($id) {
 				case T_ARRAY:
+                    if ($this->leftUsefulTokenIs(T_FUNCTION)) {
+                        $this->appendCode($text);
+                        break;
+                    }
 					if ($this->rightTokenIs([ST_PARENTHESES_OPEN])) {
 						$foundParen[] = self::FOUND_ARRAY;
 						$this->printAndStopAt(ST_PARENTHESES_OPEN);
