@@ -6489,6 +6489,11 @@ namespace {
 					$this->appendCode($text);
 					$this->printUntilAny([T_EXTENDS, T_IMPLEMENTS, ST_CURLY_OPEN]);
 					break;
+                case T_NAMESPACE:
+                    $found[] = T_NAMESPACE;
+                    $touchedClassInterfaceTrait = true;
+                    $this->appendCode($text);
+                    break;
 				case T_INTERFACE:
 					$found[] = T_INTERFACE;
 					$touchedClassInterfaceTrait = true;
@@ -6599,7 +6604,7 @@ namespace {
 					$this->printUntil(ST_SEMI_COLON);
 					break;
 				case T_FUNCTION:
-					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0]) && $this->rightUsefulTokenIs([T_STRING, T_ARRAY, ST_REFERENCE]);
+					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0] || T_NAMESPACE === $found[0]) && $this->rightUsefulTokenIs([T_STRING, T_ARRAY, ST_REFERENCE]);
 					if ($hasFoundClassOrInterface && null !== $finalOrAbstract) {
 						$this->appendCode($finalOrAbstract . $this->getSpace());
 					}
@@ -6609,7 +6614,9 @@ namespace {
 						$hasFoundClassOrInterface &&
 						!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_COMMA, ST_PARENTHESES_OPEN])
 					) {
-						$this->appendCode('public' . $this->getSpace());
+                        if ($found[count($found)-2] !== T_NAMESPACE) {
+						  $this->appendCode('public' . $this->getSpace());
+                        }
 					}
 					if ($hasFoundClassOrInterface && null !== $static) {
 						$this->appendCode($static . $this->getSpace());
