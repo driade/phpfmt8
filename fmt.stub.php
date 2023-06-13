@@ -6214,7 +6214,7 @@ namespace {
 					}
 					break;
 				case T_FUNCTION:
-					if (!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_PARENTHESES_OPEN, ST_COMMA]) && $this->rightUsefulTokenIs([T_STRING, ST_REFERENCE])) {
+					if (!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_PARENTHESES_OPEN, ST_COMMA]) && $this->rightUsefulTokenIs([T_STRING, T_ARRAY, ST_REFERENCE])) {
 						$this->appendCode($text);
 						$touchedLn = false;
 						while (list($index, $token) = $this->each($this->tkns)) {
@@ -6589,7 +6589,7 @@ namespace {
 					$this->printUntil(ST_SEMI_COLON);
 					break;
 				case T_FUNCTION:
-					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0]) && $this->rightUsefulTokenIs([T_STRING, ST_REFERENCE]);
+					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0]) && $this->rightUsefulTokenIs([T_STRING, T_ARRAY, ST_REFERENCE]);
 					if ($hasFoundClassOrInterface && null !== $finalOrAbstract) {
 						$this->appendCode($finalOrAbstract . $this->getSpace());
 					}
