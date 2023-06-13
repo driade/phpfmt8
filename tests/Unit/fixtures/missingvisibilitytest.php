@@ -5,7 +5,7 @@ class Test
     public function array($rows)
     {
         if (count($rows) > 0) {
-            foreach ($rows as  &$row) {
+            foreach ($rows as &$row) {
                 // Save DB
             }
         }

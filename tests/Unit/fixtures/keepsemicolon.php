@@ -1,7 +1,7 @@
 <?php
 
 $menu = [];
-$recurse = function ($parent, $path) use (&$recurse,  &$menu, $res) {
+$recurse = function ($parent, $path) use (&$recurse, &$menu, $res) {
     foreach ($res as $v) {
         if ($v['parent'] == $parent) {
             $name = "$path/{$v['name']}";
