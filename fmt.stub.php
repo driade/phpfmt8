@@ -1517,6 +1517,9 @@ namespace {
     if (!defined("T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG")) {
         define("T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG", "&$");
     }
+    if (!defined("T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG")) {
+        define("T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG", "&");
+    }
 
 	abstract class FormatterPass {
 		protected $cache = [];
@@ -6186,6 +6189,7 @@ namespace {
 
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
+                
 				$this->ptr = $index;
 				switch ($id) {
 				case T_START_HEREDOC:
@@ -6220,7 +6224,7 @@ namespace {
 					}
 					break;
 				case T_FUNCTION:
-					if (!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_PARENTHESES_OPEN, ST_COMMA]) && $this->rightUsefulTokenIs([T_STRING, T_ARRAY, ST_REFERENCE])) {
+					if (!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_PARENTHESES_OPEN, ST_COMMA]) && $this->rightUsefulTokenIs([T_STRING, T_ARRAY, ST_REFERENCE, T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG])) {
 						$this->appendCode($text);
 						$touchedLn = false;
 						while (list($index, $token) = $this->each($this->tkns)) {
