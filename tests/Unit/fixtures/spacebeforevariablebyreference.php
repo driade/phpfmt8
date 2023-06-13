@@ -9,5 +9,6 @@ function foo(&$a, &$b)
 
 }
 
-function &bar() {
+function &bar()
+{
 }
