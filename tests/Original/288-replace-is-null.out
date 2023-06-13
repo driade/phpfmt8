@@ -1,0 +1,10 @@
+<?php
+//passes:Default,ReplaceIsNull
+
+if (null === $a) {
+
+}
+
+if (null/*aaa*/ === /*aaa*/$a
+// hello world
+);

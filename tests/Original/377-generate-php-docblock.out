@@ -1,0 +1,15 @@
+<?php
+/**
+ * @author Foo <foo@example.com>
+ */
+class BlogController {
+	/**
+	 * @param $request
+	 * @return mixed
+	 */
+	public function reports($request) {
+		return $request;
+	}
+}
+
+//passes:GeneratePHPDoc

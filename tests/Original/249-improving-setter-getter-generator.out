@@ -1,0 +1,35 @@
+<?php
+//passes:SettersAndGettersPass,Default
+
+class A {
+	private $a;
+
+	private function setA($a) {
+		$this->a = $a;
+	}
+
+	private function getA() {
+		return $this->a;
+	}
+
+	public $c;
+
+	public function setC($c) {
+		$this->c = $c;
+	}
+
+	public function getC() {
+		return $this->c;
+	}
+
+	private $b;
+
+	private function setB($b) {
+		$this->b = $b;
+	}
+
+	private function getB() {
+		return $this->b;
+	}
+
+}

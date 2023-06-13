@@ -1,0 +1,11 @@
+<?php
+//passes:Default,OrderMethodAndVisibility
+class A {
+	public function a() {}
+
+	public function d() {}
+
+	protected function b() {}
+
+	private function c() {}
+}

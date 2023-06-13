@@ -1,0 +1,9 @@
+<?php
+//passes:GeneratePHPDoc
+class A {
+	/**
+	 * @param $a
+	 */
+	public function b($a) {
+	}
+}

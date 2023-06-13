@@ -1,0 +1,57 @@
+<?php
+//passes:Default,StrictBehavior
+array_search($needle, $haystack, true);
+base64_decode($str, true);
+in_array($needle, $haystack, true);
+
+array_keys($arr, null, true);
+mb_detect_encoding($arr, null, true);
+
+array_keys($arr, [1], true);
+mb_detect_encoding($arr, 'UTF8', true);
+
+//-----
+
+array_search($needle, $haystack, true);
+base64_decode($str, true);
+in_array($needle, $haystack, true);
+
+array_keys($arr, null, true);
+mb_detect_encoding($arr, null, true);
+
+array_keys($arr, [1], true);
+mb_detect_encoding($arr, 'UTF8', true);
+
+//-----
+
+array_search/*Comment*/($needle, $haystack, true);
+base64_decode//Comment
+($str, true);
+in_array($needle, $haystack/*Comment*/, true);
+
+array_keys($arr, null, true);
+mb_detect_encoding($arr, null, true);
+
+array_keys($arr, [1], true);
+mb_detect_encoding($arr, 'UTF8', true);
+
+//-----
+
+array_keys($arr, func($a, $b), true);
+array_keys($arr, [$a, $b], true);
+array_keys($arr, $a->{$v}, true);
+array_keys($arr, "{$v}", true);
+array_keys($arr, "${$v}", true);
+array_keys($arr, ${$v}, true);
+
+//-----
+
+SomeStaticClass::array_keys($arr, func($a, $b));
+$someObject->array_keys($arr, func($a, $b));
+
+SomeStaticClass::array_keys;
+$someObject->array_keys;
+
+//------
+
+array_keys;

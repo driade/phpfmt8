@@ -1,0 +1,39 @@
+<?php
+//passes:Default,AliasToMaster
+rtrim();
+closedir();
+exit();
+floatval();
+fwrite();
+ini_set();
+is_float();
+is_int();
+is_int();
+is_float();
+is_writable();
+implode();
+array_key_exists();
+set_magic_quotes_runtime();
+current();
+rewinddir();
+highlight_file();
+count();
+strstr();
+
+$smth->close($a);
+new fputs();
+new NS\doubleval();
+NS\die();
+namespace\implode();
+namespace::pos();
+ns::rewind();
+
+die\ns();
+join\namespace ();
+pos::namespace ();
+rewind::ns();
+
+\exit();
+ & is_writable();
+
+somefunc(is_writable());

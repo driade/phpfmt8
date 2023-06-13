@@ -1,0 +1,35 @@
+<?php
+//passes:ReturnNull,Default
+function a() {
+	return;
+}
+
+function b() {
+	return /* comment */;
+}
+
+function c() {
+	return;
+}
+
+function d() {
+	return;
+}
+
+function e() {
+	return null ? 1 : 0;
+}
+
+function f() {
+	return ((null . null));
+}
+
+function g() {
+	return null . null;
+}
+
+function h() {
+	return array_map(function ($v) {
+		return;
+	}, $arr);
+}

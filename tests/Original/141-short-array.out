@@ -1,0 +1,23 @@
+<?php
+//passes:OrderAndRemoveUseClauses,AddMissingCurlyBraces,SmartLnAfterCurlyOpen,NormalizeLnAndLtrimLines,MergeParenCloseWithCurlyOpen,MergeCurlyCloseAndDoWhile,MergeDoubleArrowAndArray,ExtraCommaInArray,ResizeSpaces,Reindent,ReindentColonBlocks,ReindentObjOps,EliminateDuplicatedEmptyLines,AlignEquals,AlignDoubleArrow,LeftAlignComment,RTrim,ShortArray
+
+$x = [];
+$x = [];
+$y = [];
+$x = [];
+$x = ['foo'];
+$x = ['foo'];
+$x = [($y ? true : false)];
+$x = [($y ? [true] : [false])];
+$x = [($y ? [true] : [false])];
+$x = [($y ? ["t" => true] : ["f" => false])];
+print_r([($y ? true : false)]);
+$x = [[[]]];
+$x = [[[]]];
+$y = [[[]]];
+function a($foo = []) {
+
+}
+function b(array $foo = []) {
+
+}

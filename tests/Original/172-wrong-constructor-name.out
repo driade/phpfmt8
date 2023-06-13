@@ -1,0 +1,16 @@
+<?php
+//passes:Default,WrongConstructorName
+
+class WrongConstructorName {
+	function __construct() {
+
+	}
+}
+
+function a() {
+
+}
+
+echo WrongConstructorName::class;
+
+echo 'a';

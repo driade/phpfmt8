@@ -1,0 +1,133 @@
+<?php
+//passes:SettersAndGettersPass,Default
+
+namespace Spinen\ConnectWiseApi\Wrappers\ActivityApi;
+
+class Activity {
+
+	/**
+	 * @var string $CompanyIdentifier
+	 */
+	protected $CompanyIdentifier = null;
+
+	protected function setCompanyIdentifier($CompanyIdentifier) {
+		$this->CompanyIdentifier = $CompanyIdentifier;
+	}
+
+	protected function getCompanyIdentifier() {
+		return $this->CompanyIdentifier;
+	}
+
+	/**
+	 * @var int $Id
+	 */
+	protected $Id;
+
+	protected function setId($Id) {
+		$this->Id = $Id;
+	}
+
+	protected function getId() {
+		return $this->Id;
+	}
+
+	/**
+	 * @var string $Subject
+	 */
+	protected $Subject = null;
+
+	protected function setSubject($Subject) {
+		$this->Subject = $Subject;
+	}
+
+	protected function getSubject() {
+		return $this->Subject;
+	}
+
+}
+
+class Activity2 {
+
+	/**
+	 * @var string $CompanyIdentifier
+	 */
+	public $CompanyIdentifier = null;
+
+	public function setCompanyIdentifier($CompanyIdentifier) {
+		$this->CompanyIdentifier = $CompanyIdentifier;
+	}
+
+	public function getCompanyIdentifier() {
+		return $this->CompanyIdentifier;
+	}
+
+	/**
+	 * @var int $Id
+	 */
+	public $Id;
+
+	public function setId($Id) {
+		$this->Id = $Id;
+	}
+
+	public function getId() {
+		return $this->Id;
+	}
+
+	/**
+	 * @var string $Subject
+	 */
+	public $Subject = null;
+
+	public function setSubject($Subject) {
+		$this->Subject = $Subject;
+	}
+
+	public function getSubject() {
+		return $this->Subject;
+	}
+
+}
+
+class Activity3 {
+
+	/**
+	 * @var string $CompanyIdentifier
+	 */
+	private $CompanyIdentifier = null;
+
+	private function setCompanyIdentifier($CompanyIdentifier) {
+		$this->CompanyIdentifier = $CompanyIdentifier;
+	}
+
+	private function getCompanyIdentifier() {
+		return $this->CompanyIdentifier;
+	}
+
+	/**
+	 * @var int $Id
+	 */
+	private $Id;
+
+	private function setId($Id) {
+		$this->Id = $Id;
+	}
+
+	private function getId() {
+		return $this->Id;
+	}
+
+	/**
+	 * @var string $Subject
+	 */
+	private $Subject = null;
+
+	private function setSubject($Subject) {
+		$this->Subject = $Subject;
+	}
+
+	private function getSubject() {
+		return $this->Subject;
+	}
+
+}
