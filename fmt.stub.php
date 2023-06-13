@@ -2432,6 +2432,9 @@ namespace {
 		}
 
 		private function calculateCacheKey($direction, $ignoreList) {
+            if (!is_array($ignoreList)) {
+                $ignoreList = [$ignoreList];
+            }
 			return $direction . "\x2" . implode('', $ignoreList);
 		}
 
@@ -2450,6 +2453,9 @@ namespace {
 		}
 
 		private function resolveIgnoreList($ignoreList = []) {
+            if (!is_array($ignoreList)) {
+                $ignoreList = [$ignoreList];
+            }
 			if (!empty($ignoreList)) {
 				return array_flip($ignoreList);
 			}
