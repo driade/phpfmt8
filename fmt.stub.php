@@ -4561,7 +4561,7 @@ namespace {
                 switch ($id) {
                 case '&':
                     if ($this->rightTokenIs(T_VARIABLE)) {
-                        if (!$this->leftTokenIs(ST_PARENTHESES_OPEN, T_AS, ST_COMMA)) {
+                        if (!$this->leftTokenIs([ST_PARENTHESES_OPEN, T_AS, ST_COMMA])) {
                             $this->appendCode(" ");    
                         }
                     }
