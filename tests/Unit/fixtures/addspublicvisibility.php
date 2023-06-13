@@ -20,7 +20,7 @@ namespace B {
     }
 }
 
-namespace Symfony\Component\Console\Formatter{
+namespace Symfony\Component\Console\Formatter {
     class ProgressBar
     {
         public function b(callable $fn)
@@ -48,7 +48,7 @@ namespace C {
     }
 }
 
-namespace Symfony\Component\Console\Formatter{
+namespace Symfony\Component\Console\Formatter {
     function b(callable $fn)
     {
     }

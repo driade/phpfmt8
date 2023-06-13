@@ -1505,6 +1505,9 @@ namespace {
     if (!defined("T_NAME_FULLY_QUALIFIED")) {
         define("T_NAME_FULLY_QUALIFIED", "namespace");
     }
+    if (!defined("T_NAME_QUALIFIED")) {
+        define("T_NAME_QUALIFIED", "namespace");
+    }
     if (!defined("T_ATTRIBUTE")) {
         define("T_ATTRIBUTE", "attribute");
     }
@@ -4766,6 +4769,7 @@ namespace {
                     $this->appendCode($this->getSpace($this->leftMemoTokenIs(ST_PARENTHESES_CLOSE)) . $text . ' ');
                     break;
 
+                case T_NAME_QUALIFIED:
                 case T_NAME_FULLY_QUALIFIED:
                 case T_NAMESPACE:
                     if ($this->leftUsefulTokenIs([T_ATTRIBUTE, T_DOUBLE_COLON])) {
