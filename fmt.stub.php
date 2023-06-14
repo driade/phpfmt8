@@ -4566,16 +4566,11 @@ namespace {
 
                 switch ($id) {
                 case '&':
+                case T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG:
                     if ($this->rightTokenIs(T_VARIABLE)) {
-                        if (!$this->leftTokenIs([ST_PARENTHESES_OPEN, T_AS, ST_COMMA])) {
+                        if (!$this->leftTokenIs([ST_PARENTHESES_OPEN, T_AS, ST_COMMA, T_DOUBLE_ARROW])) {
                             $this->appendCode(" ");    
                         }
-                    }
-                    $this->appendCode($text);
-                    break;
-                case T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG:
-                    if (!$this->leftTokenIs([ST_PARENTHESES_OPEN, T_AS, ST_COMMA])) {
-                        $this->appendCode(" ");    
                     }
                     $this->appendCode($text);
                     break;

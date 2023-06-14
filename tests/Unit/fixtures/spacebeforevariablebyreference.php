@@ -12,3 +12,7 @@ function foo(&$a, &$b)
 function &bar()
 {
 }
+
+$a = [
+    '1' => &$b,
+];
