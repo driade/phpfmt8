@@ -1489,7 +1489,10 @@ namespace {
         define('T_COALESCE_EQUAL', '??=');
     }
     if (!defined ('T_NAME_QUALIFIED')) {
-        define('T_NAME_QUALIFIED', 'T_NAME_QUALIFIED');
+        define('T_NAME_QUALIFIED', 'namespace');
+    }
+    if (!defined ('T_NAME_RELATIVE')) {
+        define('T_NAME_RELATIVE', 'namespace');
     }
 
     // PHP 8
@@ -1504,9 +1507,6 @@ namespace {
     }
     if (!defined("T_NAME_FULLY_QUALIFIED")) {
         define("T_NAME_FULLY_QUALIFIED", "namespace");
-    }
-    if (!defined("T_NAME_QUALIFIED")) {
-        define("T_NAME_QUALIFIED", "namespace");
     }
     if (!defined("T_ATTRIBUTE")) {
         define("T_ATTRIBUTE", "attribute");
@@ -6530,13 +6530,16 @@ namespace {
 					}
 					break;
                 case '?':
-                    if ($this->rightTokenIs([T_STRING, T_ARRAY])) {
+                    if ($this->rightTokenIs([T_STRING, T_ARRAY, T_NAME_RELATIVE, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED])) {
                         $type = '?';
                     } else {
                         $this->appendCode($text);
                     }
                     break;
                 case '|':
+                case T_NAME_RELATIVE:
+                case T_NAME_QUALIFIED:
+                case T_NAME_FULLY_QUALIFIED:
                 case T_STRING:
                 case T_ARRAY:
                     if (
