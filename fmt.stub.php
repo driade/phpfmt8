@@ -6541,6 +6541,16 @@ namespace {
                 case T_NAME_QUALIFIED:
                 case T_NAME_FULLY_QUALIFIED:
                 case T_STRING:
+                    if (
+                        null !== $visibility ||
+                        null !== $finalOrAbstract ||
+                        null !== $static
+                    ) {
+                        $type .= $text;
+                    } else {
+                        $this->appendCode($text);
+                    }
+                    break;
                 case T_ARRAY:
                     if (
                         null !== $visibility ||
@@ -6550,6 +6560,9 @@ namespace {
                         $type .= $text;
                     } else {
                         $this->appendCode($text);
+                        if ($this->rightTokenIs([ST_PARENTHESES_OPEN])) {
+                            $this->printUntil(ST_PARENTHESES_CLOSE);
+                        }
                     }
                     break;
 				case T_VAR:
