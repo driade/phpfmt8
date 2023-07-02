@@ -29,4 +29,8 @@ class DocumentManager
     public static function print($type, $data = array(), $filename = null) {
 
     }
+
+    public function function() {
+
+    }
 }

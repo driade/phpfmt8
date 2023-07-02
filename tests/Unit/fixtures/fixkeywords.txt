@@ -1,0 +1,11 @@
+<?php
+
+class A
+{
+    const PUBLIC = 1;
+    PRIVATE STRING $PRIVATE = '1';
+
+    PUBLIC STATIC FUNCTION PUBLIC() {
+
+    }
+}

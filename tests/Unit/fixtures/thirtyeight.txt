@@ -31,4 +31,8 @@ class DocumentManager
     {
  
     }
+
+    public function function() {
+
+    }
 }

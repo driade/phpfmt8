@@ -20,7 +20,7 @@ class Test
 {
     public function saveTest()
     {
-        $user = {};
+        $user = [];
         $tests = $api->getTests();
         foreach ($tests as $key => $test) {
             $db_test[] = [
