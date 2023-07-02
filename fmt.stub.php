@@ -2175,7 +2175,9 @@ namespace {
 
 		protected function rightToken($ignoreList = []) {
 			$i = $this->rightTokenIdx($ignoreList);
-
+            if (!isset($this->tkns[$i])) {
+                return false;
+            }
 			return $this->tkns[$i];
 		}
 
@@ -8029,6 +8031,13 @@ EOT;
 				case ST_PARENTHESES_CLOSE:
 					$lastParen = array_pop($parenStack);
 					$this->appendCode($text);
+                    if ($this->rightTokenIs([T_COMMENT, ST_CURLY_CLOSE]) || $this->rightToken() === false) {
+                        $this->appendCode(ST_SEMI_COLON);
+                    }
+
+                    if ($this->rightTokenSubsetIsAtIdx($this->tkns, $index, [ST_PARENTHESES_OPEN]) && $this->rightTokenSubsetIsAtIdx($this->tkns, $index + 2, [T_NEW])) {
+                        $this->appendCode(ST_SEMI_COLON);
+                    }
 					break;
 
                 case T_MATCH:
