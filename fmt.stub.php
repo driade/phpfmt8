@@ -4362,10 +4362,16 @@ namespace {
 
 				case T_DOUBLE_COLON:
 				case T_OBJECT_OPERATOR:
-					if (!isset($touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) || 0 == $touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
-						if (!isset($touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
-							$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
-						}
+                    if (!isset($touchCounter[$levelCounter])) {
+                        $touchCounter[$levelCounter] = [];
+                    }
+                    if (!isset($levelEntranceCounter[$levelCounter])) {
+                        $levelEntranceCounter[$levelCounter] = 0;
+                    }
+                    if (!isset($touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]])) {
+                        $touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 0;
+                    }
+					if (0 == $touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]) {
 						++$touchCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
 						if ($this->hasLnBefore()) {
 							$alignType[$levelCounter][$levelEntranceCounter[$levelCounter]] = self::ALIGN_WITH_INDENT;
