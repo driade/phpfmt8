@@ -9,6 +9,10 @@ $this->mock(Foo::class, function ($m) {
 // commment
 
 (new ClassParser)->parse()
+
+/** commment **/
+
+(new ClassParser)->parse()
 #[SetUp]
 
 (new ClassParser)->parse()

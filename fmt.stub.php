@@ -8031,7 +8031,7 @@ EOT;
 				case ST_PARENTHESES_CLOSE:
 					$lastParen = array_pop($parenStack);
 					$this->appendCode($text);
-                    if ($this->rightTokenIs([T_COMMENT, ST_CURLY_CLOSE]) || $this->rightToken() === false) {
+                    if ($this->rightTokenIs([T_DOC_COMMENT, T_COMMENT, ST_CURLY_CLOSE]) || $this->rightToken() === false) {
                         $this->appendCode(ST_SEMI_COLON);
                     }
 
