@@ -6,7 +6,7 @@ class FixSpaceAfterColonTest extends TestCase
 {
     public function testItWorks()
     {
-        exec("php " . __DIR__ . "/../../fmt.stub.php --psr2 --passes=ResizeSpaces -o=- " . __DIR__ . '/fixtures/fixspaceaftercolontest.txt', $output);
+        exec("php " . __DIR__ . "/../../fmt.stub.php --psr2 -o=- " . __DIR__ . '/fixtures/fixspaceaftercolontest.txt', $output);
 
         // file_put_contents(__DIR__ . '/fixtures/fixspaceaftercolontest.php', implode("\n", $output));
 
