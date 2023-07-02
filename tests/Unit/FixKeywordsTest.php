@@ -6,6 +6,10 @@ class FixKeywordsTest extends TestCase
 {
     public function testItWorks()
     {
+        if (PHP_VERSION_ID < 70400) {
+            $this->markTestSkipped();
+        }
+        
         exec("php " . __DIR__ . "/../../fmt.stub.php --psr2 -o=- " . __DIR__ . '/fixtures/fixkeywords.txt', $output);
 
         // file_put_contents(__DIR__ . '/fixtures/fixkeywords.php', implode("\n", $output));

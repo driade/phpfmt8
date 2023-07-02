@@ -6,6 +6,10 @@ class FixSpaceAfterColonTest extends TestCase
 {
     public function testItWorks()
     {
+        if (PHP_VERSION_ID < 80000) {
+            $this->markTestSkipped();
+        }
+
         exec("php " . __DIR__ . "/../../fmt.stub.php --psr2 -o=- " . __DIR__ . '/fixtures/fixspaceaftercolontest.txt', $output);
 
         // file_put_contents(__DIR__ . '/fixtures/fixspaceaftercolontest.php', implode("\n", $output));
