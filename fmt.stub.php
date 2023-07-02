@@ -8045,7 +8045,7 @@ EOT;
                     if ($this->rightTokenIs([T_DOC_COMMENT, T_COMMENT, ST_PARENTHESES_OPEN])){
                         $rightToken = $this->rightToken(['']);
                         // the next token could be "\n" or "\n\n\n"
-                        if (is_array($rightToken) && isset($rightToken[1][0]) && $rightToken[1][0] === "\n") {
+                        if (is_array($rightToken) && isset($rightToken[1][0]) && $rightToken[1][0] === PHP_EOL) {
                             $this->appendCode(ST_SEMI_COLON);
                             break;
                         }
