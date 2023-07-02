@@ -8031,14 +8031,27 @@ EOT;
 				case ST_PARENTHESES_CLOSE:
 					$lastParen = array_pop($parenStack);
 					$this->appendCode($text);
-                    if ($this->rightTokenIs([T_DOC_COMMENT, T_COMMENT, ST_CURLY_CLOSE]) || $this->rightToken() === false) {
+
+                    if ($this->rightToken() === false) {
                         $this->appendCode(ST_SEMI_COLON);
+                        break;
+                    }
+                    
+                    if ($this->rightTokenIs([ST_CURLY_CLOSE])){
+                        $this->appendCode(ST_SEMI_COLON);
+                        break;
                     }
 
-                    if ($this->rightTokenSubsetIsAtIdx($this->tkns, $index, [ST_PARENTHESES_OPEN]) && $this->rightTokenSubsetIsAtIdx($this->tkns, $index + 2, [T_NEW])) {
-                        $this->appendCode(ST_SEMI_COLON);
+                    if ($this->rightTokenIs([T_DOC_COMMENT, T_COMMENT, ST_PARENTHESES_OPEN])){
+                        $rightToken = $this->rightToken(['']);
+                        // the next token could be "\n" or "\n\n\n"
+                        if (is_array($rightToken) && isset($rightToken[1][0]) && $rightToken[1][0] === "\n") {
+                            $this->appendCode(ST_SEMI_COLON);
+                            break;
+                        }
                     }
-					break;
+
+                    break;
 
                 case T_MATCH:
 				case T_FUNCTION:

@@ -17,5 +17,15 @@ $this->mock(Foo::class, function ($m) {
 
 (new ClassParser)->parse()
 (new ClassParser)->parse()
+foreach ($a as $b) { (new ClassParser)->parse() }
+
+helper() - 1
+helper() /** comment **/ - 1
 
 $a()()
+
+(function ($b) { (new ClassParser)->parse() })
+
+(call())
+(call())
+(call()) (call())
