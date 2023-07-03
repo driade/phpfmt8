@@ -2175,9 +2175,7 @@ namespace {
 
 		protected function rightToken($ignoreList = []) {
 			$i = $this->rightTokenIdx($ignoreList);
-            if (!isset($this->tkns[$i])) {
-                return false;
-            }
+
 			return $this->tkns[$i];
 		}
 
@@ -4542,7 +4540,7 @@ namespace {
 
 	final class ResizeSpaces extends FormatterPass {
         public function candidate($source, $foundTokens) {
-            $tkns = token_get_all($source, TOKEN_PARSE);
+            $tkns = token_get_all($source);
 
             $this->tkns = [];
             foreach ($tkns as $token) {
@@ -6337,9 +6335,8 @@ namespace {
 		}
 
 		public function format($source) {
-			$this->tkns = token_get_all($source, TOKEN_PARSE);
+			$this->tkns = token_get_all($source);
 			$this->code = '';
-
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
@@ -6355,7 +6352,10 @@ namespace {
 					continue;
 				}
 
-				if (T_STRING == $id) {
+				if (
+					T_STRING == $id
+					&& $this->leftUsefulTokenIs([T_DOUBLE_COLON, T_OBJECT_OPERATOR])
+				) {
 					$this->appendCode($text);
 					continue;
 				}
@@ -6462,7 +6462,7 @@ namespace {
 		}
 
 		public function format($source) {
-			$this->tkns = token_get_all($source, TOKEN_PARSE);
+			$this->tkns = token_get_all($source);
 			$this->code = '';
 
 			$found = [];
@@ -6625,7 +6625,7 @@ namespace {
 					$this->printUntil(ST_SEMI_COLON);
 					break;
 				case T_FUNCTION:
-					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0] || T_NAMESPACE === $found[0]) && $this->rightUsefulTokenIs([T_STRING, ST_REFERENCE]);
+					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0] || T_NAMESPACE === $found[0]) && $this->rightUsefulTokenIs([T_STRING, T_ARRAY, T_PRINT, ST_REFERENCE]); // fix this one day, maybe completely delete the "rightUsefulTokenIs" part 
 					if ($hasFoundClassOrInterface && null !== $finalOrAbstract) {
 						$this->appendCode($finalOrAbstract . $this->getSpace());
 					}
@@ -8029,27 +8029,7 @@ EOT;
 				case ST_PARENTHESES_CLOSE:
 					$lastParen = array_pop($parenStack);
 					$this->appendCode($text);
-
-                    if ($this->rightToken() === false) {
-                        $this->appendCode(ST_SEMI_COLON);
-                        break;
-                    }
-                    
-                    if ($this->rightTokenIs([ST_CURLY_CLOSE])){
-                        $this->appendCode(ST_SEMI_COLON);
-                        break;
-                    }
-
-                    if ($this->rightTokenIs([T_DOC_COMMENT, T_COMMENT, ST_PARENTHESES_OPEN])){
-                        $rightToken = $this->rightToken(['']);
-                        // the next token could be "\n" or "\n\n\n"
-                        if (is_array($rightToken) && isset($rightToken[1][0]) && strpos($rightToken[1], PHP_EOL) !== false) {
-                            $this->appendCode(ST_SEMI_COLON);
-                            break;
-                        }
-                    }
-
-                    break;
+					break;
 
                 case T_MATCH:
 				case T_FUNCTION:
