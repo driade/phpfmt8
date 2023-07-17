@@ -6210,11 +6210,8 @@ namespace {
 				case T_CLASS:
 					$this->appendCode($text);
 					if ($this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
-                        break;
-                    }
-                    if ($this->leftUsefulTokenIs(T_NEW)) {
-                        break;
-                    }
+						break;
+					}
 					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
