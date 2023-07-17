@@ -7237,7 +7237,9 @@ EOT;
 
 				case T_WHITESPACE:
 					if ($this->hasLn($text)) {
-						++$contextCounter;
+                        if (PHP_VERSION_ID < 80000) {
+                            ++$contextCounter;
+                        }
 					}
 					$this->appendCode($text);
 					break;
