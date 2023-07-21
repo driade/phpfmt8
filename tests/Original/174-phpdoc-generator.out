@@ -1,0 +1,109 @@
+<?php
+//passes:GeneratePHPDoc, Default
+/**
+ * @param array $c
+ */
+function a($c = array()) {
+
+}
+
+class Abc {
+	/**
+	 * @param ClassA $a
+	 * @param \Lll\llll\ppp $b
+	 * @param array $c
+	 * @return mixed
+	 */
+	function a(ClassA $a, \Lll\llll\ppp $b = 10, $c = array()) {
+
+		return $c;
+	}
+
+	/**
+	 * @param ClassA $a
+	 * @param \Lll\llll\ppp $b
+	 * @param array $c
+	 * @return mixed
+	 */
+	public static function b(ClassA $a, \Lll\llll\ppp $b = 10, $c = array()) {
+
+		return $c;
+	}
+
+	/**
+	 * @param ClassA $a
+	 * @param \Lll\llll\ppp $b
+	 * @param $c
+	 * @return mixed
+	 */
+	static private function c(ClassA $a, \Lll\llll\ppp $b = 10, $c) {
+
+		return $c;
+	}
+
+	/**
+	 * @param ClassA $a
+	 * @param \Lll\llll\ppp $b
+	 * @param array $c
+	 * @param $d
+	 * @return null
+	 */
+	static private function d(ClassA $a, \Lll\llll\ppp $b = 10, $c = array(), $d) {
+
+		$a = function ($d) {
+			echo 1;
+		};
+		return;
+	}
+
+	/**
+	 * @param ClassA $a
+	 * @param \Lll\llll\ppp $b
+	 * @param array $c
+	 * @param $d
+	 * @return int
+	 */
+	static private function e(ClassA $a, \Lll\llll\ppp $b = 10, $c = array(), $d) {
+		$a = function ($d) {
+			echo 1;
+		};
+		return 1;
+	}
+
+	/**
+	 * @param ClassA $a
+	 * @param \Lll\llll\ppp $b
+	 * @param array $c
+	 * @param $d
+	 * @return float
+	 */
+	static private function f(ClassA $a, \Lll\llll\ppp $b = 10, $c = array(), $d) {
+		$a = function ($d) {
+			echo 1;
+		};
+		return 1.0;
+	}
+	/**
+	 * @param ClassA $a
+	 * @param \Lll\llll\ppp $b
+	 * @param array $c
+	 * @param $d
+	 * @return mixed
+	 */
+	static private function g(ClassA $a, \Lll\llll\ppp $b = 10, $c = array(), $d) {
+		$a = function ($d) {
+			echo 1;
+		};
+		return $a;
+	}
+}
+
+abstract class B {
+	/**
+	 * @param ClassA $a
+	 * @param \Lll\llll\ppp $b
+	 * @param array $c
+	 * @param $d
+	 */
+	static private function g(ClassA $a, \Lll\llll\ppp $b = 10, $c = array(), $d);
+}

@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * Test
+ */
+namespace NS;
+
+use A\B as B;
+use A\C as C;
+
+class StdObject
+{
+
+    const CONSTANT_NAME = 0;
+    public static function methodWithCorrectCasing()
+    {
+        return true;
+    }
+    final private function methodTwo()
+    {
+
+    }
+
+    public static function methodThree()
+    {
+
+    }
+
+    public static function methodFour()
+    {
+
+    }
+
+    public function methodName()
+    {
+        new B();
+        new C();
+        if ($a) {
+            echo 'a';
+        }
+        $a = function ($a) {
+            return false;
+        };
+        $a = function (
+            $b,
+            $c
+        ) use (
+            $v,
+            $e
+        ) {
+            return false;
+        };
+    }
+
+}
+
+class WithCorrectCasing
+{
+
+}

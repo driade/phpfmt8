@@ -1,0 +1,35 @@
+<?php
+//passes:OrganizeClass
+
+interface Foo {
+	function a();
+
+	function b();
+
+	function c();
+
+	public function d();
+}
+
+trait FooTrait {
+	// some comment somewhere2
+
+	// some comment somewhere
+
+	/**
+	 * comment for c
+	 */
+	public function c();
+
+	// some comment somewhere3
+
+	/**
+	 * comment for b
+	 */
+	protected function b();
+
+	/**
+	 * comment for a
+	 */
+	private function a();
+}

@@ -1,0 +1,22 @@
+<?php
+//passes:OrderMethodAndVisibility
+
+class A {
+	/* $a */
+
+	/**
+	 * @param $a
+	 * @param $b
+	 */
+	public function b($a, $b) {
+
+	}
+
+	/**
+	 * @param $b
+	 * @param $c
+	 */
+	private function a($b, $c) {
+
+	}
+}

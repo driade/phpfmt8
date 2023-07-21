@@ -1,0 +1,25 @@
+<?php
+//passes:PrettyPrintDocBlocks,Default
+
+/**
+ * message
+ * more message
+ *
+ * here comes some code:
+ * 	if($a){
+ * 	}
+ *
+ * @package OfAlivePeople
+ * @subpackage OfThings
+ *
+ * @author Me
+ *
+ * @see something
+ *
+ * @param  type2    $a descriptionaccented
+ * @param  LongType $b description2
+ * @return array
+ */
+function a(type2 $a, LongType $b) {
+
+}

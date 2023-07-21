@@ -1,0 +1,12 @@
+<?php
+class A
+{
+    public function b()
+    {
+        $this->b->execute(
+            function ($a) {
+                return false;
+            }
+        );
+    }
+}

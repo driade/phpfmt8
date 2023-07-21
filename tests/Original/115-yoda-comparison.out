@@ -1,0 +1,189 @@
+<?php
+//passes: TwoCommandsInSameLine, AddMissingCurlyBraces, NormalizeLnAndLtrimLines, MergeParenCloseWithCurlyOpen, MergeCurlyCloseAndDoWhile, MergeDoubleArrowAndArray, ExtraCommaInArray, YodaComparisons, ResizeSpaces, Reindent, ReindentColonBlocks,   ReindentObjOps, OrderAndRemoveUseClauses, EliminateDuplicatedEmptyLines, AlignEquals, AlignDoubleArrow, LeftAlignComment, RTrim
+if (10 == $a) {}
+if (10 === $a) {}
+if (func() === $a) {}
+if (func() === $a) {}
+
+if (func($a) === $a) {}
+if (func($a = 1) === $a) {}
+if (func(1 == $a) === $a) {}
+if ("adsadsa" === $a) {}
+if ('adsadsa' === $a) {}
+if ("$b" === $a) {}
+if (" $b " === $a) {}
+if ("$b[0]" === $a) {}
+if ((null === $b) === $c) {}
+
+if (null === $a) {}
+if (true === $a || $b) {}
+if (FALSE === $a || $b) {}
+
+if (1 == $a->b && $c) {}
+if (0 === $a->{$b} || $c) {}
+while (0 === $a->{$b}->c || $c) {}
+if ("" === $this->bar[$idx]) {}
+if ("" === $this->{$bar}) {}
+if ("" === $this->{$bar}[$idx]) {}
+if ($this->{$bar}[$idx]() === "") {}
+if ($this->{$bar}[$idx]($a) === "") {}
+if ($this->{$bar}[$idx]($a = 1) === "") {}
+if ($this->{$bar}[$idx](1 == $a) === "") {}
+
+if ($a == $b) {}
+
+$result = null === $b ? (null === $a ? 0 : 0 === $a->b) : 0 === $b->a;
+
+if ($a == $b) {
+	$result = null === $b ? (null === $a ? 0 : 0 === $a->b) : 0 === $b->a;
+}
+
+if ($a == $b) {
+	$result = null === $b ? (null === $a ? 0 : 0 === $a->{$b}) : 0 === $b->{$a};
+} elseif ((null === $b) === $c) {
+	$result = false === $d;
+}
+
+if ($a == $b) {
+	$result = null === $b ? (null === $a ? 0 : 0 === $a->b->c) : 0 === $b->a->c;
+} elseif ((null === $b) === $c) {
+	$result = false === $d;
+}
+
+if ($a == $b) {
+	$result = null === $b ? (null === $a ? 0 : 0 === $a->{$b}->c) : 0 === $b->{$a}->c;
+} elseif ((null === $b) === $c) {
+	$result = false === $d;
+}
+
+if (null === $a[1]) {}
+if ($this->method() === $foo) {}
+if ("" === $this->bar[$idx]) {}
+if ("" === $this->bar[$idx]->a) {}
+if ("" === $this->foobar->{$idx}) {}
+if ("" === $this->foobar->{$idx}->a) {}
+if (null === $a[0 === $b ? $c : $d]) {}
+if (null === $this->{$a ? 'a' : 'b' === null}) {}
+
+if (self::CONST_NAME === self::$foo) {}
+if (self::$foo() === self::CONST_NAME) {}
+if (self::foo() === self::CONST_NAME) {}
+if (self::foo() === self::$varname) {}
+
+$v = 1 * $value * 2 === $a;
+$v = 1 * self::$value * 2 === $a;
+$v = 1 * $this->value * 2 === $a;
+$v = 1 * $this->bar[$idx] * 2 === $a;
+$v = 1 * $a->{$b}->c * 2 === $a;
+$v = 1 * $this->{$bar}[$idx] * 2 === $a;
+$v = 1 * $this->{$bar}[$idx](1 == $aaa) * 2 === $a;
+
+if ((1 * $value * 2) === $a) {}
+if (1 * $value * 2 === $a) {}
+if (1 * $this->{$bar}[$idx](1 == $aaa) * 2 === $a) {}
+if ($this->{$bar}[$idx](1 == $aaa) * 2 === $a) {}
+if (2 * $this->{$bar}[$idx](1 == $aaa) === $a) {}
+if (CONST_NAME * $this->{$bar}[$idx](1 == $aaa) === $a) {}
+if (\ClassName\CONST_NAME * $this->{$bar}[$idx](1 == $aaa) === $a) {}
+if (StaticClass::CONST_NAME * $this->{$bar}[$idx](1 == $aaa) === $a) {}
+if (self::CONST_NAME * $this->{$bar}[$idx](1 == $aaa) === $a) {}
+if (($a & self::BINOP) === $a) {}
+if ($a === $b & self::BINOP) {}
+if (self::BINOP === $a & $b) {}
+if (0b10 === $a & self::BINOP) {}
+
+if (10 != $a) {}
+if (10 !== $a) {}
+if (func() !== $a) {}
+if (func() !== $a) {}
+
+if (func($a) !== $a) {}
+if (func($a = 1) !== $a) {}
+if (func(1 != $a) !== $a) {}
+if ("adsadsa" !== $a) {}
+if ('adsadsa' !== $a) {}
+if ("$b" !== $a) {}
+if (" $b " !== $a) {}
+if ("$b[0]" !== $a) {}
+if ((null !== $b) !== $c) {}
+
+if (null !== $a) {}
+if (true !== $a || $b) {}
+if (FALSE !== $a || $b) {}
+
+if (1 != $a->b && $c) {}
+if (0 !== $a->{$b} || $c) {}
+while (0 !== $a->{$b}->c || $c) {}
+if ("" !== $this->bar[$idx]) {}
+if ("" !== $this->{$bar}) {}
+if ("" !== $this->{$bar}[$idx]) {}
+if ($this->{$bar}[$idx]() !== "") {}
+if ($this->{$bar}[$idx]($a) !== "") {}
+if ($this->{$bar}[$idx]($a = 1) !== "") {}
+if ($this->{$bar}[$idx](1 != $a) !== "") {}
+
+if ($a != $b) {}
+
+$result = null !== $b ? (null !== $a ? 0 : 0 !== $a->b) : 0 !== $b->a;
+
+if ($a != $b) {
+	$result = null !== $b ? (null !== $a ? 0 : 0 !== $a->b) : 0 !== $b->a;
+}
+
+if ($a != $b) {
+	$result = null !== $b ? (null !== $a ? 0 : 0 !== $a->{$b}) : 0 !== $b->{$a};
+} elseif ((null !== $b) !== $c) {
+	$result = false !== $d;
+}
+
+if ($a != $b) {
+	$result = null !== $b ? (null !== $a ? 0 : 0 !== $a->b->c) : 0 !== $b->a->c;
+} elseif ((null !== $b) !== $c) {
+	$result = false !== $d;
+}
+
+if ($a != $b) {
+	$result = null !== $b ? (null !== $a ? 0 : 0 !== $a->{$b}->c) : 0 !== $b->{$a}->c;
+} elseif ((null !== $b) !== $c) {
+	$result = false !== $d;
+}
+
+if (null !== $a[1]) {}
+if ($this->method() !== $foo) {}
+if ("" !== $this->bar[$idx]) {}
+if ("" !== $this->bar[$idx]->a) {}
+if ("" !== $this->foobar->{$idx}) {}
+if ("" !== $this->foobar->{$idx}->a) {}
+if (null !== $a[0 !== $b ? $c : $d]) {}
+if (null !== $this->{$a ? 'a' : 'b' !== null}) {}
+
+if (self::CONST_NAME !== self::$foo) {}
+if (self::$foo() !== self::CONST_NAME) {}
+if (self::foo() !== self::CONST_NAME) {}
+if (self::foo() !== self::$varname) {}
+
+return 1 * $value * 2 !== $a;
+return 1 * self::$value * 2 !== $a;
+return 1 * $this->value * 2 !== $a;
+return 1 * $this->bar[$idx] * 2 !== $a;
+return 1 * $a->{$b}->c * 2 !== $a;
+return 1 * $this->{$bar}[$idx] * 2 !== $a;
+return 1 * $this->{$bar}[$idx](1 != $aaa) * 2 !== $a;
+
+if ((1 * $value * 2) !== $a) {}
+if (1 * $value * 2 !== $a) {}
+if (1 * $this->{$bar}[$idx](1 != $aaa) * 2 !== $a) {}
+if ($this->{$bar}[$idx](1 != $aaa) * 2 !== $a) {}
+if (2 * $this->{$bar}[$idx](1 != $aaa) !== $a) {}
+if (CONST_NAME * $this->{$bar}[$idx](1 != $aaa) !== $a) {}
+if (\ClassName\CONST_NAME * $this->{$bar}[$idx](1 != $aaa) !== $a) {}
+if (StaticClass::CONST_NAME * $this->{$bar}[$idx](1 != $aaa) !== $a) {}
+if (self::CONST_NAME * $this->{$bar}[$idx](1 != $aaa) !== $a) {}
+if (($a & self::BINOP) !== $a) {}
+if ($a !== $b & self::BINOP) {}
+if (self::BINOP !== $a & $b) {}
+if (0b10 !== $a & self::BINOP) {}
+
+if (10 == ++$a) {}
+
+//$a **= $b === 4 ? 2 : 3;

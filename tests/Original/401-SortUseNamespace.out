@@ -1,0 +1,21 @@
+<?php
+//passes:SortUseNameSpace
+namespace Laravel\Spark\Repositories;
+
+use DB;
+use Carbon\Carbon;
+use Laravel\Spark\Spark;
+use Illuminate\Http\Request;
+use Laravel\Spark\InteractsWithSparkHooks;
+use Laravel\Spark\Contracts\Repositories\UserRepository as Contract;
+
+class Foo {
+	public function bar() {
+		new Carbon;
+		new DB;
+		new Request;
+		new Contract;
+		new InteractsWithSparkHooks;
+		new Spark;
+	}
+}

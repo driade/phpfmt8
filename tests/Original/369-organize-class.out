@@ -1,0 +1,17 @@
+<?php
+//passes:OrganizeClass
+
+class A {
+	/* comment 2 */
+	/* comment 1 */
+
+	// comment 4
+
+	/* comment 3 */
+	/**
+	 * b func
+	 */
+	public function b() {
+
+	}
+}

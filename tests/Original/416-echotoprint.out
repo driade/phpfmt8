@@ -1,0 +1,7 @@
+<?php
+//passes:EchoToPrint
+echo 1, "2";
+if (true) {
+	print 3;
+}
+print 4;

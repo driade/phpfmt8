@@ -1,0 +1,40 @@
+<?php
+//passes:OrderAndRemoveUseClauses,AddMissingCurlyBraces,SmartLnAfterCurlyOpen,NormalizeLnAndLtrimLines,MergeParenCloseWithCurlyOpen,MergeCurlyCloseAndDoWhile,MergeDoubleArrowAndArray,ExtraCommaInArray,ResizeSpaces,Reindent,ReindentColonBlocks,ReindentObjOps,EliminateDuplicatedEmptyLines,AlignEquals,AlignDoubleArrow,LeftAlignComment,RTrim,SettersAndGettersPass|snake,ConstructorPass|snake,NormalizeLnAndLtrimLines,Reindent,RTrim
+
+class A {
+	private $a;
+
+	private function set_a($a) {
+		$this->a = $a;
+	}
+
+	private function get_a() {
+		return $this->a;
+	}
+
+	public $b;
+
+	public function set_b($b) {
+		$this->b = $b;
+	}
+
+	public function get_b() {
+		return $this->b;
+	}
+
+	protected $c;
+
+	protected function set_c($c) {
+		$this->c = $c;
+	}
+
+	protected function get_c() {
+		return $this->c;
+	}
+
+	function __construct($a, $b, $c) {
+		$this->set_a($a);
+		$this->set_b($b);
+		$this->set_c($c);
+	}
+}

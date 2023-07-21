@@ -1,0 +1,57 @@
+<?php
+//passes: GeneratePHPDoc
+
+class Test {
+	/**
+	 * @var mixed
+	 */
+	private $a;
+	/**
+	 * @var int
+	 */
+	private $b = 1;
+	/**
+	 * @var string
+	 */
+	private $c = "c";
+	/**
+	 * @var array
+	 */
+	private $d = [
+		1,
+		2,
+		3,
+	];
+	/**
+	 * @var float
+	 */
+	private $f = 1.25;
+
+	/**
+	 * @var int
+	 */
+	var $e = 10;
+
+	/**
+	 * @param array $a
+	 * @param $b
+	 */
+	public function __construct(array $a, $b) {
+		$this->a = $a;
+		$this->b = $b;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getA() {
+		return $this->a;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getB() {
+		return $this->b;
+	}
+}

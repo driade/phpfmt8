@@ -1,0 +1,10 @@
+<?php
+//passes:TwoCommandsInSameLine,OrderAndRemoveUseClauses,AddMissingCurlyBraces,SmartLnAfterCurlyOpen,NormalizeLnAndLtrimLines,MergeParenCloseWithCurlyOpen,MergeCurlyCloseAndDoWhile,MergeDoubleArrowAndArray,ExtraCommaInArray,ResizeSpaces,Reindent,ReindentColonBlocks,ReindentObjOps,EliminateDuplicatedEmptyLines,AlignEquals,AlignDoubleArrow,LeftAlignComment,RTrim,OrderMethod,NormalizeLnAndLtrimLines,Reindent
+
+abstract class A {
+	abstract public function b();
+
+	public function setA($a) {
+		$this->a = $a;
+	}
+}

@@ -1,0 +1,8 @@
+<?php
+//passes:Default,YodaComparisons
+function hereItComes() {
+	if (null !== $obj) {
+	}
+
+	$obj->announce("{$obj->goodbye()}");
+}

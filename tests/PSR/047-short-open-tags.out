@@ -1,0 +1,5 @@
+<?php
+
+//skipShortTag
+;?>
+<?php /*test*/;

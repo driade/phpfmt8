@@ -1,0 +1,22 @@
+<?php
+//passes:OrderMethod
+
+class A {
+	/* $a */
+
+	/**
+	 * @param $a
+	 * @param $b
+	 */
+	public function a($a, $b) {
+
+	}
+
+	/**
+	 * @param $b
+	 * @param $c
+	 */
+	public function b($b, $c) {
+
+	}
+}

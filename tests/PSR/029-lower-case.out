@@ -1,0 +1,10 @@
+<?php
+final class SomeClass
+{
+    const FALSE;
+    const NULL;
+    const TRUE;
+}
+SomeClass::FALSE;
+SomeClass::NULL;
+SomeClass::TRUE;
