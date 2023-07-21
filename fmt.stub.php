@@ -11797,7 +11797,7 @@ EOT;
 
 	final class RemoveUseLeadingSlash extends AdditionalPass {
 		public function candidate($source, $foundTokens) {
-			if (isset($foundTokens[T_NAMESPACE]) || isset($foundTokens[T_TRAIT]) || isset($foundTokens[T_CLASS]) || isset($foundTokens[T_FUNCTION]) || isset($foundTokens[T_NS_SEPARATOR])) {
+			if (isset($foundTokens[T_NAMESPACE]) || isset($foundTokens[T_NAME_FULLY_QUALIFIED]) || isset($foundTokens[T_TRAIT]) || isset($foundTokens[T_CLASS]) || isset($foundTokens[T_FUNCTION]) || isset($foundTokens[T_NS_SEPARATOR])) {
 				return true;
 			}
 
@@ -11807,20 +11807,38 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
-			$lastTouchedToken = null;
+			
+            $stack = [];
+
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
-				case T_NAMESPACE:
-				case T_TRAIT:
-				case T_CLASS:
-				case T_FUNCTION:
-					$lastTouchedToken = $id;
-				case T_NS_SEPARATOR:
-					if (T_NAMESPACE == $lastTouchedToken && $this->leftTokenIs([T_USE])) {
+                    case ST_CURLY_OPEN:
+                        $stack[] = $id;
+                        $this->appendCode($text);
+                        break;
+                    case ST_CURLY_CLOSE:
+                        array_pop($stack);
+                        $this->appendCode($text);
+                        break;
+                case T_NAME_FULLY_QUALIFIED:
+					if ((count($stack) === 0 || $lastTouchedToken === T_NAMESPACE) && $this->leftTokenIs([T_USE])) {
+                        if ($text[0] === '\\') {
+                            $text = ltrim($text, '\\');
+                        }
+                        $this->appendCode($text);
 						break;
 					}
+                case T_NAMESPACE:
+                case T_TRAIT:
+                case T_CLASS:
+                case T_FUNCTION:
+                    $lastTouchedToken = $id;
+                case T_NS_SEPARATOR:
+                    if ((T_NAMESPACE == $lastTouchedToken) && $this->leftTokenIs([T_USE])) {
+                        break;
+                    }
 				default:
 					$this->appendCode($text);
 				}
