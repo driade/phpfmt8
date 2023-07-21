@@ -8016,8 +8016,18 @@ EOT;
             $isAttribute = false;
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
-				$this->ptr = $index;
+				$this->ptr = $index;;
 				switch ($id) {
+
+                case T_STRING;
+                case T_LNUMBER:
+                case T_DNUMBER:
+                case T_CONSTANT_ENCAPSED_STRING:
+                    $this->appendCode($text);
+                    if ($this->hasLnAfter() && $this->rightTokenIs(ST_CURLY_CLOSE)) {
+                        $this->appendCode(ST_SEMI_COLON);
+                    }
+                    break;
 
                 case T_ATTRIBUTE:
                     $isAttribute = true;
