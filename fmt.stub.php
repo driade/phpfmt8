@@ -6642,7 +6642,7 @@ namespace {
 						$hasFoundClassOrInterface &&
 						!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_COMMA, ST_PARENTHESES_OPEN])
 					) {
-                        if ($found[count($found)-2] !== T_NAMESPACE) {
+                        if (count($found) - 2 >= 0 && $found[count($found)-2] !== T_NAMESPACE) {
 						  $this->appendCode('public' . $this->getSpace());
                         }
 					}
