@@ -23,17 +23,13 @@ strstr();
 $smth->close($a);
 new fputs();
 new NS\doubleval();
-NS\die();
+NS\di();
 namespace\implode();
-namespace::pos();
 ns::rewind();
 
-die\ns();
-join\namespace ();
-pos::namespace ();
+pos::namespace();
 rewind::ns();
 
-\exit();
- & is_writable();
+\di();
 
 somefunc(is_writable());
