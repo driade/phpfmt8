@@ -2168,7 +2168,7 @@ namespace {
 			}
 			$str = '';
 			foreach ($tkns as $token) {
-				$str .= $token[1];
+				if ($token !== null) $str .= $token[1];
 			}
 			return $str;
 		}
@@ -4078,7 +4078,7 @@ namespace {
 						continue;
 					}
 
-					$indent = substr(strrchr($ptText, 10), 1);
+					$indent = substr(strrchr($ptText, chr(10)), 1);
 					$indentLevel = strlen($indent);
 					$innerIndentLevel = $indentLevel + 1;
 					$innerIndent = str_repeat($this->indentChar, $innerIndentLevel);
@@ -7724,7 +7724,7 @@ EOT;
 				case T_FUNCTION:
 					$currentIndentation = 0;
 					$poppedID = end($foundStack);
-					if (true === $poppedID['implicit']) {
+					if ($poppedID !== false && true === $poppedID['implicit']) {
 						list($prevId, $prevText) = $this->inspectToken(-1);
 						$currentIndentation = substr_count($prevText, $this->indentChar, strrpos($prevText, "\n"));
 					}
@@ -9791,7 +9791,7 @@ EOT;
 				switch ($id) {
 				case T_WHITESPACE:
 					if ($this->hasLn($text) && $this->leftTokenIs(T_DOC_COMMENT)) {
-						$text = substr(strrchr($text, 10), 0);
+						$text = substr(strrchr($text, chr(10)), 0);
 						$this->appendCode($text);
 						break;
 					}
@@ -12748,7 +12748,7 @@ EOT;
 					$this->printUntil(ST_CURLY_OPEN);
 					list(, $text) = $this->printAndStopAt(T_WHITESPACE);
 					if ($this->hasLn($text)) {
-						$text = substr(strrchr($text, 10), 0);
+						$text = substr(strrchr($text, chr(10)), 0);
 					}
 					$this->appendCode($text);
 					break;
@@ -12802,7 +12802,7 @@ EOT;
 					$this->appendCode($text);
 					list(, $text) = $this->printAndStopAt(T_WHITESPACE);
 					if ($this->hasLn($text)) {
-						$text = substr(strrchr($text, 10), 0);
+						$text = substr(strrchr($text, chr(10)), 0);
 					}
 					$this->appendCode($text);
 					break;
@@ -12867,7 +12867,7 @@ EOT;
 					$this->printUntil(ST_CURLY_OPEN);
 					list(, $text) = $this->printAndStopAt(T_WHITESPACE);
 					if ($this->hasLn($text)) {
-						$text = substr(strrchr($text, 10), 0);
+						$text = substr(strrchr($text, chr(10)), 0);
 					}
 					$this->appendCode($text);
 
