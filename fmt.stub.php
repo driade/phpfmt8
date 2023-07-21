@@ -6713,20 +6713,20 @@ namespace {
 	}
 
 	final class PsrDecorator {
-		public static function PSR1(CodeFormatter $fmt) {
-			$fmt->enablePass('PSR1OpenTags');
-			$fmt->enablePass('PSR1BOMMark');
-			$fmt->enablePass('PSR1ClassConstants');
-			$fmt->disablePass('ReindentComments');
-		}
+        public static function PSR1(CodeFormatter $fmt) {
+            $fmt->enablePass('PSR1OpenTags');
+            $fmt->enablePass('PSR1BOMMark');
+            $fmt->enablePass('PSR1ClassConstants');
+            $fmt->disablePass('ReindentComments');
+        }
 
-		public static function PSR1Naming(CodeFormatter $fmt) {
-			$fmt->enablePass('PSR1ClassNames');
-			$fmt->enablePass('PSR1MethodNames');
-			$fmt->disablePass('ReindentComments');
-		}
+        public static function PSR1Naming(CodeFormatter $fmt) {
+            $fmt->enablePass('PSR1ClassNames');
+            $fmt->enablePass('PSR1MethodNames');
+            $fmt->disablePass('ReindentComments');
+        }
 
-		public static function PSR2(CodeFormatter $fmt) {
+        public static function PSR2(CodeFormatter $fmt) {
             $fmt->enablePass('PSR2KeywordsLowerCase');
             $fmt->enablePass('PSR2IndentWithSpace');
             $fmt->enablePass('PSR2LnAfterNamespace');
@@ -6739,7 +6739,15 @@ namespace {
             $fmt->disablePass('StripNewlineWithinClassBody');
         }
 
-        public static function WP(CodeFormatter $fmt) {
+        public static function decorate(CodeFormatter $fmt) {
+            self::PSR1($fmt);
+            self::PSR1Naming($fmt);
+            self::PSR2($fmt);
+        }
+    }
+
+    final class WP {
+        public static function decorate(CodeFormatter $fmt) {
             $fmt->enablePass('PSR2KeywordsLowerCase');
             $fmt->enablePass('PSR2IndentWithSpace');
             $fmt->enablePass('PSR2LnAfterNamespace');
@@ -6753,14 +6761,7 @@ namespace {
             $fmt->enablePass('WPResizeSpaces');
             $fmt->disablePass('ResizeSpaces');
         }
-
-		public static function decorate(CodeFormatter $fmt) {
-			self::PSR1($fmt);
-			self::PSR1Naming($fmt);
-			self::PSR2($fmt);
-            self::WP($fmt);
-		}
-	}
+    }
 
 	final class AddMissingParentheses extends AdditionalPass {
 		public function candidate($source, $foundTokens) {
@@ -14037,7 +14038,7 @@ EOT;
         }
 
         if (isset($opts['wp'])) {
-            PsrDecorator::WP($fmt);
+            WP::decorate($fmt);
             $argv = extractFromArgv($argv, 'wp');
         }
 
