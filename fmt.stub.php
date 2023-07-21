@@ -11809,28 +11809,20 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			
-            $stack = [];
+            $lastTouchedToken = null;
 
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
 				switch ($id) {
-                    case ST_CURLY_OPEN:
-                        $stack[] = $id;
-                        $this->appendCode($text);
-                        break;
-                    case ST_CURLY_CLOSE:
-                        array_pop($stack);
-                        $this->appendCode($text);
-                        break;
                 case T_NAME_FULLY_QUALIFIED:
-					if ((count($stack) === 0 || $lastTouchedToken === T_NAMESPACE) && $this->leftTokenIs([T_USE])) {
+					if ($lastTouchedToken === T_NAMESPACE && $this->leftTokenIs([T_USE])) {
                         if ($text[0] === '\\') {
                             $text = ltrim($text, '\\');
                         }
-                        $this->appendCode($text);
-						break;
 					}
+                    $this->appendCode($text);
+                    break;
                 case T_NAMESPACE:
                 case T_TRAIT:
                 case T_CLASS:
