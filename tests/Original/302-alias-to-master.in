@@ -23,8 +23,6 @@ strchr();
 $smth->close($a);
 new fputs();
 new NS\doubleval();
-NS\di();
-namespace\join();
 ns::rewind();
 
 pos::namespace();
