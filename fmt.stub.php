@@ -4574,7 +4574,11 @@ namespace {
 
                 case T_STRING:
                     $this->appendCode($text);
-                    if ($this->rightTokenIs(ST_CURLY_OPEN)) { // }: string {
+                    /**
+                     *  }: string {
+                     *  }: int|string {
+                    * */
+                    if (! $this->leftTokenIs([T_OBJECT_OPERATOR]) && $this->rightTokenIs(ST_CURLY_OPEN)) {
                         $this->appendCode(" ");
                     }
                     break;

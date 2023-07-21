@@ -10,6 +10,12 @@ function foobar(
     return $foobar;
 }
 
+function fee(
+    string $longVariableName
+): string | int {
+    return 1;
+}
+
 function faa(
     string $longVariableName,
     string $anotherLongVariableName,
