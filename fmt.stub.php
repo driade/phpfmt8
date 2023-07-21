@@ -8024,7 +8024,11 @@ EOT;
                 case T_DNUMBER:
                 case T_CONSTANT_ENCAPSED_STRING:
                     $this->appendCode($text);
-                    if ($this->hasLnAfter() && $this->rightTokenIs(ST_CURLY_CLOSE)) {
+                    $isMatch = false;
+                    if (count($realCurlyStack) && $realCurlyStack[count($realCurlyStack) -1] === T_MATCH) {
+                        $isMatch = true;
+                    }
+                    if ($this->hasLnAfter() && $this->rightTokenIs(ST_CURLY_CLOSE) && ! $isMatch) {
                         $this->appendCode(ST_SEMI_COLON);
                     }
                     break;
