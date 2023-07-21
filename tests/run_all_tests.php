@@ -16,7 +16,7 @@ declare (strict_types = 1);
 if (!ini_get('short_open_tag')) {
     unset($argv[0]);
     $ret = 0;
-    passthru($_SERVER['_'] . ' -dshort_open_tag=1 run_all_tests.php ' . implode(' ', $argv) . ' 2>&1', $ret);
+    passthru($_SERVER['_'] . ' -dshort_open_tag=1 ' . __DIR__ . '/run_all_tests.php ' . implode(' ', $argv) . ' 2>&1', $ret);
     exit($ret);
 }
 
