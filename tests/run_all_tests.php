@@ -1,5 +1,5 @@
 <?php
-declare (strict_types = 1);
+
 # Copyright (c) 2015, phpfmt and its authors
 # All rights reserved.
 #
@@ -320,7 +320,7 @@ if (sizeof($skippedTests) > 0) {
 }
 exit(0);
 
-function getToken($token): array{
+function getToken($token){
     if (is_string($token)) {
         return [$token, $token];
     } else {
