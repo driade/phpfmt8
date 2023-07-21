@@ -4571,6 +4571,13 @@ namespace {
                 $this->cache = [];
 
                 switch ($id) {
+
+                case T_STRING:
+                    $this->appendCode($text);
+                    if ($this->rightTokenIs(ST_CURLY_OPEN)) { // }: string {
+                        $this->appendCode(" ");
+                    }
+                    break;
                 case '&':
                 case T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG:
                     if ($this->rightTokenIs(T_VARIABLE)) {
