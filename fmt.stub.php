@@ -7996,6 +7996,7 @@ EOT;
 			$this->code = '';
 			$parenStack = [];
 			$curlyStack = [];
+            $realCurlyStack = [];
 			$lastParen = null;
 			$lastCurly = null;
 			$ternary = 0;
@@ -8038,10 +8039,33 @@ EOT;
 				case ST_PARENTHESES_CLOSE:
 					$lastParen = array_pop($parenStack);
 					$this->appendCode($text);
+                    if (count($this->tkns) === $index + 1) {
+                        $this->appendCode(ST_SEMI_COLON);
+                        break;
+                    }
+                    if ($this->rightTokenIs(ST_CURLY_CLOSE)) {
+                        if (count($realCurlyStack) > 0) {
+                            if (! in_array($realCurlyStack[count($realCurlyStack)-1], [T_MATCH])) {
+                                $this->appendCode(ST_SEMI_COLON);
+                                break;
+                            }
+                        }
+                    }
+                    if ($this->rightTokenIs([T_COMMENT, T_DOC_COMMENT])) {
+                        $this->appendCode(ST_SEMI_COLON);
+                        break;
+                    }
+                    if ($this->rightTokenIs([ST_PARENTHESES_OPEN])) {
+                        if (isset($this->tkns[$index + 1][1]) && strpos($this->tkns[$index + 1][1], PHP_EOL) !== false) {
+                            $this->appendCode(ST_SEMI_COLON);
+                            break;
+                        }
+                    }
 					break;
 
                 case T_MATCH:
 				case T_FUNCTION:
+                    $realCurlyStack[] = $id;
 					$foundId = $id;
 					if ($this->rightUsefulTokenIs(ST_PARENTHESES_OPEN)) {
 						$foundId = self::ST_CLOSURE;
@@ -8055,6 +8079,7 @@ EOT;
 				case T_CURLY_OPEN:
 				case T_DOLLAR_OPEN_CURLY_BRACES:
 				case ST_CURLY_OPEN:
+                    $realCurlyStack[] = $id;
 					$curlyStack[] = $id;
                     if ($this->leftUsefulTokenIs([T_CLASS])) {
                         $isAnonymousClassStack[] = true;
@@ -8065,17 +8090,26 @@ EOT;
 					break;
 
 				case ST_CURLY_CLOSE:
+                    $last_real_curly = array_pop($realCurlyStack);
 					$lastCurly = array_pop($curlyStack);
 					$this->appendCode($text);
                     // is "}" the last token in the file? (no spaces, return carriages)
                     if ($index === count($this->tkns) -1) {
                         if (T_MATCH == $lastCurly || self::ST_CLOSURE == $lastCurly) {
                             $this->appendCode(ST_SEMI_COLON);
+                            break;
                         }
                     }
                     $isAnonymousClass = array_pop($isAnonymousClassStack);
                     if ($isAnonymousClass) {
                         $this->appendCode(ST_SEMI_COLON);
+                        break;
+                    }
+                    if ($this->rightTokenIs(ST_PARENTHESES_OPEN)) {
+                        if (in_array($last_real_curly, [T_FUNCTION])) {
+                            $this->appendCode(ST_SEMI_COLON);
+                        }
+                        break;
                     }
 					break;
 				case ST_QUESTION:
@@ -8088,6 +8122,17 @@ EOT;
 					}
 					$this->appendCode($text);
 					break;
+
+                case ST_BRACKET_CLOSE:
+                    if (!isset($this->tkns[$index + 1])) {
+                        $this->appendCode($text . ST_SEMI_COLON);
+                        break;
+                    }
+                    if ($this->rightTokenIs(ST_CURLY_CLOSE)) {
+                        $this->appendCode($text . ST_SEMI_COLON);
+                        break;
+                    }
+                    // no break
 
 				case T_WHITESPACE:
 					if (!$this->hasLn($text)) {
