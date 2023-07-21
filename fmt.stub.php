@@ -6599,7 +6599,11 @@ namespace {
 						$static = $text;
 						$skipWhitespaces = true;
 						break;
-					} elseif (!$this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && !$this->leftTokenIs([T_NEW])) {
+					} elseif ($this->leftTokenIs([T_FINAL])) {
+                        $static = $text;
+                        $visibility = 'public';
+                        break;
+                    } elseif (!$this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && !$this->leftTokenIs([T_NEW])) {
 						$static = $text;
 						$skipWhitespaces = true;
 						break;
@@ -6638,12 +6642,23 @@ namespace {
 						!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_COMMA, ST_PARENTHESES_OPEN])
 					) {
                         if (count($found) - 2 >= 0 && $found[count($found)-2] !== T_NAMESPACE) {
+                          $visibility = 'public';
 						  $this->appendCode('public' . $this->getSpace());
                         }
 					}
+                    if ($visibility === null && $static !== null) {
+                        $visibility = 'public';
+                        $this->appendCode('public' . $this->getSpace());
+                    }
 					if ($hasFoundClassOrInterface && null !== $static) {
 						$this->appendCode($static . $this->getSpace());
 					}
+                    if ($visibility === null && $static === null) {
+                        if (count($found) === 1 || (count($found) > 1 && $found[count($found) - 2] !== T_NAMESPACE)) {
+                            $visibility = 'public';
+                            $this->appendCode('public' . $this->getSpace());
+                        }
+                    }
 					$this->appendCode($text);
 					$visibility = null;
 					$static = null;

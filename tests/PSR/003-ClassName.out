@@ -31,7 +31,7 @@ class StdObject
 
     }
 
-    public function methodName()
+    function methodName()
     {
         new B();
         new C();
