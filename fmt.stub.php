@@ -9231,7 +9231,7 @@ EOT;
 						if (0 == $count) {
 							break;
 						}
-						if (T_STRING == $id || T_NS_SEPARATOR == $id) {
+						if (T_STRING == $id || T_NS_SEPARATOR == $id || T_NAME_FULLY_QUALIFIED == $id) {
 							$tmp['type'] .= $text;
 							continue;
 						}
