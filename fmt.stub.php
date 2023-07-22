@@ -1391,6 +1391,61 @@ namespace {
 
 	define('VERSION', '19.6.4');
 
+    if (! function_exists("iso8859_1_to_utf8")) {
+        function iso8859_1_to_utf8($s) {
+            if (PHP_VERSION_ID < 80200) {
+                return utf8_encode($s);
+            }
+
+            $s .= $s;
+            $len = \strlen($s);
+
+            for ($i = $len >> 1, $j = 0; $i < $len; ++$i, ++$j) {
+                switch (true) {
+                    case $s[$i] < "\x80": $s[$j] = $s[$i]; break;
+                    case $s[$i] < "\xC0": $s[$j] = "\xC2"; $s[++$j] = $s[$i]; break;
+                    default: $s[$j] = "\xC3"; $s[++$j] = \chr(\ord($s[$i]) - 64); break;
+                }
+            }
+
+            return substr($s, 0, $j);
+        }
+    }
+
+    if (! function_exists("utf8_to_iso8859_1")) {
+        function utf8_to_iso8859_1(string $s): string {
+            if (PHP_VERSION_ID < 80200) {
+                return utf8_decode($s);
+            }
+            $s = (string) $s;
+            $len = \strlen($s);
+
+            for ($i = 0, $j = 0; $i < $len; ++$i, ++$j) {
+                switch ($s[$i] & "\xF0") {
+                    case "\xC0":
+                    case "\xD0":
+                        $c = (\ord($s[$i] & "\x1F") << 6) | \ord($s[++$i] & "\x3F");
+                        $s[$j] = $c < 256 ? \chr($c) : '?';
+                        break;
+
+                    case "\xF0":
+                        ++$i;
+                        // no break
+
+                    case "\xE0":
+                        $s[$j] = '?';
+                        $i += 2;
+                        break;
+
+                    default:
+                        $s[$j] = $s[$i];
+                }
+            }
+
+            return substr($s, 0, $j);
+        }
+    }
+
 	function extractFromArgv($argv, $item) {
 		return array_values(
 			array_filter($argv,
@@ -10623,14 +10678,14 @@ EOT;
 		}
 
 		private function isUTF8($usStr) {
-			return (utf8_encode(utf8_decode($usStr)) == $usStr);
+			return (iso8859_1_to_utf8(utf8_to_iso8859_1($usStr)) == $usStr);
 		}
 
 		private function prettify($docBlock) {
 			$isUTF8 = $this->isUTF8($docBlock);
 
 			if ($isUTF8) {
-				$docBlock = utf8_decode($docBlock);
+				$docBlock = utf8_to_iso8859_1($docBlock);
 			}
 
 			$groups = [
@@ -10823,7 +10878,7 @@ EOT;
 			$docBlock .= ' */';
 
 			if ($isUTF8) {
-				$docBlock = utf8_encode($docBlock);
+				$docBlock = iso8859_1_to_utf8($docBlock);
 			}
 
 			return $docBlock;
