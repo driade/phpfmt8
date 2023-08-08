@@ -4985,7 +4985,7 @@ namespace {
 
                 case T_CATCH:
                 case T_FINALLY:
-                    if ($this->hasLnLeftToken()) {
+                    if ($this->hasLnLeftToken() || $this->leftTokenIs([T_COMMENT, T_DOC_COMMENT])) {
                         $this->appendCode(' ' . $text . ' ');
                         break;
                     }
