@@ -8231,8 +8231,14 @@ EOT;
                         break;
                     }
                     if ($this->rightTokenIs(ST_CURLY_CLOSE)) {
-                        $this->appendCode($text . ST_SEMI_COLON);
-                        break;
+                        $isMatch = false;
+                        if (count($realCurlyStack) && $realCurlyStack[count($realCurlyStack) -1] === T_MATCH) {
+                            $isMatch = true;
+                        }
+                        if (! $isMatch) {
+                            $this->appendCode($text . ST_SEMI_COLON);
+                            break;
+                        }
                     }
                     // no break
 

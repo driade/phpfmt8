@@ -53,6 +53,11 @@ match ($a) {
 	'b' => call2()
 };
 
+match ($a) {
+	'a' => call1(),
+	default => []
+};
+
 function () {
 
 };
