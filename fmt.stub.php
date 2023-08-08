@@ -4803,7 +4803,7 @@ namespace {
                     if (!$touchedUse && $this->leftMemoUsefulTokenIs([T_VARIABLE, T_STRING]) && $this->rightUsefulTokenIs([T_VARIABLE, T_STRING])) {
                         $this->appendCode($text);
                         break;
-                    } elseif ($this->leftMemoUsefulTokenIs([T_STRING, T_DO, T_FINALLY, ST_PARENTHESES_CLOSE]) && !$this->hasLnLeftToken()) {
+                    } elseif ($this->leftMemoUsefulTokenIs([T_STRING, T_DO, T_FINALLY, ST_PARENTHESES_CLOSE]) && !$this->hasLnLeftToken() && !$this->leftTokenIs([T_DOC_COMMENT, T_COMMENT])) {
                         $this->rtrimAndAppendCode(
                             ' ' .
                             $text .
@@ -4835,7 +4835,7 @@ namespace {
                     break;
 
                 case ST_PARENTHESES_OPEN:
-                    if ($this->leftMemoUsefulTokenIs([T_WHILE, T_CATCH]) && !$this->hasLnLeftToken()) {
+                    if ($this->leftMemoUsefulTokenIs([T_WHILE, T_CATCH]) && !$this->hasLnLeftToken() && !$this->leftTokenIs([T_DOC_COMMENT, T_COMMENT])) {
                         $this->rtrimAndAppendCode(' ');
                     }
                     $this->appendCode($text);
