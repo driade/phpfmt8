@@ -8153,7 +8153,7 @@ EOT;
                             }
                         }
                     }
-                    if ($this->rightTokenIs([T_COMMENT, T_DOC_COMMENT])) {
+                    if ($this->rightTokenIs([T_COMMENT, T_DOC_COMMENT]) && ! $this->chainAfterComments($index)) {
                         $this->appendCode(ST_SEMI_COLON);
                         break;
                     }
@@ -8464,6 +8464,16 @@ EOT;
 
 			return $this->code;
 		}
+
+        private function chainAfterComments($index) {
+            for ($i = $index + 1 ; $max = count($this->tkns); $i++) {
+                if (in_array ($this->tkns[$i][0], [T_DOC_COMMENT, T_COMMENT, T_WHITESPACE])) {
+                    continue;
+                }
+                return $this->tkns[$i][0] === T_OBJECT_OPERATOR;
+            }
+            return false;
+        }
 
 		public function getDescription() {
 			return 'Add semicolons in statements ends.';

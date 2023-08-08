@@ -58,6 +58,11 @@ match($a) {
     default => []
 }
 
+collect([])
+    ->take(2)
+    /** @phpstan-ignore-next-line */
+    ->map(function () {});
+
 function () {
 
 }
