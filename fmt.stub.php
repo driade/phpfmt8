@@ -1413,7 +1413,7 @@ namespace {
     }
 
     if (! function_exists("utf8_to_iso8859_1")) {
-        function utf8_to_iso8859_1(string $s): string {
+        function utf8_to_iso8859_1($s) {
             if (PHP_VERSION_ID < 80200) {
                 return utf8_decode($s);
             }
@@ -4599,9 +4599,24 @@ namespace {
             $tkns = token_get_all($source);
 
             $this->tkns = [];
-            foreach ($tkns as $token) {
+            foreach ($tkns as $i => $token) {
                 if (T_WHITESPACE === $token[0] && !$this->hasLn($token[1])) {
-                    continue;
+                    $c = count($this->tkns);
+                    if (PHP_VERSION_ID >= 80000 && $c) {
+                        if (
+                            isset($this->tkns[$c - 1][1]) && $this->tkns[$c - 1][1] === '&'
+                            && 
+                            isset($this->tkns[$c - 2][1]) && $this->tkns[$c - 2][1] !== '('
+                        ) {
+                            $this->tkns[] = $token;
+                            continue;
+                        }
+                        if (isset($tkns[$i + 1][0]) && $tkns[$i + 1][0] === T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG) {
+                                $this->tkns[] = $token;
+                            continue;
+                        }
+                    }
+                   continue;
                 }
                 $this->tkns[] = $token;
             }
@@ -4640,7 +4655,7 @@ namespace {
                     break;
                 case T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG:
                     if ($this->rightTokenIs(T_VARIABLE)) {
-                        if (!$this->leftTokenIs([ST_PARENTHESES_OPEN, T_AS, ST_COMMA, T_DOUBLE_ARROW])) {
+                        if (!$this->leftTokenIs([T_FUNCTION,ST_EQUAL, ST_PARENTHESES_OPEN, T_AS, ST_COMMA, T_DOUBLE_ARROW])) {
                             $this->appendCode(" ");    
                         }
                     }
@@ -4879,7 +4894,10 @@ namespace {
 
                 case T_FUNCTION:
                     $touchedFunction = true;
-                    $this->appendCode($text . $this->getSpace(!$this->rightTokenIs(ST_SEMI_COLON)));
+                    $this->appendCode($text);
+                    if ($this->rightTokenIs([ST_SEMI_COLON, T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG]) === false) {
+                        $this->appendCode(' ');
+                    }
                     break;
 
                 case T_PUBLIC:
@@ -5055,6 +5073,9 @@ namespace {
                     break;
 
                 default:
+                    if (!$this->hasLn($text) && trim($text) === '') {
+                        $text = ' ';
+                    }
                     $this->appendCode($text);
                     break;
                 }
