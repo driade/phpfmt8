@@ -4980,7 +4980,10 @@ namespace {
                 case ST_IS_GREATER:
                 case ST_IS_SMALLER:
                 case ST_EQUAL:
-                    $this->appendCode($this->getSpace(!$this->hasLnBefore()) . $text . ' ');
+                    $this->appendCode($this->getSpace(!$this->hasLnBefore()) . $text);
+                    if (! $this->rightTokenIs(T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG)) {
+                        $this->appendCode(" ");
+                    }
                     break;
 
                 case T_CATCH:
