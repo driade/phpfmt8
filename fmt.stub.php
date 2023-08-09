@@ -8154,7 +8154,9 @@ EOT;
                         }
                     }
                     if ($this->rightTokenIs([T_COMMENT, T_DOC_COMMENT]) && ! $this->chainAfterComments($index)) {
-                        $this->appendCode(ST_SEMI_COLON);
+                        if ($this->hasLnAfter(T_DOC_COMMENT) || $this->hasLnAfter(T_COMMENT)) {
+                            $this->appendCode(ST_SEMI_COLON);
+                        }
                         break;
                     }
                     if ($this->rightTokenIs([ST_PARENTHESES_OPEN])) {

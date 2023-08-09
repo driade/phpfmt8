@@ -63,6 +63,14 @@ collect([])
 	/** @phpstan-ignore-next-line */
 	->map(function () {});
 
+collect([])
+	->take(2) /** @phpstan-ignore-next-line */
+	->map(function () {});
+
+$a = $a() /** @phpstan-ignore-next-line */ - 1;
+$a = $a() - /** @phpstan-ignore-next-line */1;
+$a = [$a() /** @phpstan-ignore-next-line */, 1];
+
 function () {
 
 };
@@ -79,9 +87,6 @@ call();
 $a();
 
 /** a */
-
-$a(); /**  */
-$a(); //
 
 $a();
 
