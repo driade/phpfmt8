@@ -18,3 +18,21 @@ use ApiPlatform\Metadata\Get;
 class User {
 
 }
+
+#[FooAttribute]
+function foo_func(#[FooParamAttrib('Foo1')]$foo) {}
+
+#[FooAttribute('hello')]
+#[BarClassAttrib(42)]
+class Foo {
+	#[ConstAttr]
+	#[FooAttribute(null)]
+	private const FOO_CONST = 28;
+	private const BAR_CONST = 28;
+
+	#[PropAttr(Foo::BAR_CONST, 'string')]
+	private string $foo;
+
+	#[SomeoneElse\FooMethodAttrib]
+	public function getFoo(#[FooClassAttrib(28)]$a): string {}
+}
