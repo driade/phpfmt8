@@ -3,7 +3,7 @@
 class User {
 	private ?string $id = null;
 
-	public function setId(string $id):  ?static
+	public function setId(string $id): ?static
 	{
 		$this->id = $id;
 		return $this;
