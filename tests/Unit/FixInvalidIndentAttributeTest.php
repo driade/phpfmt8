@@ -6,6 +6,9 @@ class FixInvalidIndentAttributeTest extends TestCase
 {
     public function testItWorks()
     {
+        if (PHP_VERSION_ID < 80000) {
+            $this->markTestSkipped();
+        }
         exec("php " . __DIR__ . "/../../fmt.stub.php -o=- " . __DIR__ . '/fixtures/invalidindentattribute.txt', $output);
 
         $file = file_get_contents(__DIR__ . '/fixtures/invalidindentattribute.php');
