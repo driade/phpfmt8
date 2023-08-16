@@ -3918,8 +3918,7 @@ namespace {
 					$this->appendCode($text);
 					break;
                 case T_ATTRIBUTE:
-                    $this->appendCode($text);
-                    $this->printUntil(ST_BRACKET_CLOSE);
+                    $this->manageAttribute($text);
                     break;
                 
                 case T_DEFAULT:
@@ -3963,6 +3962,43 @@ namespace {
 			}
 			return $this->code;
 		}
+
+        private function manageAttribute($text) {
+            $this->appendCode($text);
+            $stack = [1];
+            $indent = $this->indent; 
+            while(list($index, $token) = $this->each($this->tkns)) {
+                list($id, $text) = $this->getToken($token);
+
+                $this->appendCode($text);
+                $next =null;
+                if (isset($this->tkns[$index + 1])) {
+                    $next = $this->tkns[$index + 1][0];
+                }
+
+                if (in_array($next, [ST_CURLY_OPEN, ST_PARENTHESES_OPEN, ST_BRACKET_OPEN])) {
+                    $this->setIndent(+1);
+                }
+                if (in_array($next, [ST_CURLY_CLOSE, ST_PARENTHESES_CLOSE, ST_BRACKET_CLOSE])) {
+                    $this->setIndent(-1);
+                }
+
+                if ($this->hasLn($text)) {
+                    $this->appendCode(str_repeat($this->indentChar, $this->indent));
+                }
+                
+                if ($id === ST_BRACKET_OPEN) {
+                    $stack[] = 1;
+                }
+                if ($id === ST_BRACKET_CLOSE) {
+                    if (count($stack) === 1) {
+                        break;
+                    }
+                    array_pop($stack);
+                }
+            }
+            $this->indent = $indent; 
+        }
 	}
 
 	final class ReindentColonBlocks extends FormatterPass {
