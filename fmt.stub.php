@@ -4690,7 +4690,10 @@ namespace {
                         T_WHITESPACE !== $prevId &&
                         T_WHITESPACE !== $nextId
                     ) {
-                        $this->appendCode(' ' . $text . $this->getSpace(! $this->rightTokenIs(ST_COLON) && ! $this->rightTokenIs(T_STATIC)));
+                        $this->appendCode(' ' . $text);
+                        if (! $this->rightTokenIs(T_STATIC) || $id !== ST_QUESTION) {
+                            $this->appendCode($this->getSpace(! $this->rightTokenIs(ST_COLON)));
+                        }
                         break;
                     }
                     $this->appendCode($text);
