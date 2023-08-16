@@ -4654,7 +4654,7 @@ namespace {
                         T_WHITESPACE !== $prevId &&
                         T_WHITESPACE !== $nextId
                     ) {
-                        $this->appendCode(' ' . $text . $this->getSpace(!$this->rightTokenIs(ST_COLON)));
+                        $this->appendCode(' ' . $text . $this->getSpace(! $this->rightTokenIs(ST_COLON) && ! $this->rightTokenIs(T_STATIC)));
                         break;
                     }
                     $this->appendCode($text);
