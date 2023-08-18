@@ -10,6 +10,10 @@ class RunOriginalTest extends TestCase
             $this->markTestSkipped();
         }
 
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $this->markTestSkipped();
+        }
+
         exec("php " . __DIR__ . "/../run_all_tests.php -v", $output, $retvar);
 
         if ($retvar === 1) {
