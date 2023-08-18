@@ -4690,7 +4690,7 @@ namespace {
                         T_WHITESPACE !== $prevId &&
                         T_WHITESPACE !== $nextId
                     ) {
-                         if (! $this->rightTokenIs(T_STATIC) || $id !== ST_QUESTION) {
+                         if (! $this->rightTokenIs([T_STATIC, T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED]) || $id !== ST_QUESTION) {
                             $this->appendCode(' ' . $text);
                             $this->appendCode($this->getSpace(! $this->rightTokenIs(ST_COLON)));
                         } else {
@@ -4726,7 +4726,10 @@ namespace {
                         T_WHITESPACE !== $prevId &&
                         T_WHITESPACE !== $nextId
                     ) {
-                        $this->appendCode($this->getSpace(!$shortTernaryOperator && ! $this->rightTokenIs(ST_QUESTION)) . $text . ' ');
+                        if (! $shortTernaryOperator && ! $this->rightTokenIs([ST_QUESTION, T_STATIC])) {
+                            $this->appendCode(" ");
+                        }
+                        $this->appendCode($text . ' ');
                         --$inTernaryOperator;
                         break;
                     } elseif (0 == $inTernaryOperator && $this->leftMemoUsefulTokenIs(ST_PARENTHESES_CLOSE)) {
