@@ -4639,12 +4639,17 @@ namespace {
                 if (T_WHITESPACE === $token[0] && !$this->hasLn($token[1])) {
                     $c = count($this->tkns);
                     if (PHP_VERSION_ID >= 80000 && $c) {
-                        if (
-                            isset($this->tkns[$c - 1][1]) && $this->tkns[$c - 1][1] === '&'
-                            && 
-                            isset($this->tkns[$c - 2][1]) && $this->tkns[$c - 2][1] !== '('
+                        if (isset($tkns[$i + 1][1]) && $tkns[$i + 1][1] === '&'
+                            &&
+                            isset($tkns[$i + 2][0]) && $tkns[$i + 2][0] === T_WHITESPACE
                         ) {
-                            $this->tkns[] = $token;
+                            $this->tkns[] = [T_WHITESPACE, ' '];
+                        }
+                        if (isset($this->tkns[$c - 1][1]) && $this->tkns[$c - 1][1] === '&'
+                            &&
+                            isset($this->tkns[$c - 2][0]) && $this->tkns[$c - 2][0]  === T_WHITESPACE
+                        ) {
+                            $this->tkns[] = [T_WHITESPACE, ' '];
                             continue;
                         }
                     }
@@ -4688,7 +4693,9 @@ namespace {
                 case T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG:
                     if ($this->rightTokenIs(T_VARIABLE)) {
                         if (!$this->leftTokenIs([T_FUNCTION,ST_EQUAL, ST_PARENTHESES_OPEN, T_AS, ST_COMMA, T_DOUBLE_ARROW])) {
-                            $this->appendCode(" ");    
+                            if (! isset($this->tkns[$index - 1]) || $this->tkns[$index - 1][1] !== ' ') {
+                                $this->appendCode(" ");
+                            }
                         }
                     }
                     $this->appendCode($text);
