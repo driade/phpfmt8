@@ -4647,10 +4647,6 @@ namespace {
                             $this->tkns[] = $token;
                             continue;
                         }
-                        if (isset($tkns[$i + 1][0]) && $tkns[$i + 1][0] === T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG) {
-                                $this->tkns[] = $token;
-                            continue;
-                        }
                     }
                    continue;
                 }
@@ -4938,10 +4934,7 @@ namespace {
 
                 case T_FUNCTION:
                     $touchedFunction = true;
-                    $this->appendCode($text);
-                    if ($this->rightTokenIs([ST_SEMI_COLON, T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG]) === false) {
-                        $this->appendCode(' ');
-                    }
+                    $this->appendCode($text . ' ');
                     break;
 
                 case T_PUBLIC:

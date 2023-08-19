@@ -1,5 +1,5 @@
 <?php
-// version:100000
+// version:80000
 function& aFunc() {}
 
 class aClass {
