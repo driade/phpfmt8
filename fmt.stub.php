@@ -4736,7 +4736,7 @@ namespace {
                 case ST_QUESTION:
                 case ST_CONCAT:
                     if (ST_QUESTION == $id) {
-                        if ($this->rightUsefulTokenIs([T_STRING]) && ($this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr+1, [T_VARIABLE]) ||  $this->leftTokenSubsetIsAtIdx($this->tkns, $this->ptr, [':']))) { // nullable types 
+                        if ($this->rightUsefulTokenIs([T_STRING, T_ARRAY]) && ($this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr+1, [T_VARIABLE]) ||  $this->leftTokenSubsetIsAtIdx($this->tkns, $this->ptr, [':']))) { // nullable types 
                             $this->appendCode($text);
                             break;
                         } else {
@@ -4850,7 +4850,7 @@ namespace {
                     if (!$touchedUse && $this->leftMemoUsefulTokenIs([T_VARIABLE, T_STRING]) && $this->rightUsefulTokenIs([T_VARIABLE, T_STRING])) {
                         $this->appendCode($text);
                         break;
-                    } elseif ($this->leftMemoUsefulTokenIs([T_STRING, T_DO, T_FINALLY, ST_PARENTHESES_CLOSE]) && !$this->hasLnLeftToken() && !$this->leftTokenIs([T_DOC_COMMENT, T_COMMENT])) {
+                    } elseif ($this->leftMemoUsefulTokenIs([T_STRING, T_DO, T_FINALLY, ST_PARENTHESES_CLOSE, T_ARRAY]) && !$this->hasLnLeftToken() && !$this->leftTokenIs([T_DOC_COMMENT, T_COMMENT])) {
                         $this->rtrimAndAppendCode(
                             ' ' .
                             $text .
