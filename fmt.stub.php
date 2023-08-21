@@ -4777,7 +4777,7 @@ namespace {
                     if (!$touchedUse && $this->leftMemoUsefulTokenIs([T_VARIABLE, T_STRING]) && $this->rightUsefulTokenIs([T_VARIABLE, T_STRING])) {
                         $this->appendCode($text);
                         break;
-                    } elseif ($this->leftMemoUsefulTokenIs([T_STRING, T_DO, T_FINALLY, ST_PARENTHESES_CLOSE]) && !$this->hasLnLeftToken()) {
+                    } elseif ($this->leftMemoUsefulTokenIs([T_STRING, T_DO, T_FINALLY, ST_PARENTHESES_CLOSE, T_ARRAY]) && !$this->hasLnLeftToken()) {
                         $this->rtrimAndAppendCode(
                             ' ' .
                             $text .
