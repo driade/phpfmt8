@@ -5,3 +5,9 @@ class A {
 
 	}
 }
+
+class A {
+	public function test(): ?array {
+
+	}
+}
