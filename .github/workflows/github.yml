@@ -25,5 +25,4 @@ jobs:
       with:
         php-version: ${{ matrix.php-versions }}
     - name: Run tests
-      run: composer require phpunit/phpunit; vendor/bin/phpunit;
-      run: cd tests; php run_all_tests.php -v
+      run: composer require phpunit/phpunit; vendor/bin/phpunit; cd tests; php run_all_tests.php -v
