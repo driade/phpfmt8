@@ -61,7 +61,7 @@ if ($a) {
 	$b;
 } else {
 	foreach ($array as $item => $value) // Comment
-// Comment
+	// Comment
 	{
 		echo 'Test Code.';
 	}
