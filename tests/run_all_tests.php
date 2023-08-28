@@ -165,8 +165,11 @@ foreach ($cases as $caseIn) {
     }
 
     if ($got != $expected) {
-        echo $got;
-        echo $expected;
+
+        echo bin2hex($got);
+        echo bin2hex($expected);
+        exit(1);
+        
         $brokenTests[$caseOut] = $got;
         if (isset($opt['stop'])) {
             $bailOut = true;
