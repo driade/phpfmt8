@@ -1,0 +1,13 @@
+<?php
+//version:8
+namespace App\Entity;
+
+use Symfony\Component\Validator\Constraints\Ip2 as AssertIp2;
+use Symfony\Component\Validator\Constraints\Ip as AssertIp;
+
+class Author {
+	#[AssertIp]
+	public string $name;
+	#[AssertIp2\Assert]
+	public string $foo;
+}
