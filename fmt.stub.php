@@ -6636,7 +6636,7 @@ namespace {
 				case T_PUBLIC:
 				case T_PRIVATE:
 				case T_PROTECTED:
-                    if ($this->rightTokenIs([T_CONST])) {
+                    if ($this->rightTokenIs([T_CONST]) || $this->leftTokenIs(T_DOUBLE_COLON)) {
                         $this->appendCode($text);
                     } else {
                         $visibility = $text;
@@ -6645,7 +6645,7 @@ namespace {
 					break;
 				case T_FINAL:
 				case T_ABSTRACT:
-					if (!$this->rightTokenIs([T_CLASS])) {
+					if (!$this->rightTokenIs([T_CLASS]) && ! $this->leftTokenIs(T_DOUBLE_COLON)) {
 						$finalOrAbstract = $text;
 						$skipWhitespaces = true;
 						break;
@@ -6653,19 +6653,21 @@ namespace {
 					$this->appendCode($text);
 					break;
 				case T_STATIC:
-					if (!is_null($visibility)) {
-						$static = $text;
-						$skipWhitespaces = true;
-						break;
-					} elseif ($this->leftTokenIs([T_FINAL])) {
-                        $static = $text;
-                        $visibility = 'public';
-                        break;
-                    } elseif (!$this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && !$this->leftTokenIs([T_NEW])) {
-						$static = $text;
-						$skipWhitespaces = true;
-						break;
-					}
+                    if (! $this->leftTokenIs(T_DOUBLE_COLON)) {
+    					if (!is_null($visibility)) {
+    						$static = $text;
+    						$skipWhitespaces = true;
+    						break;
+    					} elseif ($this->leftTokenIs([T_FINAL])) {
+                            $static = $text;
+                            $visibility = 'public';
+                            break;
+                        } elseif (!$this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && !$this->leftTokenIs([T_NEW])) {
+    						$static = $text;
+    						$skipWhitespaces = true;
+    						break;
+    					}
+                    }
 					$this->appendCode($text);
 					break;
 				case T_VARIABLE:
