@@ -161,11 +161,12 @@ foreach ($cases as $caseIn) {
         $expected = file_get_contents($caseOut);
     }
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        $got = str_replace(PHP_EOL, "\n", $got);
         $expected = str_replace(PHP_EOL, "\n", $expected);
     }
 
     if ($got != $expected) {
+        echo $got;
+        echo $expected;
         $brokenTests[$caseOut] = $got;
         if (isset($opt['stop'])) {
             $bailOut = true;
