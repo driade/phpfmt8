@@ -10335,8 +10335,21 @@ EOT;
 				}
 				list($id, $text) = $this->getToken($token);
 				$lowerText = strtolower($text);
+                // if (in_array($id, [T_NAME_FULLY_QUALIFIED])) {
+                //     $lowerText = explode("\\", strtolower($text));
+                //     if (isset($aliasList[$lowerText[1]])) {
+                //         ++$aliasCount[$lowerText[1]];
+                //     }
+                // }
+                // PHP >=8
+                if (in_array($id, [T_NAME_QUALIFIED, T_NAME_RELATIVE])) {
+                    $lowerText = explode("\\", strtolower($text));
+                    if (isset($aliasList[$lowerText[0]])) {
+                        ++$aliasCount[$lowerText[0]];
+                    }
+                }
 				if (T_STRING === $id && isset($aliasList[$lowerText])) {
-					++$aliasCount[$lowerText];
+					   ++$aliasCount[$lowerText];
 				} elseif (T_DOC_COMMENT === $id) {
 					foreach ($aliasList as $alias => $use) {
 						if (false !== stripos($text, $alias)) {
