@@ -16,7 +16,7 @@
 if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN' && !ini_get('short_open_tag')) {
     unset($argv[0]);
     $ret = 0;
-    passthru($_SERVER['_'] . ' -dshort_open_tag=1 ' . __DIR__ . '/run_all_tests.php ' . implode(' ', $argv) . ' 2>&1', $ret);
+    passthru($_SERVER['_'] . ' -dshort_open_tag=1 ' . __DIR__ . DIRECTORY_SEPARATOR . 'run_all_tests.php ' . implode(' ', $argv) . ' 2>&1', $ret);
     exit($ret);
 }
 
@@ -91,22 +91,18 @@ if (isset($opt['baseline'])) {
     echo 'done', PHP_EOL;
 }
 
-echo 'Building fmt.php... ';
-exec('php build.php');
-echo 'done', PHP_EOL;
-
 echo 'Starting timer...', PHP_EOL;
 $start = microtime(true);
 $testEnv = true;
 ob_start();
-include realpath(__DIR__ . '/../fmt.stub.php');
+include realpath(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR. 'fmt.stub.php');
 ob_end_clean();
 
-echo 'Running tests...', PHP_EOL;
+echo 'Running tests...' . PHP_EOL;
 $brokenTests = [];
 $skippedTests = [];
 
-$cases = glob(__DIR__ . '/Original/' . $testNumber . '*.in');
+$cases = glob(__DIR__ . DIRECTORY_SEPARATOR . 'Original' . DIRECTORY_SEPARATOR . $testNumber . '*.in');
 $count = 0;
 $bailOut = false;
 foreach ($cases as $caseIn) {
@@ -159,10 +155,15 @@ foreach ($cases as $caseIn) {
     }
 
     $got = $fmt->formatCode($content);
+    
     $expected = '';
     if (file_exists($caseOut)) {
         $expected = file_get_contents($caseOut);
     }
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $expected = str_replace(PHP_EOL, "\n", $expected);
+    }
+
     if ($got != $expected) {
         $brokenTests[$caseOut] = $got;
         if (isset($opt['stop'])) {
@@ -177,7 +178,7 @@ foreach ($cases as $caseIn) {
     $isCoverage && $coverage->stop();
 }
 
-$cases = glob(__DIR__ . '/PSR/' . $testNumber . '*.in');
+$cases = glob(__DIR__ . DIRECTORY_SEPARATOR . 'PSR' . DIRECTORY_SEPARATOR . $testNumber . '*.in');
 
 if (!$bailOut) {
     foreach ($cases as $caseIn) {
