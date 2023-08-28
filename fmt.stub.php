@@ -2866,9 +2866,12 @@ namespace {
 				$this->ptr = $index;
 
 				$hasCurlyOnLeft = false;
-
+                
 				switch ($id) {
 				case T_ELSE:
+                    if ($this->leftTokenSubsetIsAtIdx($this->tkns, $this->ptr, [T_DOUBLE_COLON], $this->ignoreFutileTokens)) {
+                        break;
+                    }
 					if ($this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr, [ST_CURLY_OPEN, ST_COLON, T_IF], $this->ignoreFutileTokens)) {
 						break;
 					}
@@ -2889,6 +2892,9 @@ namespace {
 				case T_FOREACH:
 				case T_ELSEIF:
 				case T_IF:
+                    if ($this->leftTokenSubsetIsAtIdx($this->tkns, $this->ptr, [T_DOUBLE_COLON], $this->ignoreFutileTokens)) {
+                        break;
+                    }
 					$this->refWalkUsefulUntil($this->tkns, $this->ptr, ST_PARENTHESES_OPEN);
 					$this->refWalkBlock($this->tkns, $this->ptr, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
 					if (
