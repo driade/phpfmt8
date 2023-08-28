@@ -161,7 +161,7 @@ foreach ($cases as $caseIn) {
         $expected = file_get_contents($caseOut);
     }
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        $expected = str_replace("\r\n", PHP_EOK, $expected);
+        $expected = str_replace("\r\n", PHP_EOL, $expected);
     }
 
     if ($got != $expected) {
