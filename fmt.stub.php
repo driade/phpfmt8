@@ -4893,7 +4893,8 @@ namespace {
                 case T_SWITCH:
                 case T_TRY:
                 case ST_COMMA:
-                    $this->appendCode($text . ' ');
+                    $this->appendCode($text);
+                    $this->appendCode($this->getSpace(!$this->leftTokenIs([T_DOUBLE_COLON])));
                     break;
 
                 case T_CLONE:
@@ -4920,12 +4921,17 @@ namespace {
                 case T_AS:
                 case T_COALESCE:
                 case T_COALESCE_EQUAL:
-                    $this->rtrimAndAppendCode(' ' . $text . ' ');
+                    $space = $this->getSpace(! $this->leftTokenIs(T_DOUBLE_COLON));
+                    $this->rtrimAndAppendCode($space . $text . $space);
                     break;
 
                 case T_LOGICAL_AND:
                 case T_LOGICAL_OR:
                 case T_LOGICAL_XOR:
+                    $this->appendCode($this->getSpace(!$this->hasLnBefore() && !$this->leftTokenIs(T_DOUBLE_COLON)));
+                    $this->appendCode($text);
+                    $this->appendCode($this->getSpace(!$this->leftTokenIs(T_DOUBLE_COLON)));
+                    break;
                 case T_AND_EQUAL:
                 case T_BOOLEAN_AND:
                 case T_BOOLEAN_OR:
@@ -4956,11 +4962,12 @@ namespace {
 
                 case T_CATCH:
                 case T_FINALLY:
+                    $space = $this->getSpace(!$this->leftTokenIs([T_DOUBLE_COLON]));
                     if ($this->hasLnLeftToken()) {
-                        $this->appendCode(' ' . $text . ' ');
+                        $this->appendCode($space . $text . $space);
                         break;
                     }
-                    $this->rtrimAndAppendCode(' ' . $text . ' ');
+                    $this->rtrimAndAppendCode($space . $text . $space);
                     break;
 
                 case T_ELSEIF:
@@ -4987,7 +4994,8 @@ namespace {
                 case T_STRING_CAST:
                 case T_UNSET_CAST:
                 case T_GOTO:
-                    $this->appendCode(str_replace([' ', "\t"], '', $text) . ' ');
+                    $this->appendCode(str_replace([' ', "\t"], '', $text));
+                    $this->appendCode($this->getSpace(!$this->leftTokenIs([T_DOUBLE_COLON])));
                     break;
 
                 case ST_REFERENCE:
@@ -6398,6 +6406,11 @@ namespace {
 					$this->appendCode($text);
 					continue;
 				}
+
+                if ($this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
+                    $this->appendCode($text);
+                    continue;
+                }
 
 				if (
 					T_STRING == $id
