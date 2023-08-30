@@ -2921,9 +2921,12 @@ namespace {
 				$this->ptr = $index;
 
 				$hasCurlyOnLeft = false;
-
+                
 				switch ($id) {
 				case T_ELSE:
+                    if ($this->leftTokenSubsetIsAtIdx($this->tkns, $this->ptr, [T_DOUBLE_COLON], $this->ignoreFutileTokens)) {
+                        break;
+                    }
 					if ($this->rightTokenSubsetIsAtIdx($this->tkns, $this->ptr, [ST_CURLY_OPEN, ST_COLON, T_IF], $this->ignoreFutileTokens)) {
 						break;
 					}
@@ -2944,6 +2947,9 @@ namespace {
 				case T_FOREACH:
 				case T_ELSEIF:
 				case T_IF:
+                    if ($this->leftTokenSubsetIsAtIdx($this->tkns, $this->ptr, [T_DOUBLE_COLON], $this->ignoreFutileTokens)) {
+                        break;
+                    }
 					$this->refWalkUsefulUntil($this->tkns, $this->ptr, ST_PARENTHESES_OPEN);
 					$this->refWalkBlock($this->tkns, $this->ptr, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
 					if (
@@ -4966,7 +4972,11 @@ namespace {
                 case T_SWITCH:
                 case T_TRY:
                 case ST_COMMA:
-                    $this->appendCode($text . ' ');
+                    $this->appendCode($text);
+                    if ($this->leftTokenIs(T_FUNCTION)) {
+                        break;
+                    }
+                    $this->appendCode($this->getSpace(!$this->leftTokenIs([T_DOUBLE_COLON])));
                     break;
 
                 case T_CLONE:
@@ -4993,12 +5003,17 @@ namespace {
                 case T_AS:
                 case T_COALESCE:
                 case T_COALESCE_EQUAL:
-                    $this->rtrimAndAppendCode(' ' . $text . ' ');
+                    $space = $this->getSpace(! $this->leftTokenIs(T_DOUBLE_COLON));
+                    $this->rtrimAndAppendCode($space . $text . $space);
                     break;
 
                 case T_LOGICAL_AND:
                 case T_LOGICAL_OR:
                 case T_LOGICAL_XOR:
+                    $this->appendCode($this->getSpace(!$this->hasLnBefore() && !$this->leftTokenIs(T_DOUBLE_COLON)));
+                    $this->appendCode($text);
+                    $this->appendCode($this->getSpace(!$this->leftTokenIs(T_DOUBLE_COLON)));
+                    break;
                 case T_AND_EQUAL:
                 case T_BOOLEAN_AND:
                 case T_BOOLEAN_OR:
@@ -5030,11 +5045,12 @@ namespace {
 
                 case T_CATCH:
                 case T_FINALLY:
+                    $space = $this->getSpace(!$this->leftTokenIs([T_DOUBLE_COLON]));
                     if ($this->hasLnLeftToken() || $this->leftTokenIs([T_COMMENT, T_DOC_COMMENT])) {
-                        $this->appendCode(' ' . $text . ' ');
+                        $this->appendCode($space . $text . $space);
                         break;
                     }
-                    $this->rtrimAndAppendCode(' ' . $text . ' ');
+                    $this->rtrimAndAppendCode($space . $text . $space);
                     break;
 
                 case T_ELSEIF:
@@ -5061,7 +5077,8 @@ namespace {
                 case T_STRING_CAST:
                 case T_UNSET_CAST:
                 case T_GOTO:
-                    $this->appendCode(str_replace([' ', "\t"], '', $text) . ' ');
+                    $this->appendCode(str_replace([' ', "\t"], '', $text));
+                    $this->appendCode($this->getSpace(!$this->leftTokenIs([T_DOUBLE_COLON])));
                     break;
 
                 case ST_REFERENCE:
@@ -6476,6 +6493,11 @@ namespace {
 					continue;
 				}
 
+                if ($this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
+                    $this->appendCode($text);
+                    continue;
+                }
+
 				if (
 					T_STRING == $id
 					&& $this->leftUsefulTokenIs([T_DOUBLE_COLON, T_OBJECT_OPERATOR])
@@ -6700,7 +6722,7 @@ namespace {
 				case T_PUBLIC:
 				case T_PRIVATE:
 				case T_PROTECTED:
-                    if ($this->rightTokenIs([T_CONST])) {
+                    if ($this->rightTokenIs([T_CONST]) || $this->leftTokenIs(T_DOUBLE_COLON)) {
                         $this->appendCode($text);
                     } else {
                         $visibility = $text;
@@ -6709,7 +6731,7 @@ namespace {
 					break;
 				case T_FINAL:
 				case T_ABSTRACT:
-					if (!$this->rightTokenIs([T_CLASS])) {
+					if (!$this->rightTokenIs([T_CLASS]) && ! $this->leftTokenIs(T_DOUBLE_COLON)) {
 						$finalOrAbstract = $text;
 						$skipWhitespaces = true;
 						break;
@@ -6717,19 +6739,21 @@ namespace {
 					$this->appendCode($text);
 					break;
 				case T_STATIC:
-					if (!is_null($visibility)) {
-						$static = $text;
-						$skipWhitespaces = true;
-						break;
-					} elseif ($this->leftTokenIs([T_FINAL])) {
-                        $static = $text;
-                        $visibility = 'public';
-                        break;
-                    } elseif (!$this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && !$this->leftTokenIs([T_NEW])) {
-						$static = $text;
-						$skipWhitespaces = true;
-						break;
-					}
+                    if (! $this->leftTokenIs(T_DOUBLE_COLON)) {
+    					if (!is_null($visibility)) {
+    						$static = $text;
+    						$skipWhitespaces = true;
+    						break;
+    					} elseif ($this->leftTokenIs([T_FINAL])) {
+                            $static = $text;
+                            $visibility = 'public';
+                            break;
+                        } elseif (!$this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && !$this->leftTokenIs([T_NEW])) {
+    						$static = $text;
+    						$skipWhitespaces = true;
+    						break;
+    					}
+                    }
 					$this->appendCode($text);
 					break;
 				case T_VARIABLE:
@@ -6753,7 +6777,9 @@ namespace {
 					$this->printUntil(ST_SEMI_COLON);
 					break;
 				case T_FUNCTION:
-					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0] || T_NAMESPACE === $found[0]) && $this->rightUsefulTokenIs([T_STRING, T_ARRAY, T_PRINT, ST_REFERENCE, T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG]); // fix this one day, maybe completely delete the "rightUsefulTokenIs" part 
+
+					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0] || T_NAMESPACE === $found[0]) && ! $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN]);
+
 					if ($hasFoundClassOrInterface && null !== $finalOrAbstract) {
 						$this->appendCode($finalOrAbstract . $this->getSpace());
 					}
@@ -11793,7 +11819,11 @@ EOT;
 				case T_REQUIRE:
 				case T_INCLUDE_ONCE:
 				case T_REQUIRE_ONCE:
-					$this->appendCode($text . $this->getSpace());
+					$this->appendCode($text);
+                    if ($this->leftTokenIs(T_FUNCTION)) {
+                        break;
+                    }
+                    $this->appendCode($this->getSpace());
 					if (!$this->rightTokenIs(ST_PARENTHESES_OPEN)) {
 						break;
 					}
