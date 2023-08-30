@@ -1,6 +1,6 @@
 <?php
 //passes:Default,ReindentEnumBlocks,PSR2ModifierVisibilityStaticOrder
-//version:8.0.0
+//version:8.1.0
 enum Status {
 	case public;
 	case protected;
