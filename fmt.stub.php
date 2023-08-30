@@ -5836,8 +5836,11 @@ namespace {
 				case T_CLASS:
 					$this->appendCode($text);
 					if ($this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
-						break;
-					}
+                        break;
+                    }
+                    if ($this->rightUsefulTokenIs(ST_CURLY_OPEN)) {
+                        break;
+                    }
 					while (list($index, $token) = $this->each($this->tkns)) {
 						list($id, $text) = $this->getToken($token);
 						$this->ptr = $index;
