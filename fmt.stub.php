@@ -4837,7 +4837,9 @@ namespace {
                     if ($this->leftUsefulTokenIs([T_ATTRIBUTE, T_DOUBLE_COLON])) {
                         $this->appendCode($text);
                     } else {
-                        $this->appendCode($text . $this->getSpace(!$this->rightTokenIs([ST_SEMI_COLON, T_NS_SEPARATOR, T_NAME_FULLY_QUALIFIED, T_DOUBLE_COLON, ST_PARENTHESES_OPEN])));
+                        $this->appendCode($text . $this->getSpace(
+                            ! $this->rightTokenIs([ST_SEMI_COLON, T_NS_SEPARATOR, T_NAME_FULLY_QUALIFIED, T_DOUBLE_COLON, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE])
+                        ));
                     }
                     break;
 
