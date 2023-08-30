@@ -4905,7 +4905,8 @@ namespace {
                     if ($this->leftTokenIs([T_FUNCTION, T_CASE])) {
                         break;
                     }
-                    $this->appendCode($this->getSpace(!$this->leftTokenIs([T_DOUBLE_COLON])));
+                    // this "case" covers too many things
+                    $this->appendCode($this->getSpace(! $this->leftTokenIs([T_DOUBLE_COLON]) || $this->rightTokenIs([T_DOUBLE_ARROW])));
                     break;
 
                 case T_CLONE:
@@ -7164,7 +7165,7 @@ EOT;
 						}
 						++$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]];
 						$maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = max($maxContextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]], $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]]);
-					} elseif ($contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] > 1) {
+					} elseif (isset($contextCounter[$levelCounter]) && $contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] > 1) {
 						$contextCounter[$levelCounter][$levelEntranceCounter[$levelCounter]] = 1;
 					}
 					$this->appendCode($text);
