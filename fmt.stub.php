@@ -4902,7 +4902,7 @@ namespace {
                 case T_TRY:
                 case ST_COMMA:
                     $this->appendCode($text);
-                    if ($this->leftTokenIs(T_FUNCTION)) {
+                    if ($this->leftTokenIs([T_FUNCTION, T_CASE])) {
                         break;
                     }
                     $this->appendCode($this->getSpace(!$this->leftTokenIs([T_DOUBLE_COLON])));
@@ -6647,7 +6647,7 @@ namespace {
 				case T_PUBLIC:
 				case T_PRIVATE:
 				case T_PROTECTED:
-                    if ($this->rightTokenIs([T_CONST]) || $this->leftTokenIs(T_DOUBLE_COLON)) {
+                    if ($this->rightTokenIs([T_CONST]) || $this->leftTokenIs([T_DOUBLE_COLON, T_CASE])) {
                         $this->appendCode($text);
                     } else {
                         $visibility = $text;
