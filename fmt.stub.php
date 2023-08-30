@@ -4900,6 +4900,9 @@ namespace {
                 case T_TRY:
                 case ST_COMMA:
                     $this->appendCode($text);
+                    if ($this->leftTokenIs(T_FUNCTION)) {
+                        break;
+                    }
                     $this->appendCode($this->getSpace(!$this->leftTokenIs([T_DOUBLE_COLON])));
                     break;
 
@@ -6697,7 +6700,7 @@ namespace {
 					$this->printUntil(ST_SEMI_COLON);
 					break;
 				case T_FUNCTION:
-					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0] || T_NAMESPACE === $found[0]) && $this->rightUsefulTokenIs([T_STRING, T_ARRAY, T_PRINT, ST_REFERENCE]); // fix this one day, maybe completely delete the "rightUsefulTokenIs" part 
+					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0] || T_NAMESPACE === $found[0]) && ! $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN]);
 					if ($hasFoundClassOrInterface && null !== $finalOrAbstract) {
 						$this->appendCode($finalOrAbstract . $this->getSpace());
 					}
@@ -11719,7 +11722,11 @@ EOT;
 				case T_REQUIRE:
 				case T_INCLUDE_ONCE:
 				case T_REQUIRE_ONCE:
-					$this->appendCode($text . $this->getSpace());
+					$this->appendCode($text);
+                    if ($this->leftTokenIs(T_FUNCTION)) {
+                        break;
+                    }
+                    $this->appendCode($this->getSpace());
 					if (!$this->rightTokenIs(ST_PARENTHESES_OPEN)) {
 						break;
 					}
