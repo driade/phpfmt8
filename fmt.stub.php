@@ -5858,7 +5858,7 @@ namespace {
 					}
 					break;
 				case T_FUNCTION:
-					if (!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_PARENTHESES_OPEN, ST_COMMA]) && $this->rightUsefulTokenIs([T_STRING, T_ARRAY, ST_REFERENCE, T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG])) {
+					if (!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_PARENTHESES_OPEN, ST_COMMA]) && ! $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN])) {
 						$this->appendCode($text);
 						$touchedLn = false;
 						while (list($index, $token) = $this->each($this->tkns)) {
