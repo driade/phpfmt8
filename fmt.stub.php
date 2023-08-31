@@ -7769,6 +7769,10 @@ EOT;
                             break;
                         }
                     }
+                    if (T_MATCH == $last_real_curly) {
+                        $this->appendCode(ST_SEMI_COLON);
+                        break;
+                    }
                     $isAnonymousClass = array_pop($isAnonymousClassStack);
                     if ($isAnonymousClass) {
                         $this->appendCode(ST_SEMI_COLON);
