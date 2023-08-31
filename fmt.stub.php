@@ -7652,10 +7652,17 @@ EOT;
 			$touchedSingleColon = false;
             $isAnonymousClassStack = [];
             $isAttribute = false;
+            $quote_stack = false;
+
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;;
 				switch ($id) {
+
+                case '"':
+                    $this->appendCode($text);
+                    $quote_stack = !$quote_stack;
+                    break;
 
                 case T_STRING;
                 case T_LNUMBER:
@@ -7791,7 +7798,7 @@ EOT;
                         $this->appendCode($text . ST_SEMI_COLON);
                         break;
                     }
-                    if ($this->rightTokenIs(ST_CURLY_CLOSE)) {
+                    if ($this->rightTokenIs(ST_CURLY_CLOSE) && ! $quote_stack) {
                         $this->appendCode($text . ST_SEMI_COLON);
                         break;
                     }
