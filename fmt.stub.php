@@ -5932,7 +5932,7 @@ namespace {
 					}
 					break;
 				case T_FUNCTION:
-					if (!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_PARENTHESES_OPEN, ST_COMMA]) && $this->rightUsefulTokenIs([T_STRING, T_ARRAY, ST_REFERENCE, T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG])) {
+					if (!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_PARENTHESES_OPEN, ST_COMMA]) && ! $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN])) {
 						$this->appendCode($text);
 						$touchedLn = false;
 						while (list($index, $token) = $this->each($this->tkns)) {
@@ -7728,10 +7728,17 @@ EOT;
 			$touchedSingleColon = false;
             $isAnonymousClassStack = [];
             $isAttribute = false;
+            $quote_stack = false;
+
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;;
 				switch ($id) {
+
+                case '"':
+                    $this->appendCode($text);
+                    $quote_stack = !$quote_stack;
+                    break;
 
                 case T_STRING;
                 case T_LNUMBER:
@@ -7869,7 +7876,7 @@ EOT;
                         $this->appendCode($text . ST_SEMI_COLON);
                         break;
                     }
-                    if ($this->rightTokenIs(ST_CURLY_CLOSE)) {
+                    if ($this->rightTokenIs(ST_CURLY_CLOSE) && ! $quote_stack) {
                         $isMatch = false;
                         if (count($realCurlyStack) && $realCurlyStack[count($realCurlyStack) -1] === T_MATCH) {
                             $isMatch = true;
