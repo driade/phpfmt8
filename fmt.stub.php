@@ -6208,10 +6208,11 @@ namespace {
 					break;
                 case T_NAMESPACE:
                     $found[] = T_NAMESPACE;
+                    $touchedClassInterfaceTrait = true;
                     $this->appendCode($text);
                     break;
 				case T_INTERFACE:
-					$found[] = T_INTERFACE;
+					// $found[] = T_INTERFACE;
 					$touchedClassInterfaceTrait = true;
 					$this->appendCode($text);
 					break;
@@ -7846,6 +7847,10 @@ EOT;
                             $this->appendCode(ST_SEMI_COLON);
                             break;
                         }
+                    }
+                    if (T_MATCH == $last_real_curly) {
+                        $this->appendCode(ST_SEMI_COLON);
+                        break;
                     }
                     $isAnonymousClass = array_pop($isAnonymousClassStack);
                     if ($isAnonymousClass) {
