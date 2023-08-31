@@ -7676,6 +7676,9 @@ EOT;
                     if ($this->hasLnAfter() && $this->rightTokenIs(ST_CURLY_CLOSE) && ! $isMatch) {
                         $this->appendCode(ST_SEMI_COLON);
                     }
+                    if ($this->hasLnAfter() && $this->rightTokenIs([T_COMMENT, T_DOC_COMMENT]) && ! $isMatch) {
+                        $this->appendCode(ST_SEMI_COLON);
+                    }
                     break;
 
                 case T_ATTRIBUTE:
