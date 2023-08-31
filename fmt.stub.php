@@ -6134,7 +6134,6 @@ namespace {
 					break;
                 case T_NAMESPACE:
                     $found[] = T_NAMESPACE;
-                    $touchedClassInterfaceTrait = true;
                     $this->appendCode($text);
                     break;
 				case T_INTERFACE:

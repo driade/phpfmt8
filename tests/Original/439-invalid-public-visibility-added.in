@@ -1,0 +1,13 @@
+<?php
+//passes:PSR2ModifierVisibilityStaticOrder
+namespace B {
+    class ProgressBar {
+    }
+
+    interface Cacher {
+    }
+
+    function test() {}
+}
+
+function test() {}
