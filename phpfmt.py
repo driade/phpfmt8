@@ -594,7 +594,7 @@ class AnalyseThisCommand(sublime_plugin.TextCommand):
         cmdOracle.append(oraclePath)
         cmdOracle.append("introspect")
         cmdOracle.append(lookTerm)
-        print_debug(cmdOracle+'asdasd')
+        print_debug(cmdOracle)
         if os.name == 'nt':
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
