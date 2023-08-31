@@ -7891,6 +7891,11 @@ EOT;
                         }
                         break;
                     }
+                    if ($this->rightTokenIs(ST_PARENTHESES_OPEN) && $this->hasLnAfter()) {
+                        $this->appendCode($text);
+                        $this->appendCode(ST_SEMI_COLON);
+                        break;
+                    }
                     // no break
 
 				case T_WHITESPACE:
