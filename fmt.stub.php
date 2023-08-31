@@ -7878,13 +7878,14 @@ EOT;
                     }
                     if ($this->rightTokenIs(ST_CURLY_CLOSE) && ! $quote_stack) {
                         $isMatch = false;
+                        $this->appendCode($text);
                         if (count($realCurlyStack) && $realCurlyStack[count($realCurlyStack) -1] === T_MATCH) {
                             $isMatch = true;
                         }
                         if (! $isMatch) {
-                            $this->appendCode($text . ST_SEMI_COLON);
-                            break;
+                            $this->appendCode(ST_SEMI_COLON);
                         }
+                        break;
                     }
                     // no break
 
@@ -8100,7 +8101,15 @@ EOT;
                         break;
                     }
 
-					$this->appendCode(ST_SEMI_COLON . $text);
+                    $isMatch = false;
+                    if (count($realCurlyStack) && $realCurlyStack[count($realCurlyStack) -1] === T_MATCH) {
+                        $isMatch = true;
+                    }
+                    if (!$isMatch) {
+                        $this->appendCode(ST_SEMI_COLON);
+                    }
+
+					$this->appendCode($text);
 					break;
 				default:
 					$this->appendCode($text);
