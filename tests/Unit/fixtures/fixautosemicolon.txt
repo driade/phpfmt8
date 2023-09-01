@@ -61,16 +61,3 @@ function () {
 
 (new C)->handle()
 (new C)->handle()
-
-$a()()
-
-call()
-
-$a()
-
-$a()
-
-//
-
-$a = []
-$a = []
