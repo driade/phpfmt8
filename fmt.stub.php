@@ -7725,7 +7725,18 @@ EOT;
                         }
                     }
                     if ($this->rightTokenIs([T_COMMENT, T_DOC_COMMENT])) {
-                        $this->appendCode(ST_SEMI_COLON);
+                        
+                        $mytoken = null;
+                        for ($i = $this->ptr + 1; $i<count($this->tkns); $i++) {
+                            $mytoken = $this->tkns[$i];
+                            if (! in_array($mytoken[0], [T_COMMENT, T_DOC_COMMENT, T_WHITESPACE])) {
+                                break;
+                            }
+                        }
+                        if ($mytoken !== null && $mytoken[0] !== T_OBJECT_OPERATOR) {
+                            $this->appendCode(ST_SEMI_COLON);
+                        }
+                    
                         break;
                     }
                     if ($this->rightTokenIs([ST_PARENTHESES_OPEN])) {
