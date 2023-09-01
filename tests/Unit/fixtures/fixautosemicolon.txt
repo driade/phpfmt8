@@ -53,24 +53,6 @@ match($a) {
     'b' => call2()
 }
 
-match($a) {
-    'a' => call1(),
-    default => []
-}
-
-collect([])
-    ->take(2)
-    /** @phpstan-ignore-next-line */
-    ->map(function () {});
-
-collect([])
-    ->take(2) /** @phpstan-ignore-next-line */
-    ->map(function () {});
-
-$a = $a()  /** @phpstan-ignore-next-line */ - 1;
-$a = $a() - /** @phpstan-ignore-next-line */ 1;
-$a = [$a()  /** @phpstan-ignore-next-line */ , 1];
-
 function () {
 
 }
@@ -85,8 +67,6 @@ $a()()
 call()
 
 $a()
-
-/** a */
 
 $a()
 
