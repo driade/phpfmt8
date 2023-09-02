@@ -2194,7 +2194,7 @@ namespace {
 		protected function refWalkUsefulUntil($tkns, &$ptr, $expectedId) {
 			do {
 				$ptr = $this->walkRight($tkns, $ptr, $this->ignoreFutileTokens);
-			} while ($expectedId != $tkns[$ptr][0]);
+			} while (isset($tkns[$ptr]) && $expectedId != $tkns[$ptr][0]);
 		}
 
 		protected function refWalkUsefulUntilReverse($tkns, &$ptr, $expectedId) {
@@ -2966,7 +2966,7 @@ namespace {
 		}
 
 		private function addSemicolon() {
-			if (T_CLOSE_TAG == $this->tkns[$this->ptr][0]) {
+			if (isset($this->tkns[$this->ptr]) && T_CLOSE_TAG == $this->tkns[$this->ptr][0]) {
 				return $this->refInsert($this->tkns, $this->ptr, [ST_SEMI_COLON, ST_SEMI_COLON]);
 			}
 			++$this->ptr;
