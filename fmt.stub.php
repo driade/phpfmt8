@@ -4701,6 +4701,9 @@ namespace {
                     if (! $this->leftTokenIs([T_OBJECT_OPERATOR]) && $this->rightTokenIs(ST_CURLY_OPEN)) {
                         $this->appendCode(" ");
                     }
+                    if (! $this->leftTokenIs(T_STRING) && $this->rightTokenIs(T_STRING)) {
+                        $this->appendCode(" ");
+                    }
                     break;
                 case T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG:
                     if ($this->rightTokenIs(T_VARIABLE)) {
