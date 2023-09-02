@@ -20,6 +20,8 @@ class User
 
 }
 
+#[AttributeWithClassNameAndConstants(PDO::class,PHP_VERSION_ID)]
+
 #[FooAttribute]
 function foo_func(#[FooParamAttrib('Foo1')] $foo) {}
 

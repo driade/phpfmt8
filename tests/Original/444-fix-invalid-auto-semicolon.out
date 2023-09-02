@@ -1,13 +1,4 @@
 <?php
 //passes:Autosemicolon
-$q->orWhere('id', 'like', "%" . $search . "%") // foo
-	->orWhere('name', 'david');
-
-$q->orWhere('id', 'like', "%" . $search . "%")
-// foo
-	->orWhere('name', 'test');
-
-/** a */
-
-$a(); /**  */
-$a(); //
+$b = $a() /**  */
+ + 1

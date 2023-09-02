@@ -19,8 +19,10 @@ class User {
 
 }
 
+#[AttributeWithClassNameAndConstants(PDO::class, PHP_VERSION_ID)]
+
 #[FooAttribute]
-function foo_func(#[FooParamAttrib('Foo1')]$foo) {}
+function foo_func(#[FooParamAttrib('Foo1')] $foo) {}
 
 #[FooAttribute('hello')]
 #[BarClassAttrib(42)]
@@ -34,5 +36,5 @@ class Foo {
 	private string $foo;
 
 	#[SomeoneElse\FooMethodAttrib]
-	public function getFoo(#[FooClassAttrib(28)]$a): string {}
+	public function getFoo(#[FooClassAttrib(28)] $a): string {}
 }

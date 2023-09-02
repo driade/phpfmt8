@@ -1,11 +1,12 @@
 <?php
+//version:8.1.0
 
 class TestClass implements MyInterface {
-	public function __construct(
-		public readonly string $v
-	) {
+    public function __construct(
+        public readonly string $v
+    ) {
 
-	}
+    }
 }
 
 class Service
@@ -23,3 +24,5 @@ function redirect(string $uri): never {
     header('Location: ' . $uri);
     exit();
 }
+
+array_map(strtoupper(...), $files);
