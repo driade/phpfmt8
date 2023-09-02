@@ -1,0 +1,20 @@
+php.fmt
+=======
+
+As you may already be aware, this package underwent a transition as it was passed into the care of a new maintainer by ST several months ago. The codebase has since been relocated to https://github.com/driade/phpfmt8.
+
+The primary objective of this transition was to ensure maximum compatibility with PHP 8. Thanks to the invaluable bug reports and feedback from our user community, our support has seen substantial enhancements. As a result, thousands of individuals now rely on this package in their day-to-day coding activities.
+
+Furthermore, I've successfully retrieved the original suite of automated tests, which are accessible at https://github.com/Buzzoole/phpfmt-next. These tests have proven instrumental in identifying and resolving additional issues.
+
+We're pleased to announce that the latest version of this package is already fully compatible with PHP 8.3.
+
+Additionally, this package also extends support to the VSCode version of phpfmt, which can be explored at https://github.com/kokororin/vscode-phpfmt.
+
+Should you encounter any issues or discover any areas where improvements can be made, please do not hesitate to open an issue or submit a pull request. Your contributions greatly assist me in refining the codebase.
+
+Lastly, I kindly request that you consider showing your support by giving the package a star on Github! ;)
+
+Thank you for your attention and support.
+
+David Fernández david@mundosaparte.com
