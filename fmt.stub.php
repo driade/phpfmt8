@@ -6283,14 +6283,6 @@ namespace {
 					$this->appendCode($text);
 					$this->printUntil(ST_SEMI_COLON);
 					break;
-
-                case T_CONST:
-                    if (PHP_VERSION_ID < 80200) {
-                        $this->appendCode($text);
-                        break;
-                    }
-                    // no break;
-
 				case T_FUNCTION:
 					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0] || T_NAMESPACE === $found[0]) && ! $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN]);
 					if ($hasFoundClassOrInterface && null !== $finalOrAbstract) {

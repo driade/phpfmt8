@@ -1,9 +1,0 @@
-<?php
-//passes:PSR2ModifierVisibilityStaticOrder
-//version:8.2
-trait FooBar {
-	public const FOO = 'foo';
-	private const BAR = 'bar';
-	final const BAZ = 'baz';
-	final protected const QUX = 'qux';
-}
