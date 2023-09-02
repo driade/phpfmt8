@@ -6229,7 +6229,7 @@ namespace {
 				case T_PUBLIC:
 				case T_PRIVATE:
 				case T_PROTECTED:
-                    if ($this->rightTokenIs([T_CONST]) || $this->leftTokenIs([T_DOUBLE_COLON, T_CASE])) {
+                    if ($this->leftTokenIs([T_DOUBLE_COLON, T_CASE])) {
                         $this->appendCode($text);
                     } else {
                         $visibility = $text;
@@ -6283,6 +6283,8 @@ namespace {
 					$this->appendCode($text);
 					$this->printUntil(ST_SEMI_COLON);
 					break;
+
+                case T_CONST:
 				case T_FUNCTION:
 					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0] || T_NAMESPACE === $found[0]) && ! $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN]);
 					if ($hasFoundClassOrInterface && null !== $finalOrAbstract) {
@@ -6295,21 +6297,27 @@ namespace {
 						!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_COMMA, ST_PARENTHESES_OPEN])
 					) {
                         if (count($found) - 2 >= 0 && $found[count($found)-2] !== T_NAMESPACE) {
-                          $visibility = 'public';
-						  $this->appendCode('public' . $this->getSpace());
+                            if ($id === T_FUNCTION) {
+                                $visibility = 'public';
+						        $this->appendCode('public' . $this->getSpace());
+                            }
                         }
 					}
                     if ($visibility === null && $static !== null) {
-                        $visibility = 'public';
-                        $this->appendCode('public' . $this->getSpace());
+                        if ($id === T_FUNCTION) {
+                            $visibility = 'public';
+                            $this->appendCode('public' . $this->getSpace());
+                        }
                     }
 					if ($hasFoundClassOrInterface && null !== $static) {
 						$this->appendCode($static . $this->getSpace());
 					}
                     if ($visibility === null && $static === null) {
                         if (count($found) === 1 || (count($found) > 1 && $found[count($found) - 2] !== T_NAMESPACE)) {
-                            $visibility = 'public';
-                            $this->appendCode('public' . $this->getSpace());
+                            if ($id === T_FUNCTION) {
+                                $visibility = 'public';
+                                $this->appendCode('public' . $this->getSpace());
+                            }
                         }
                     }
 					$this->appendCode($text);
@@ -6322,8 +6330,12 @@ namespace {
 						break;
 					}
 					$finalOrAbstract = null;
-					$this->printUntil(ST_CURLY_OPEN);
-					$this->printCurlyBlock();
+                    if ($id === T_FUNCTION) {
+					   $this->printUntil(ST_CURLY_OPEN);
+					   $this->printCurlyBlock();
+                    } else {
+                        $this->printUntil(ST_SEMI_COLON);
+                    }
 					break;
 				default:
 					$this->appendCode($text);
