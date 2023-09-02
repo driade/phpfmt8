@@ -4606,6 +4606,7 @@ namespace {
             $touchedUse = false;
             $touchedGroupedUse = false;
             $hasEchoAfterOpenTag = false;
+            $attributeStack = [];
 
             while (list($index, $token) = $this->each($this->tkns)) {
                 list($id, $text) = $this->getToken($token);
@@ -4614,6 +4615,11 @@ namespace {
                 $this->cache = [];
 
                 switch ($id) {
+
+                case T_ATTRIBUTE:
+                    $attributeStack[] = true;
+                    $this->appendCode($text);
+                    break;
 
                 case T_STRING:
                     $this->appendCode($text);
@@ -5071,9 +5077,18 @@ namespace {
 
                 case ST_BRACKET_CLOSE:
                     $this->appendCode($this->getSpace($this->isWordpress()) . $text);
+                    if (count($attributeStack)) {
+                        array_pop($attributeStack);
+                        if (count($attributeStack) === 0 && ! $this->hasLnAfter()) {
+                            $this->appendCode(" ");
+                        }
+                    }
                     break;
 
                 case ST_BRACKET_OPEN:
+                    if (count($attributeStack)) {
+                        $attributeStack[] = true;
+                    }
                     $this->appendCode($text . $this->getSpace($this->isWordpress()));
                     break;
                 default:
