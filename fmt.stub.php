@@ -6276,14 +6276,6 @@ namespace {
                 case T_NAME_RELATIVE:
                 case T_NAME_QUALIFIED:
                 case T_NAME_FULLY_QUALIFIED:
-                case T_READONLY:
-                    if ($visibility !== null) {
-                        $this->appendCode($visibility. " ");
-                        $visibility = null;
-                        $skipWhitespaces = false;
-                    }
-                    $this->appendCode($text);
-                    break;
                 case T_STRING:
                     if (
                         null !== $visibility ||
@@ -6330,6 +6322,7 @@ namespace {
 					}
 					$this->appendCode($text);
 					break;
+                case T_READONLY:
 				case T_STATIC:
                     if (! $this->leftTokenIs(T_DOUBLE_COLON)) {
     					if (!is_null($visibility)) {
