@@ -6228,6 +6228,11 @@ namespace {
 				case T_CLASS:
 					$found[] = T_CLASS;
 					$touchedClassInterfaceTrait = true;
+                    if ($static !== null) {
+                        $this->appendCode($static. ' ');
+                        $static = null;
+                        $skipWhitespaces = false;
+                    }
 					$this->appendCode($text);
 					$this->printUntilAny([T_EXTENDS, T_IMPLEMENTS, ST_CURLY_OPEN]);
 					break;
