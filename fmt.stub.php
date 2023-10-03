@@ -4034,6 +4034,12 @@ namespace {
             while(list($index, $token) = $this->each($this->tkns)) {
                 list($id, $text) = $this->getToken($token);
 
+                if ($id === T_START_HEREDOC) {
+                    $this->appendCode($text);
+                    $this->printUntil(T_END_HEREDOC);
+                    continue;
+                }
+
                 $this->appendCode($text);
                 $next =null;
                 if (isset($this->tkns[$index + 1])) {
