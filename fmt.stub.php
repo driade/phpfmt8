@@ -4730,7 +4730,11 @@ namespace {
                     break;
                 case T_START_HEREDOC:
                     $this->appendCode($text);
-                    $this->printUntil(ST_SEMI_COLON);
+                    if (count($attributeStack)) {
+                        $this->printUntil(T_END_HEREDOC);
+                    } else {
+                        $this->printUntil(ST_SEMI_COLON);
+                    }
                     break;
 
                 case T_CALLABLE:
