@@ -9672,6 +9672,7 @@ EOT;
 					$return = $text;
 					$return .= $this->walkAndAccumulateUntil($this->tkns, ST_CURLY_OPEN);
 					$classBlock = $this->walkAndAccumulateCurlyBlock($this->tkns);
+                    
 					$return .= str_replace(
 						self::OPENER_PLACEHOLDER,
 						'',
@@ -9780,12 +9781,19 @@ EOT;
 					break;
 
 				case T_DOC_COMMENT:
-					if (!$touchedDocComment) {
-						$touchedDocComment = true;
-						$docCommentStack = ' ';
-					}
-					$docCommentStack .= $text;
-					break;
+                    if (!$touchedDocComment) {
+                        $touchedDocComment = true;
+                        $docCommentStack = ' ';
+                    }
+                    $docCommentStack .= $text;
+                    break;
+                case T_ATTRIBUTE:
+                    if (!$touchedDocComment) {
+                        $touchedDocComment = true;
+                        $docCommentStack = ' ';
+                    }
+                    $docCommentStack .= $text;
+                    break;
 
 				case T_CONST:
 					$stack = '';
