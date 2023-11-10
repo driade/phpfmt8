@@ -12837,6 +12837,7 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 			$touchedDo = false;
+            $stack = [];
 
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
@@ -12865,6 +12866,7 @@ EOT;
 					break;
 
 				case T_WHILE:
+                    $stack[] = $id;
 					if (!$touchedDo && $this->leftUsefulTokenIs(ST_CURLY_CLOSE)) {
 						$this->rtrimAndAppendCode($this->newLine);
 					}
@@ -12885,8 +12887,17 @@ EOT;
 
 					break;
 
+                case T_ENUM:
+                    $stack[] = $id;
+                    $this->appendCode($text);
+                    break;
+
 				case T_CASE:
 					$this->appendCode($text);
+                    if (count($stack) > 0 && $stack[count($stack) - 1] === T_ENUM) {
+                        $this->printUntil(ST_SEMI_COLON);
+                        break;    
+                    }
 					$this->printUntil(ST_COLON);
 
 					while (list($index, $token) = $this->each($this->tkns)) {
@@ -12901,6 +12912,7 @@ EOT;
 					break;
 
 				case ST_CURLY_CLOSE:
+                    array_pop($stack);
 					if ($this->hasLnBefore()) {
 						$this->rtrimAndAppendCode($this->newLine . $text);
 						break;
