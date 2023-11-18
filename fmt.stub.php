@@ -6386,7 +6386,10 @@ namespace {
 
                 case T_CONST:
 				case T_FUNCTION:
-
+                    if (count($found) === 0 || (count($found) === 1 && $found[0] === T_NAMESPACE)) {
+                        $this->appendCode($text);
+                        break;
+                    }
 					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0] || T_NAMESPACE === $found[0]) && ! $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN]);
 
 					if ($hasFoundClassOrInterface && null !== $finalOrAbstract) {

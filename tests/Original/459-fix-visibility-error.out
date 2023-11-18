@@ -1,0 +1,7 @@
+<?php
+//passes:PSR2ModifierVisibilityStaticOrder
+function F() {
+}
+
+class A {
+}
