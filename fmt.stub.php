@@ -2582,6 +2582,8 @@ namespace {
 
 			'CakePHPStyle' => false,
 
+            'SpaceBetweenMethods' => false,
+
 			'StripNewlineAfterClassOpen' => false,
 			'StripNewlineAfterCurlyOpen' => false,
 
@@ -2658,7 +2660,6 @@ namespace {
 			'RemoveIncludeParentheses' => false,
 			'TwoCommandsInSameLine' => false,
 
-			'SpaceBetweenMethods' => false,
 			'GeneratePHPDoc' => false,
 			'ReturnNull' => false,
 			'AddMissingParentheses' => false,
