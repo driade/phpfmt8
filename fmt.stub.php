@@ -8154,7 +8154,9 @@ EOT;
                             }
 
                             if (! $isMatch) {
-                                $this->appendCode(ST_SEMI_COLON);
+                                if ($this->code[strlen($this->code) - 1] !== ST_SEMI_COLON) {
+                                    $this->appendCode(ST_SEMI_COLON);
+                                }
                             }
                         }
                         $this->appendCode($text);
