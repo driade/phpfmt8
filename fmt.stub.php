@@ -6095,6 +6095,10 @@ namespace {
                     $this->appendCode($text);
                     continue;
                 }
+                if ($this->leftUsefulTokenIs(T_CONST)) {
+                    $this->appendCode($text);
+                    continue;
+                }
 
 				if (
 					T_STRING == $id
