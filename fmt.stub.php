@@ -6230,7 +6230,21 @@ namespace {
 				switch ($id) {
                 case T_ATTRIBUTE:
                     $this->appendCode($text);
-                    $this->printUntil(ST_BRACKET_CLOSE);
+                    $stack = [];
+                    while (list($index, $token) = $this->each($this->tkns)) {
+                        list($id, $text) = $this->getToken($token);
+                        $this->ptr = $index;
+                        $this->appendCode($text);
+                        if ($id === ST_BRACKET_CLOSE) {
+                            if (count($stack) === 0) {
+                                break;
+                            }
+                            array_pop($stack);
+                        }
+                        if ($id === ST_BRACKET_OPEN) {
+                            $stack[] = true;
+                        }
+                    }
                     break;
 				case T_START_HEREDOC:
 					$this->appendCode($text);
