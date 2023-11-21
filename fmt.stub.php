@@ -5005,7 +5005,7 @@ namespace {
                 case T_TRY:
                 case ST_COMMA:
                     $this->appendCode($text);
-                    if ($this->leftTokenIs([T_FUNCTION, T_CASE])) {
+                    if ($this->leftTokenIs([T_FUNCTION, T_CASE, T_CONST])) {
                         break;
                     }
                     // this "case" covers too many things
