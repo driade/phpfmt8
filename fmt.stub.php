@@ -4941,7 +4941,7 @@ namespace {
                         $this->appendCode($text);
                     } else {
                         $this->appendCode($text . $this->getSpace(
-                            ! $this->rightTokenIs([ST_SEMI_COLON, T_NS_SEPARATOR, T_NAME_FULLY_QUALIFIED, T_DOUBLE_COLON, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE])
+                            ! $this->rightTokenIs([ST_SEMI_COLON, T_NS_SEPARATOR, T_NAME_FULLY_QUALIFIED, T_DOUBLE_COLON, ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE, ST_COMMA, ST_BRACKET_CLOSE])
                         ));
                     }
                     break;
