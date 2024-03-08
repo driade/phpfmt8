@@ -6326,6 +6326,9 @@ namespace {
 					if (1 === sizeof($found)) {
 						array_pop($found);
 					}
+                    if (count($found) === 0) {
+                        $touchedClassInterfaceTrait = false;
+                    }
 					$this->appendCode($text);
 					break;
 				case T_WHITESPACE:
