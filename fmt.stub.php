@@ -6282,6 +6282,10 @@ namespace {
 					$this->printUntilTheEndOfString();
 					break;
 				case T_CLASS:
+                    if ($this->leftUsefulTokenIs([T_DOUBLE_COLON])) {
+                        $this->appendCode($text);
+                        break;
+                    }
 					$found[] = T_CLASS;
 					$touchedClassInterfaceTrait = true;
                     if ($static !== null) {
