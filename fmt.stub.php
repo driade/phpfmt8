@@ -4927,6 +4927,23 @@ namespace {
 
                 case ST_PARENTHESES_CLOSE:
                     $this->appendCode($text . $this->getSpace($this->rightTokenIs([T_COMMENT, T_DOC_COMMENT])));
+                    $stack = 1;
+                    for ($i = $index - 1; $i > 0; $i--) {
+                        if ($this->tkns[$i][0] === ST_PARENTHESES_OPEN) {
+                            $stack--;
+                            if ($stack === 0) {
+                                break;
+                            }
+                        } elseif ($this->tkns[$i][0] === ST_PARENTHESES_CLOSE) {
+                            $stack++;
+                        }
+                    }
+
+                    if ($stack === 0 && in_array($this->tkns[$i - 1][0], [T_IF, T_FOREACH, T_FOR, T_ELSEIF])) {
+                        if (!$this->rightTokenIs([ST_SEMI_COLON, ST_COLON, T_COMMENT, T_DOC_COMMENT])) {
+                            $this->appendCode(' ');
+                        }
+                    }
                     break;
 
                 case T_USE:
@@ -5100,6 +5117,9 @@ namespace {
                 case T_ELSE:
                     if (!$this->leftMemoUsefulTokenIs(ST_CURLY_CLOSE)) {
                         $this->appendCode($text);
+                        if (! $this->rightTokenIs([ST_CURLY_OPEN, ST_SEMI_COLON, ST_COLON])) {
+                            $this->appendCode(' ');
+                        }
                         break;
                     }
 
