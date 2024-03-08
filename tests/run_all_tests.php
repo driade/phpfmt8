@@ -145,7 +145,15 @@ foreach ($cases as $caseIn) {
                     }
                 }
             }
+        } elseif (T_COMMENT == $id && '//excludes:' == substr($text, 0, 11)) {
+            $excludes = explode(',', str_replace('//excludes:', '', $text));
+            $specialPasses = false;
+            foreach ($excludes as $pass) {
+                $pass = trim($pass);
+                $fmt->disablePass($pass);
+            }
         }
+
     }
     if (!$specialPasses) {
         $fmt->forcePass('AlignEquals');

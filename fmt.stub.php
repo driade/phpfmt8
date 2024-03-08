@@ -5102,7 +5102,14 @@ namespace {
                         $this->appendCode($text);
                         break;
                     }
-                    $this->appendCode($this->getSpace(!$this->leftMemoTokenIs([T_COMMENT, T_DOC_COMMENT])) . $text . ' ');
+
+                    $space = $this->getSpace(!$this->leftMemoTokenIs([T_COMMENT, T_DOC_COMMENT]));
+                    
+                    if ($this->hasLnBefore()) {
+                        $space = '';
+                    }
+
+                    $this->appendCode($space . $text . ' ');
                     break;
 
                 case T_ARRAY_CAST:
