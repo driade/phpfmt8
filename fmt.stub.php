@@ -3915,6 +3915,7 @@ namespace {
 
 			$foundStack = [];
             $stack = [];
+            $is_enum = false;
 
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
@@ -3934,6 +3935,7 @@ namespace {
 						$this->setIndent(+1);
 					}
 				}
+
 				switch ($id) {
 				case ST_QUOTE:
 					$this->appendCode($text);
@@ -3957,11 +3959,18 @@ namespace {
 					$this->appendCode($text);
 					break;
 
+                case T_CURLY_OPEN:
+                case ST_CURLY_OPEN:
+                    if ($is_enum) {
+                        $stack[] = $is_enum;
+                        $is_enum = false;
+                    } else {
+                        $stack[] = $id;
+                    }
 				case T_DOLLAR_OPEN_CURLY_BRACES:
-				case T_CURLY_OPEN:
-				case ST_CURLY_OPEN:
 				case ST_PARENTHESES_OPEN:
 				case ST_BRACKET_OPEN:
+                    
 					$indentToken = [
 						'id' => $id,
 						'implicit' => true,
@@ -3976,7 +3985,7 @@ namespace {
 
                 case T_ENUM:
                     $this->appendCode($text);
-                    $stack[] = $id;
+                    $is_enum = $id;
                     break;
 
 				case ST_CURLY_CLOSE:
@@ -4006,9 +4015,9 @@ namespace {
 				case T_COMMENT:
 				case T_WHITESPACE:
 
-                    $is_enum = false;
+                    $is_enum2 = false;
                     if (count($stack) && $stack[count($stack) - 1] === T_ENUM) {
-                        $is_enum = true;
+                        $is_enum2 = true;
                     }
 
 					if (
@@ -4017,7 +4026,7 @@ namespace {
                         (
                             $this->rightUsefulTokenIs([T_DEFAULT])
                             ||
-    						($this->rightUsefulTokenIs([T_CASE]) && ! $is_enum)
+    						($this->rightUsefulTokenIs([T_CASE]) && ! $is_enum2)
                         ) 
 					) {
 						$this->setIndent(-1);

@@ -22,3 +22,34 @@ enum ExampleEnum2:string {
     // Note.
     case Qux = 'c';
 }
+enum Suit implements Colorful
+{
+    // Fulfills the interface contract.
+    case Hearts;
+    /**
+     * Note.
+     */
+    case Diamonds;
+
+    // Fulfills the interface contract.
+    public function color(): string
+    {
+        return match($this) {
+            Suit::Hearts, Suit::Diamonds => 'Red',
+            Suit::Clubs, Suit::Spades => 'Black',
+        };
+    }
+
+    // Not part of an interface; that's fine.
+    public function shape(): string
+    {
+        return "Rectangle";
+    }
+
+    # Note.
+    case Clubs;
+    /**
+     * a
+     * */
+    case Spades;
+}
