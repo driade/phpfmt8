@@ -3914,6 +3914,7 @@ namespace {
 			$this->useCache = true;
 
 			$foundStack = [];
+            $stack = [];
 
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
@@ -3973,7 +3974,13 @@ namespace {
 					$foundStack[] = $indentToken;
 					break;
 
+                case T_ENUM:
+                    $this->appendCode($text);
+                    $stack[] = $id;
+                    break;
+
 				case ST_CURLY_CLOSE:
+                    array_pop($stack);
 				case ST_PARENTHESES_CLOSE:
 				case ST_BRACKET_CLOSE:
 					$poppedID = array_pop($foundStack);
@@ -3998,10 +4005,20 @@ namespace {
 
 				case T_COMMENT:
 				case T_WHITESPACE:
+
+                    $is_enum = false;
+                    if (count($stack) && $stack[count($stack) - 1] === T_ENUM) {
+                        $is_enum = true;
+                    }
+
 					if (
-						$this->hasLn($text) &&
-						$this->rightTokenIs([T_COMMENT, T_DOC_COMMENT]) &&
-						$this->rightUsefulTokenIs([T_CASE, T_DEFAULT])
+                        $this->hasLn($text) &&
+                        $this->rightTokenIs([T_COMMENT, T_DOC_COMMENT]) &&
+                        (
+                            $this->rightUsefulTokenIs([T_DEFAULT])
+                            ||
+    						($this->rightUsefulTokenIs([T_CASE]) && ! $is_enum)
+                        ) 
 					) {
 						$this->setIndent(-1);
 						$this->appendCode(str_replace($this->newLine, $this->newLine . $this->getIndent(), $text));
