@@ -6467,7 +6467,6 @@ namespace {
 						$skipWhitespaces = false;
 					}
 					$this->appendCode($text);
-					$this->printUntil(ST_SEMI_COLON);
 					break;
 
                 case T_CONST:
