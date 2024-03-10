@@ -1,0 +1,10 @@
+php.fmt
+=======
+
+Hi there! I've just added PHP 8.4 support, and fixed a few errors.
+
+I kindly request that you consider showing your support by giving the package a star on Github! ;) https://github.com/driade/phpfmt8
+
+Thank you for your attention and support.
+
+David Fernández david@mundosaparte.com
