@@ -4723,6 +4723,13 @@ namespace {
 
                 switch ($id) {
 
+                case T_ELLIPSIS:
+                    if (! $this->leftTokenIs([T_WHITESPACE, ST_PARENTHESES_OPEN, ST_COMMA])) {
+                        $this->appendCode(' ');
+                    }
+                    $this->appendCode($text);
+                    break;
+
                 case T_ATTRIBUTE:
                     $attributeStack[] = true;
                     $this->appendCode($text);
