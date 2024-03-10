@@ -7994,7 +7994,7 @@ EOT;
                         break;
                     }
                     $isAnonymousClass = array_pop($isAnonymousClassStack);
-                    if ($isAnonymousClass) {
+                    if ($isAnonymousClass && ! $this->rightUsefulTokenIs([ST_PARENTHESES_CLOSE])) {
                         $this->appendCode(ST_SEMI_COLON);
                         break;
                     }
