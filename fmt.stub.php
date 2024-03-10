@@ -4966,7 +4966,7 @@ namespace {
                     }
 
                     if ($stack === 0 && in_array($this->tkns[$i - 1][0], [T_IF, T_FOREACH, T_FOR, T_ELSEIF])) {
-                        if (!$this->rightTokenIs([ST_SEMI_COLON, ST_COLON, T_COMMENT, T_DOC_COMMENT])) {
+                        if (!$this->rightTokenIs([ST_SEMI_COLON, ST_COLON, T_COMMENT, T_DOC_COMMENT, T_OBJECT_OPERATOR])) {
                             $this->appendCode(' ');
                         }
                     }
