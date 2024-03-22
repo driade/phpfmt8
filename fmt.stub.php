@@ -6441,11 +6441,11 @@ namespace {
                             $static = $text;
                             $visibility = 'public';
                             break;
-                        } elseif (!$this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && !$this->leftTokenIs([T_NEW])) {
-    						$static = $text;
-    						$skipWhitespaces = true;
-    						break;
-    					}
+                        } elseif (!$this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && !$this->leftTokenIs([T_NEW, ST_COMMA])) {
+                            $static = $text;
+                            $skipWhitespaces = true;
+                            break;
+                        }
                     }
 					$this->appendCode($text);
 					break;
