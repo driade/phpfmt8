@@ -2649,7 +2649,6 @@ namespace {
 			'MergeParenCloseWithCurlyOpen' => false,
 			'NormalizeLnAndLtrimLines' => false,
 			'ExtraCommaInArray' => false,
-			'SmartLnAfterCurlyOpen' => false,
 			'AddMissingCurlyBraces' => false,
 			'OnlyOrderUseClauses' => false,
 			'OrderAndRemoveUseClauses' => false,
@@ -2688,6 +2687,8 @@ namespace {
 			'EchoToPrint' => false,
 			'TrimSpaceBeforeSemicolon' => false,
 			'StripNewlineWithinClassBody' => false,
+            'MatchNewLineAndCurlys'=>false,
+            'SmartLnAfterCurlyOpen' => false,
 		];
 
 		private $hasAfterExecutedPass = false;
@@ -2726,6 +2727,7 @@ namespace {
 		private $shortcircuits = [];
 
 		public function __construct() {
+            $this->passes['MatchNewLineAndCurlys'] = new MatchNewLineAndCurlys();
 			$this->passes['AddMissingCurlyBraces'] = new AddMissingCurlyBraces();
 			$this->passes['EliminateDuplicatedEmptyLines'] = new EliminateDuplicatedEmptyLines();
 			$this->passes['ExtraCommaInArray'] = new ExtraCommaInArray();
@@ -3894,6 +3896,161 @@ namespace {
 			return $this->code;
 		}
 	}
+
+    final class SmartLnAfterCurlyOpen extends AdditionalPass {
+        public function candidate($source, $foundTokens) {
+            if (isset($foundTokens[ST_CURLY_OPEN])) {
+                return true;
+            }
+
+            return false;
+        }
+
+        public function format($source) {
+            $this->tkns = token_get_all($source);
+            $this->code = '';
+            while (list($index, $token) = $this->each($this->tkns)) {
+                list($id, $text) = $this->getToken($token);
+                $this->ptr = $index;
+                switch ($id) {
+                case ST_CURLY_OPEN:
+                    $this->appendCode($text);
+                    $curlyCount = 1;
+                    $stack = '';
+                    $foundLineBreak = false;
+                    $hasLnAfter = $this->hasLnAfter();
+                    while (list($index, $token) = $this->each($this->tkns)) {
+                        list($id, $text) = $this->getToken($token);
+                        $this->ptr = $index;
+                        $stack .= $text;
+                        if (T_START_HEREDOC == $id) {
+                            $stack .= $this->walkAndAccumulateUntil($this->tkns, T_END_HEREDOC);
+                            continue;
+                        }
+                        if (ST_QUOTE == $id) {
+                            $stack .= $this->walkAndAccumulateUntil($this->tkns, ST_QUOTE);
+                            continue;
+                        }
+                        if (ST_CURLY_OPEN == $id) {
+                            ++$curlyCount;
+                        }
+                        if (ST_CURLY_CLOSE == $id) {
+                            --$curlyCount;
+                        }
+                        if (T_WHITESPACE === $id && $this->hasLn($text)) {
+                            $foundLineBreak = true;
+                            break;
+                        }
+                        if (0 == $curlyCount) {
+                            break;
+                        }
+                    }
+                    if ($foundLineBreak && !$hasLnAfter) {
+                        $this->appendCode($this->newLine);
+                    }
+                    $this->appendCode($stack);
+                    break;
+                default:
+                    $this->appendCode($text);
+                    break;
+                }
+            }
+            return $this->code;
+        }
+
+        public function getDescription() {
+            return 'Add line break when implicit curly block is added.';
+        }
+
+        public function getExample() {
+            return <<<'EOT'
+<?php
+if($a) echo array();
+?>
+to
+<?php
+if($a) {
+    echo array();
+}
+?>
+EOT;
+        }
+    }
+
+    final class MatchNewLineAndCurlys extends FormatterPass {
+        public function candidate($source, $foundTokens) {
+            if (isset($foundTokens[ST_CURLY_OPEN])) {
+                return true;
+            }
+
+            return false;
+        }
+
+        public function format($source) {
+            $this->tkns = token_get_all($source);
+            $this->code = '';
+
+            $stack = [];
+
+            while (list($index, $token) = $this->each($this->tkns)) {
+                list($id, $text) = $this->getToken($token);
+                $this->ptr = $index;
+
+                switch ($id) {
+                    case T_DOLLAR_OPEN_CURLY_BRACES:
+                        $stack[] = false;
+                        $this->appendCode($text);
+                        break;
+                    case T_CURLY_OPEN:
+                    case ST_CURLY_OPEN:
+                        $next = false;
+                        for ($i = $this->ptr + 1; $i < count($this->tkns); $i++) {
+                            list($id2, $text2) = $this->getToken($this->tkns[$i]);
+                            if ($this->hasLn($text2) && $id2 !== T_CLOSE_TAG) {
+                                $next = true;
+                                break;
+                            }
+                            if (! in_array($id2, [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT])) {
+                                break;
+                            }
+                        }
+                        $stack[] = $next;
+                        $this->appendCode($text);
+                        break;
+                    case ST_CURLY_CLOSE:
+                        $hadNewLineOpen = array_pop($stack);
+                        if ($hadNewLineOpen && ! $this->myHasLnBefore()) {
+                            $this->appendCode($this->newLine);
+                        }
+                        $this->appendCode($text);
+                        break;
+                    default:
+                        if ($this->hasLn($text) && $this->rightTokenIs(ST_CURLY_CLOSE) && $id !== T_OPEN_TAG) {
+                            $hadNewLineOpen = count($stack) === 0 || $stack[count($stack) - 1] === true;
+                            if (! $hadNewLineOpen) {
+                                break;
+                            }
+                        }
+                        $this->appendCode($text);
+                        break;
+                }
+            }
+            return $this->code;
+        }
+
+        private function myHasLnBefore() {
+            for ($i = $this->ptr - 1; $i > 0; $i--) {
+                list($id, $text) = $this->getToken($this->tkns[$i]);
+                if ($this->hasLn($text)) {
+                    return true;
+                }
+                if ($id !== T_WHITESPACE) {
+                    break;
+                }
+            }
+            return false;
+        }
+    }
 
 	final class Reindent extends FormatterPass {
 		public function candidate($source, $foundTokens) {
@@ -12065,86 +12222,6 @@ echo array();
 to
 <?php
 echo [];
-?>
-EOT;
-		}
-	}
-
-	final class SmartLnAfterCurlyOpen extends AdditionalPass {
-		public function candidate($source, $foundTokens) {
-			if (isset($foundTokens[ST_CURLY_OPEN])) {
-				return true;
-			}
-
-			return false;
-		}
-
-		public function format($source) {
-			$this->tkns = token_get_all($source);
-			$this->code = '';
-			while (list($index, $token) = $this->each($this->tkns)) {
-				list($id, $text) = $this->getToken($token);
-				$this->ptr = $index;
-				switch ($id) {
-				case ST_CURLY_OPEN:
-					$this->appendCode($text);
-					$curlyCount = 1;
-					$stack = '';
-					$foundLineBreak = false;
-					$hasLnAfter = $this->hasLnAfter();
-					while (list($index, $token) = $this->each($this->tkns)) {
-						list($id, $text) = $this->getToken($token);
-						$this->ptr = $index;
-						$stack .= $text;
-						if (T_START_HEREDOC == $id) {
-							$stack .= $this->walkAndAccumulateUntil($this->tkns, T_END_HEREDOC);
-							continue;
-						}
-						if (ST_QUOTE == $id) {
-							$stack .= $this->walkAndAccumulateUntil($this->tkns, ST_QUOTE);
-							continue;
-						}
-						if (ST_CURLY_OPEN == $id) {
-							++$curlyCount;
-						}
-						if (ST_CURLY_CLOSE == $id) {
-							--$curlyCount;
-						}
-						if (T_WHITESPACE === $id && $this->hasLn($text)) {
-							$foundLineBreak = true;
-							break;
-						}
-						if (0 == $curlyCount) {
-							break;
-						}
-					}
-					if ($foundLineBreak && !$hasLnAfter) {
-						$this->appendCode($this->newLine);
-					}
-					$this->appendCode($stack);
-					break;
-				default:
-					$this->appendCode($text);
-					break;
-				}
-			}
-			return $this->code;
-		}
-
-		public function getDescription() {
-			return 'Add line break when implicit curly block is added.';
-		}
-
-		public function getExample() {
-			return <<<'EOT'
-<?php
-if($a) echo array();
-?>
-to
-<?php
-if($a) {
-	echo array();
-}
 ?>
 EOT;
 		}

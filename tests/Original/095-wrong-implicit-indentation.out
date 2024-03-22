@@ -20,5 +20,4 @@ function aaa($query) {
 }
 
 function bbb($query) {$a;
-	$b;
-}
+	$b;}
