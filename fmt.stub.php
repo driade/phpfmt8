@@ -6531,7 +6531,20 @@ EOT;
 					}
 					break;
                 case '?':
-                    if ($this->rightTokenIs([T_STRING, T_ARRAY, T_NAME_RELATIVE, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED])) {
+                    $peek = null;
+                    $i = $this->ptr + 1;
+                    $futile_tokens = array_merge($this->ignoreFutileTokens, [T_STRING, T_ARRAY, T_NAME_RELATIVE, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED]);
+                    while (1) {
+                        if (count($this->tkns) <= ++$i) {
+                            break;
+                        }
+                        $mpeek = $this->tkns[$i];
+                        if (isset($mpeek[0]) && ! in_array($mpeek[0], $futile_tokens)) {
+                            $peek = $mpeek[0];
+                            break;
+                        }
+                    }
+                    if ($this->rightTokenIs([T_STRING, T_ARRAY, T_NAME_RELATIVE, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED]) && $peek === T_VARIABLE) {
                         $type = '?';
                     } else {
                         $this->appendCode($text);
