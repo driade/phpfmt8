@@ -14465,6 +14465,11 @@ EOT;
                         list($prevId) = $this->inspectToken(-1);
                         list($nextId) = $this->inspectToken(+1);
 
+                        if ($prevId === T_WHITESPACE) {
+                            $this->appendCode($text);
+                            break;
+                        }
+
                         $this->appendCode(
                             $this->getSpace(
                                 (
