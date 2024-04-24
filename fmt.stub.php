@@ -14462,16 +14462,13 @@ EOT;
                 $this->ptr = $index;
                 switch ($id) {
                     case ST_PARENTHESES_OPEN:
+
                         list($prevId) = $this->inspectToken(-1);
                         list($nextId) = $this->inspectToken(+1);
 
-                        if ($prevId === T_WHITESPACE) {
-                            $this->appendCode($text);
-                            break;
-                        }
-
-                        $this->appendCode(
-                            $this->getSpace(
+                        if ( !$this->leftUsefulTokenIs(ST_PARENTHESES_OPEN)) {
+                            $this->appendCode(
+                                $this->getSpace(
                                 (
                                     $this->leftTokenIs(
                                         [
@@ -14479,8 +14476,12 @@ EOT;
                                         ]
                                     )
                                     && T_WHITESPACE != $prevId && T_FUNCTION != $prevId)
-                            )
-                            . $text .
+                                )
+                            );
+                        }
+
+                        $this->appendCode(
+                            $text .
                             $this->getSpace(!$this->rightTokenIs([
                                 T_WHITESPACE, ST_PARENTHESES_CLOSE,
                             ]))
