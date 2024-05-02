@@ -4986,13 +4986,18 @@ EOT;
                         T_WHITESPACE !== $prevId &&
                         T_WHITESPACE !== $nextId
                     ) {
-                         if (! $this->rightTokenIs([T_STATIC, T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED, T_NS_SEPARATOR]) || $id !== ST_QUESTION) {
+                        $myNextId = $this->inspectToken(+2);
+                        if (
+                            ($this->rightTokenIs(T_STATIC) && $myNextId[0] === T_DOUBLE_COLON)
+                            ||
+                            ! $this->rightTokenIs([T_STATIC, T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED, T_NS_SEPARATOR])
+                            ||
+                            $id !== ST_QUESTION
+                        ) {
                             $this->appendCode(' ' . $text);
                             $this->appendCode($this->getSpace(! $this->rightTokenIs(ST_COLON)));
-                        } else {
-                            $this->appendCode($text);
+                            break;
                         }
-                        break;
                     }
                     $this->appendCode($text);
                     break;
