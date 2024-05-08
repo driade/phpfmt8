@@ -7247,7 +7247,7 @@ EOT;
 		}
 	}
 
-	final class AlignDoubleSlashComments extends AdditionalPass {
+	class AlignComments extends AdditionalPass {
 		const ALIGNABLE_COMMENT = "\x2 COMMENT%d \x3";
 
 		public function candidate($source, $foundTokens) {
@@ -7276,9 +7276,11 @@ EOT;
 					}
 
 					$prefix = '';
-					if (substr($text, 0, 2) == '//' && !$touchedNonAlignableComment) {
-						$prefix = sprintf(self::ALIGNABLE_COMMENT, $contextCounter);
-					}
+                    if (! $touchedNonAlignableComment) {
+    					if (substr($text, 0, 2) == '//' || (substr($text, 0, 1) === '#' && substr($text, 0, 2) !== '#[')) {
+                            $prefix = sprintf(self::ALIGNABLE_COMMENT, $contextCounter);
+                        }
+                    }
 					$this->appendCode($prefix . $text);
 
 					break;
@@ -7325,6 +7327,10 @@ $ccc = 333;  // Comment 3
 EOT;
 		}
 	}
+
+    final class AlignDoubleSlashComments extends AlignComments {
+        
+    }
 
 	final class AlignEquals extends AdditionalPass {
 		const ALIGNABLE_EQUAL = "\x2 EQUAL%d \x3";
