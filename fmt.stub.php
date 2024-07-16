@@ -11977,9 +11977,26 @@ EOT;
 
 				if (T_STRING == $id && 'is_null' == strtolower($text) && !$this->leftUsefulTokenIs([T_OBJECT_OPERATOR, T_DOUBLE_COLON])) {
 					$this->appendCode('null');
-					$this->printAndStopAt(ST_PARENTHESES_OPEN);
+
+                    // @see 484-replace-is-null
+                    $tokens = 0;
+                    for ($i = $this->ptr + 1 ; $max = count($this->tkns), $i < $max; $i++){
+                        list($id2, $text2) = $this->getToken($this->tkns[$i]);
+                        if (! in_array($id2, [T_WHITESPACE, ST_PARENTHESES_OPEN])) {
+                            $tokens++;
+                        }
+                        if ($id2 === ST_PARENTHESES_CLOSE) {
+                            break;
+                        }
+                    }
+
+                    if ($tokens === 2) {
+                        $this->printAndStopAt(ST_PARENTHESES_OPEN);
+                    }
 					$this->appendCode('===');
-					$this->printAndStopAt(ST_PARENTHESES_CLOSE);
+                    if ($tokens === 2) {
+					   $this->printAndStopAt(ST_PARENTHESES_CLOSE);
+                    }
 					continue;
 				}
 

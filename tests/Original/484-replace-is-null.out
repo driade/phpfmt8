@@ -1,0 +1,7 @@
+<?php
+//passes:ReplaceIsNull
+if (!null === ($n = get_number())) {
+}
+
+if (!null === 1) {
+}
