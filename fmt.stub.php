@@ -11982,7 +11982,7 @@ EOT;
                     $tokens = 0;
                     for ($i = $this->ptr + 1 ; $max = count($this->tkns), $i < $max; $i++){
                         list($id2, $text2) = $this->getToken($this->tkns[$i]);
-                        if (! in_array($id2, [T_WHITESPACE, ST_PARENTHESES_OPEN])) {
+                        if (! in_array($id2, [T_WHITESPACE, ST_PARENTHESES_OPEN, T_COMMENT, T_DOC_COMMENT])) {
                             $tokens++;
                         }
                         if ($id2 === ST_PARENTHESES_CLOSE) {
