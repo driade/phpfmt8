@@ -15,7 +15,6 @@ implode();
 array_key_exists();
 set_magic_quotes_runtime();
 current();
-rewinddir();
 highlight_file();
 count();
 strstr();
