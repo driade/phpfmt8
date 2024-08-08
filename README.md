@@ -1,77 +1,65 @@
-# [phpfmt](https://github.com/driade/phpfmt8) support for Sublime Text 4 with PHP 8.x support
+# [PHPFmt](https://github.com/driade/phpfmt8) for Sublime Text 4
 
 [![PHPFmt](https://github.com/driade/phpfmt8/actions/workflows/github.yml/badge.svg)](https://github.com/driade/phpfmt8/actions/workflows/github.yml)
 
-This project is a clone of https://github.com/nanch/phpfmt_stable with PHP 8 support and numerous bugfixes, since the original project is abandoned. 
+PHPFmt is a PHP code formatter tailored for Sublime Text 4 with full support for PHP 8.x. It's a continuation of the [phpfmt_stable](https://github.com/nanch/phpfmt_stable) project, with added PHP 8 compatibility and numerous bug fixes.
 
-## Contributing
+## Features
 
-Please don't hesitate opening a pull request or an issue in case you find something wrong. Provide as much information as you can, with code samples of the expected result, to make it easier to spot the error.
+- **PHP 8 Support**: Seamlessly format PHP >= 5.6 code.
+- **Rich Formatting Options**: Includes PSR-1, PSR-2, and WordPress coding standards, among others.
+- **Customization**: Supports a wide array of transformations and formatting tweaks.
+- **Easy Integration**: Simple setup and configuration within Sublime Text.
 
 ## Installation
 
-#### Requirements
-- **You must have a running copy of PHP on the machine you are running Sublime Text**
+### Requirements
 
-Plugin runs with PHP 5.6 or newer installed in the machine running the plugin.
+- PHP 5.6 or newer installed on your system.
+- Sublime Text 4.
 
-#### Install this plugin through Package Manager
+### Steps
 
-- In Sublime Text press `ctrl+shift+P`
-- Choose `Package Control: Install Package`
-- Choose `phpfmt`
+1. Open Sublime Text and press `Ctrl+Shift+P`.
+2. Select `Package Control: Install Package`.
+3. Search for `phpfmt` and install it.
 
-#### Configuration (Windows)
+## Configuration
 
-- Edit configuration file (`%AppData%\Sublime Text\Packages\phpfmt\phpfmt.sublime-nings`)
-- For field `"php_bin"` enter the path to the php.exe
-  Example: `"php_bin":"c:/PHP/php.exe"`
+### Windows
 
-#### Configuration (OS X and Linux)
+Edit the configuration file at `%AppData%\Sublime Text\Packages\phpfmt\phpfmt.sublime-settings` and set the `php_bin` path:
 
-- Edit configuration file (`phpfmt.sublime-settings`)
-- For field `"php_bin"` enter the path to the php
-  Example: `"php_bin":"/usr/local/bin/php"`
-
-### Settings
-
-Prefer using the toggle options at command palette. However you might find yourself in need to setup where PHP is running, use this option below for the configuration file.
-```
+```json
 {
-	"php_bin":"/usr/local/bin/php",
+    "php_bin": "c:/PHP/php.exe"
 }
 ```
 
-You may find an example configuration file in https://github.com/driade/phpfmt8/blob/master/driade.sublime-settings
+### macOS and Linux
 
-**The following features are available through command palette (`ctrl+shift+P` or `cmd+shift+P`) :**
+Edit `phpfmt.sublime-settings` and set the `php_bin` path:
 
- *  phpfmt: format now
- *  phpfmt: indentation with spaces
- *  phpfmt: toggle additional transformations
- *  phpfmt: toggle excluded transformations
- *  phpfmt: toggle skip execution when .php.tools.ini is missing
- *  phpfmt: toggle autocomplete
- *  phpfmt: toggle dependency autoimport
- *  phpfmt: toggle format on save
- *  phpfmt: toggle PSR1 - Class and Methods names
- *  phpfmt: toggle PSR1
- *  phpfmt: toggle PSR2
- *  phpfmt: toggle WP Coding Standards
- *  phpfmt: analyse this
- *  phpfmt: build autocomplete database
- *  phpfmt: getter and setter (camelCase)
- *  phpfmt: getter and setter (Go)
- *  phpfmt: getter and setter (snake_case)
- *  phpfmt: generate PHPDoc block
- *  phpfmt: look for .php.tools.ini
- *  phpfmt: reorganize content of class
- *  phpfmt: enable/disable additional transformations
- *  phpfmt: troubleshoot information
- *  phpfmt: update PHP binary path
+```json
+{
+    "php_bin": "/usr/local/bin/php"
+}
+```
+
+You may find an example configuration file in https://github.com/driade/phpfmt8/blob/master/driade.sublime-settings , where you can see how to configure the extension.
+
+## Usage
+
+PHPFmt provides a variety of commands accessible via the command palette (`Ctrl+Shift+P` or `Cmd+Shift+P`):
+
+- `phpfmt: format now`
+- `phpfmt: toggle format on save`
+- `phpfmt: toggle PSR2`
+
+... and more.
 
 
-### Currently Supported Transformations:
+## Currently Supported Transformations:
 
  * AddMissingParentheses             Add extra parentheses in new instantiations.
  * AliasToMaster                     Replace function aliases to their masters - only basic syntax alias.
@@ -145,7 +133,7 @@ You may find an example configuration file in https://github.com/driade/phpfmt8/
  * WrongConstructorName              Update old constructor names into new ones. http://php.net/manual/en/language.oop5.decon.php
  * YodaComparisons                   Execute Yoda Comparisons.
 
-### What does it do?
+## What does it do?
 
 <table>
 <tr>
@@ -302,10 +290,22 @@ $d = new D();
 </tr>
 </table>
 
-### Troubleshooting
-- Be sure you can run PHP from the command line.
-- If you need support, please open an issue at [fmt issues](https://github.com/driade/phpfmt8/issues)
+## Troubleshooting
+
+Ensure PHP is accessible from the command line. If issues arise, open an issue [here](https://github.com/driade/phpfmt8/issues).
+
+
+## Contributing
+
+Contributions are welcome! Please submit pull requests or issues with detailed information and code samples.
+
+## VSCode
+
+If you're using Visual Studio Code, please consider installing  [vscode-phpfmt](https://marketplace.visualstudio.com/items?itemName=kokororin.vscode-phpfmt) extension by @kokororin
+
+This extension leverages the same phpfmt8 engine, providing seamless PHP formatting directly within VS Code.
 
 ### Acknowledgements
+
 - GoSublime - for the method to update the formatted buffer
 - Google's diff match patch - http://code.google.com/p/google-diff-match-patch/
