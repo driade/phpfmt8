@@ -87,7 +87,7 @@ PHPFmt provides a variety of commands accessible via the command palette (`Ctrl+
  * LeftWordWrap                      Word wrap at 80 columns - left justify.
  * LongArray                         Convert short to long arrays.
  * MergeElseIf                       Merge if with else.
- * SplitElseIf                       Merge if with else.
+ * SplitElseIf                       Split if with else.
  * MergeNamespaceWithOpenTag         Ensure there is no more than one linebreak before namespace
  * MildAutoPreincrement              Automatically convert postincrement to preincrement. (Deprecated pass. Use AutoPreincrement instead).
  * NewLineBeforeReturn               Add an empty line before T_RETURN.
