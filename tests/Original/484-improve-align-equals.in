@@ -1,0 +1,12 @@
+<?php
+//passes:AlignEquals,PSR2LnAfterNamespace,PSR2CurlyOpenNextLine,PSR2ModifierVisibilityStaticOrder,PSR2SingleEmptyLineAndStripClosingTag,AlignDoubleArrow,AlignPHPCode,MergeElseIf,ReindentAndAlignObjOps,ReindentSwitchBlocks,ReplaceBooleanAndOr,ShortArray,StripExtraCommaInArray
+//excludes:ReindentComments,StripNewlineWithinClassBody
+class A {
+    protected $_mapping;
+    protected $table ='';
+    protected $_primary_key='id';
+    protected $_return_type='array';
+    protected $_allowed_fields=[];
+    protected $_label_fields=[];
+    protected $_user_timestamps=FALSE;
+}
