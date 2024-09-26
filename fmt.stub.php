@@ -7295,6 +7295,8 @@ EOT;
 			$bracketCount = 0;
 			$contextCounter = 0;
 
+            $hasConcatEqual = false;
+
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
@@ -7330,10 +7332,11 @@ EOT;
 					$this->appendCode($text);
 					break;
 				case ST_EQUAL:
-					if (!$parenCount && !$bracketCount) {
-						$this->appendCode(sprintf(self::ALIGNABLE_EQUAL, $contextCounter) . $text);
-						break;
-					}
+                case T_CONCAT_EQUAL;
+                    if (!$parenCount && !$bracketCount) {
+                        $this->appendCode(sprintf(self::ALIGNABLE_EQUAL, $contextCounter) . $text);
+                        break;
+                    }
 
 				default:
 					$this->appendCode($text);
@@ -7347,19 +7350,19 @@ EOT;
 		}
 
 		public function getDescription() {
-			return 'Vertically align "=".';
+			return 'Vertically align "=" and ".=".';
 		}
 
 		public function getExample() {
 			return <<<'EOT'
 <?php
 $a = 1;
-$bb = 22;
+$bb .= 22;
 $ccc = 333;
 
-$a   = 1;
-$bb  = 22;
-$ccc = 333;
+$a    = 1;
+$bb  .= 22;
+$ccc  = 333;
 
 ?>
 EOT;
