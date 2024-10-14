@@ -1,16 +1,15 @@
 {
-    "autocomplete": true,
+    "autocomplete": false,
     "autoimport": false,
-    "excludes":
-    [
-        "PSR2ModifierVisibilityStaticOrder"
+    "excludes": [
+        "SpaceBetweenMethods"
     ],
     "format_on_save": true,
     "passes":
     [
         "AlignDoubleArrow",
         "AlignPHPCode",
-        "SpaceAroundExclamationMark",
+        "SpaceAfterExclamationMark",
         "AlignConstVisibilityEquals",
         "AutoSemicolon",
         "ConvertOpenTagWithEcho",
@@ -18,12 +17,16 @@
         "MergeNamespaceWithOpenTag",
         "RemoveSemicolonAfterCurly",
         "RestoreComments",
-        "ShortArray"
+        "ShortArray",
+        "ExtraCommaInArray",
+        "AlignDoubleSlashComments"
     ],
     "php_bin": "/usr/local/bin/php",
     "psr1": false,
     "psr1_naming": false,
     "psr2": true,
-    "readini": false,
-    "smart_linebreak_after_curly": false
+    "readini": true,
+    "smart_linebreak_after_curly": false,
+    "version": 4,
+    "wp": false,
 }
