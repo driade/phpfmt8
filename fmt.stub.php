@@ -4937,7 +4937,11 @@ EOT;
                         if (
                             ($this->rightTokenIs(T_STATIC) && $myNextId[0] === T_DOUBLE_COLON)
                             ||
-                            ! $this->rightTokenIs([T_STATIC, T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED, T_NS_SEPARATOR])
+                            (
+                                ! $this->rightTokenIs([T_STATIC, T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED, T_NS_SEPARATOR])
+                                ||
+                                ! $this->leftTokenIs([ST_COLON])
+                            )
                             ||
                             $id !== ST_QUESTION
                         ) {
