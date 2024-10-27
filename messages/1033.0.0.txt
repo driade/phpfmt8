@@ -1,0 +1,10 @@
+php.fmt
+=======
+
+Greetings! I'm pleased to announce that I've improved the formating in PHP 8.4.
+
+I kindly request that you consider showing your support by giving the package a star on Github! ;) https://github.com/driade/phpfmt8
+
+Thank you for your attention and support.
+
+David Fernández david@mundosaparte.com
