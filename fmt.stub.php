@@ -1569,6 +1569,15 @@ namespace {
     if (!defined("T_ATTRIBUTE")) {
         define("T_ATTRIBUTE", "attribute");
     }
+    if (!defined("T_PRIVATE_SET")) {
+        define("T_PRIVATE_SET", "private(set)");
+    }
+    if (!defined("T_PROTECTED_SET")) {
+        define("T_PROTECTED_SET", "protected(set)");
+    }
+    if (!defined("T_PUBLIC_SET")) {
+        define("T_PUBLIC_SET", "public(set)");
+    }
 
 	define('ST_PARENTHESES_BLOCK', 'ST_PARENTHESES_BLOCK');
 	define('ST_BRACKET_BLOCK', 'ST_BRACKET_BLOCK');
@@ -4855,6 +4864,10 @@ EOT;
                     if (! $this->leftTokenIs(T_STRING) && $this->rightTokenIs(T_STRING)) {
                         $this->appendCode(" ");
                     }
+
+                    // if (in_array($text, ['get', 'set'], true) && $this->rightUsefulTokenIs(ST_PARENTHESES_OPEN)) {
+                    //     $this->appendCode(" ");
+                    // }
                     break;
                 case T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG:
                     if ($this->rightTokenIs(T_VARIABLE)) {
@@ -5019,6 +5032,18 @@ EOT;
                         $this->appendCode(' ');
                     }
                     $this->appendCode($text);
+                    $peek = null;
+                    if (isset($this->tkns[$this->ptr + 2])) {
+                        $peek = $this->tkns[$this->ptr + 2];
+                    }
+                    if ($this->rightUsefulTokenIs([ST_CURLY_OPEN]) && (
+                        (isset($peek[0]) && $peek[0] === T_WHITESPACE)
+                        ||
+                        in_array($peek[1], ['get', 'set'], true)
+                        )
+                    ) {
+                        $this->appendCode(' ');
+                    }
                     break;
 
                 case T_DEFAULT:
@@ -5029,7 +5054,11 @@ EOT;
                     break;
                 case ST_CURLY_OPEN:
                     $touchedFunction = false;
-                    if (!$touchedUse && $this->leftMemoUsefulTokenIs([T_VARIABLE, T_STRING]) && $this->rightUsefulTokenIs([T_VARIABLE, T_STRING])) {
+                    $peek = $this->rightToken();
+                    if (isset($peek[1]) && in_array($peek[1], ['get', 'set'], true)) {
+                        $this->appendCode($text . ' ');
+                        break;
+                    } elseif (!$touchedUse && $this->leftMemoUsefulTokenIs([T_VARIABLE, T_STRING]) && $this->rightUsefulTokenIs([T_VARIABLE, T_STRING])) {
                         $this->appendCode($text);
                         break;
                     } elseif ($this->leftMemoUsefulTokenIs([T_STRING, T_DO, T_FINALLY, ST_PARENTHESES_CLOSE, T_ARRAY]) && !$this->hasLnLeftToken() && !$this->leftTokenIs([T_DOC_COMMENT, T_COMMENT])) {
@@ -5313,10 +5342,23 @@ EOT;
                     $this->appendCode($text);
                     break;
 
+                case T_PROTECTED_SET:
+                case T_PRIVATE_SET:
+                case T_PUBLIC_SET:
+                    $this->appendCode($text . ' ');
+                    break;
+
                 case ST_CURLY_CLOSE:
                     if ($touchedGroupedUse) {
                         $touchedGroupedUse = false;
                         $this->appendCode($this->getSpace(!$this->hasLnBefore()));
+                    }
+                    $peek = null;
+                    if (isset($this->tkns[$this->ptr - 2])) {
+                        $peek = $this->tkns[$this->ptr - 2];
+                    }
+                    if (isset($peek[1]) && in_array($peek[1], ['get', 'set'], true)) {
+                        $this->appendCode(' ');
                     }
                     $this->appendCode($text);
                     $this->appendCode($this->getSpace($this->rightTokenIs(T_COMMENT) && !$this->hasLnAfter()));
@@ -5759,7 +5801,11 @@ EOT;
 					$touchedSemicolon = true;
 					$this->appendCode($text);
 					break;
-
+                case T_STRING:
+                    if (in_array($text, ['get', 'set'], true) && $this->rightTokenIs(ST_SEMI_COLON)) {
+                        $this->appendCode($text);
+                        break;
+                    }
 				case T_VARIABLE:
 				case T_STRING:
 				case T_CONTINUE:
@@ -6535,12 +6581,19 @@ EOT;
                         }
                     }
                     break;
+                case T_PUBLIC_SET:
+                case T_PRIVATE_SET:
+                case T_PROTECTED_SET:
+                    $this->appendCode($text);
+                    break;
 				case T_VAR:
 					$text = 'public';
 				case T_PUBLIC:
 				case T_PRIVATE:
 				case T_PROTECTED:
                     if ($this->leftTokenIs([T_DOUBLE_COLON, T_CASE])) {
+                        $this->appendCode($text);
+                    } else if ($this->rightTokenIs([T_PUBLIC_SET, T_PRIVATE_SET, T_PROTECTED_SET])) {
                         $this->appendCode($text);
                     } else {
                         $visibility = $text;
