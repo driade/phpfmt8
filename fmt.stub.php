@@ -3715,6 +3715,9 @@ namespace {
 				$this->ptr = $index;
 				switch ($id) {
 				case T_STRING:
+                case T_NAMESPACE:
+                case T_NAME_QUALIFIED:
+                case T_NAME_FULLY_QUALIFIED:
 				case ST_PARENTHESES_CLOSE:
 					$touchedElseStringParenClose = true;
 					$this->appendCode($text);
