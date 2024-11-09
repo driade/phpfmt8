@@ -6446,6 +6446,21 @@ EOT;
             $type = null;
 			$skipWhitespaces = false;
 			$touchedClassInterfaceTrait = false;
+
+            // joins T_NS_SEPARATOR and T_STRING
+            while (list($index, $token) = $this->each($this->tkns)) {
+                list($id, $text) = $this->getToken($token);
+                $this->ptr = $index;
+                if ($id === T_NS_SEPARATOR) {
+                    if ($this->rightTokenIs([T_STRING])) {
+                        $this->tkns[$this->ptr + 1][1] = $text . $this->tkns[$this->ptr + 1][1];
+                        $this->tkns[$this->ptr] = '';
+                    }
+                }
+            }
+            
+            reset($this->tkns);
+
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;
