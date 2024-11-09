@@ -5024,6 +5024,9 @@ EOT;
                         break;
                     }
                     $this->appendCode($text);
+                    if ($this->leftMemoUsefulTokenIs(T_THROW)) {
+                        $this->appendCode(' ');
+                    }
                     break;
 
                 case T_PRINT:
@@ -5201,6 +5204,9 @@ EOT;
                 case ST_COMMA:
                     $this->appendCode($text);
                     if ($this->leftTokenIs([T_FUNCTION, T_CASE, T_CONST])) {
+                        break;
+                    }
+                    if ($id === T_THROW && $this->rightTokenIs([ST_COLON])) {
                         break;
                     }
                     // this "case" covers too many things
