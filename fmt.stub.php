@@ -5925,6 +5925,12 @@ EOT;
 					$this->appendCode($text);
 					break;
 				case T_STRING:
+                    if (in_array($text, [
+                      '__construct', '__destruct', '__call', '__callStatic', '__get', '__set', '__isset', '__unset', '__sleep', '__wakeup', '__toString', '__invoke', '__set_state', '__clone', '__debugInfo', '__serialize', '__unserialize'
+                    ])) {
+                        $this->appendCode($text);
+                        break;
+                    }
 					if ($foundClass) {
 						$count = 0;
 						$tmp = ucwords(str_replace(['-', '_'], ' ', strtolower($text), $count));
