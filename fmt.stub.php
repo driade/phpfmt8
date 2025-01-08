@@ -2638,6 +2638,7 @@ namespace {
 			'AlignGroupDoubleArrow' => false,
 			'AlignDoubleArrow' => false,
 			'AlignEquals' => false,
+            'AlignSuperEquals' => false,
 			'AlignConstVisibilityEquals' => false,
 
             'ReindentSwitchBlocks' => false,
@@ -7489,6 +7490,172 @@ $ccc = 333;
 EOT;
 		}
 	}
+
+    class AlignSuperEquals extends AdditionalPass {
+        const ALIGNABLE_EQUAL = "\x2 EQUAL%d \x3";
+        const ALIGNABLE_EQUAL_SPACE = "\x2 EQUAL_SPACE \x3";
+
+        const OPEN_TAG = "<?php /*\x2 EQUAL OPEN TAG\x3*/";
+
+        public function candidate($source, $foundTokens) {
+            return true;
+        }
+
+        public function format($source) {
+            $this->tkns = token_get_all($source);
+            $this->code = '';
+
+            $blockCounter = 0;
+            $blockCountEquals = array(0 => 0);
+
+            while (list($index, $token) = $this->each($this->tkns)) {
+                list($id, $text) = $this->getToken($token);
+                $this->ptr = $index;
+                switch ($id) {
+                    case T_WHITESPACE:
+                        if ($this->hasLn($text) && substr_count($text, $this->newLine) >= 2) {
+                            $blockCounter++;
+                            $blockCountEquals[$blockCounter] = 0;
+                        }
+                        break;
+                    case ST_EQUAL:
+                    case T_PLUS_EQUAL:
+                    case T_MINUS_EQUAL:
+                    case T_MUL_EQUAL:
+                    case T_POW_EQUAL:
+                    case T_DIV_EQUAL:
+                    case T_CONCAT_EQUAL:
+                    case T_MOD_EQUAL:
+                    case T_AND_EQUAL:
+                    case T_OR_EQUAL:
+                    case T_XOR_EQUAL:
+                    case T_SL_EQUAL:
+                    case T_SR_EQUAL:
+                    case T_IS_EQUAL:
+                    case T_IS_NOT_EQUAL:
+                    case T_IS_IDENTICAL:
+                    case T_IS_NOT_IDENTICAL:
+                    case T_IS_SMALLER_OR_EQUAL:
+                    case T_IS_GREATER_OR_EQUAL:
+                        $len = strlen($text);
+                        if ($len > $blockCountEquals[$blockCounter]) {
+                            $blockCountEquals[$blockCounter] = $len;
+                        }
+                        break;
+                }
+            }
+
+            reset($this->tkns);
+
+            $parenCount = 0;
+            $bracketCount = 0;
+            $contextCounter = 0;
+            $blockCounter = 0;
+
+            while (list($index, $token) = $this->each($this->tkns)) {
+                list($id, $text) = $this->getToken($token);
+                $this->ptr = $index;
+                switch ($id) {
+                    case T_WHITESPACE:
+                       if ($this->hasLn($text) && substr_count($text, $this->newLine) >= 2) {
+                            $blockCounter++;
+                        }
+                        $this->appendCode($text);
+                        break;
+                    case T_FUNCTION:
+                        ++$contextCounter;
+                        $this->appendCode($text);
+                        break;
+
+                    case ST_CURLY_OPEN:
+                        $this->appendCode($text);
+                        $block = $this->walkAndAccumulateCurlyBlock($this->tkns);
+                        $aligner = new self();
+                        $this->appendCode(
+                            str_replace(self::OPEN_TAG, '', $aligner->format(self::OPEN_TAG . $block))
+                        );
+                        break;
+
+                    case ST_PARENTHESES_OPEN:
+                        ++$parenCount;
+                        $this->appendCode($text);
+                        break;
+                    case ST_PARENTHESES_CLOSE:
+                        --$parenCount;
+                        $this->appendCode($text);
+                        break;
+                    case ST_BRACKET_OPEN:
+                        ++$bracketCount;
+                        $this->appendCode($text);
+                        break;
+                    case ST_BRACKET_CLOSE:
+                        --$bracketCount;
+                        $this->appendCode($text);
+                        break;
+                    case ST_EQUAL:
+                    case T_PLUS_EQUAL:
+                    case T_MINUS_EQUAL:
+                    case T_MUL_EQUAL:
+                    case T_POW_EQUAL:
+                    case T_DIV_EQUAL:
+                    case T_CONCAT_EQUAL:
+                    case T_MOD_EQUAL:
+                    case T_AND_EQUAL:
+                    case T_OR_EQUAL:
+                    case T_XOR_EQUAL:
+                    case T_SL_EQUAL:
+                    case T_SR_EQUAL:
+                    case T_IS_EQUAL:
+                    case T_IS_NOT_EQUAL:
+                    case T_IS_IDENTICAL:
+                    case T_IS_NOT_IDENTICAL:
+                    case T_IS_SMALLER_OR_EQUAL:
+                    case T_IS_GREATER_OR_EQUAL:
+                        if (!$parenCount && !$bracketCount) {
+                            $this->appendCode(sprintf(self::ALIGNABLE_EQUAL, $contextCounter));
+                            if ($blockCountEquals[$blockCounter] > 1) {
+                                $extra_chars = $blockCountEquals[$blockCounter] - strlen($text);
+                                if ($extra_chars > 0) {
+                                    $this->appendCode(str_repeat(self::ALIGNABLE_EQUAL_SPACE, $extra_chars));
+                                }
+                            }
+                        }
+                        $this->appendCode($text);
+                        break;
+                    default:
+                        $this->appendCode($text);
+                        break;
+                }
+            }
+
+            $this->alignPlaceholders(self::ALIGNABLE_EQUAL, $contextCounter);
+
+            $this->code = str_replace(self::ALIGNABLE_EQUAL_SPACE, $this->getSpace(), $this->code);
+
+            return $this->code;
+        }
+
+        public function getDescription() {
+            return 'Vertically align "=", ".=", "&=", ">>=", etc.';
+        }
+
+        public function getExample() {
+            return <<<'EOT'
+<?php
+$a .= 1;
+$bb = 22;
+$ccc &= 333;
+$d <<= 1;
+
+$a    .= 1;
+$bb    = 22;
+$ccc  &= 333;
+$d   <<= 1;
+
+?>
+EOT;
+        }
+    }
 
 	final class AlignGroupDoubleArrow extends AlignDoubleArrow {
 		public function format($source) {

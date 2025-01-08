@@ -67,6 +67,7 @@ PHPFmt provides a variety of commands accessible via the command palette (`Ctrl+
  * AlignDoubleArrow                  Vertically align T_DOUBLE_ARROW (=>).
  * AlignDoubleSlashComments          Vertically align "//" comments.
  * AlignEquals                       Vertically align "=".
+ * AlignSuperEquals                  Vertically align "=", ".=", "&=", ">>=", etc.
  * AlignGroupDoubleArrow             Vertically align T_DOUBLE_ARROW (=>) by line groups.
  * AlignPHPCode                      Align PHP code within HTML block.
  * AlignTypehint                     Vertically align function type hints.
