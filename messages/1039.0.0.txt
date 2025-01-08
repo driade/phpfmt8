@@ -1,0 +1,18 @@
+php.fmt
+=======
+
+Happy New Year!
+
+I'm excited to announce the addition of a new pass called "AlignSuperEquals", which enables you to align your code like this:
+
+$a    .= 1;
+$bb    = 22;
+$ccc  &= 333;
+$d   <<= 1;
+
+I would greatly appreciate your support by starring the package on GitHub! 😉
+https://github.com/driade/phpfmt8
+
+Thank you for your time and support.
+
+David Fernández david@mundosaparte.com
