@@ -6466,6 +6466,7 @@ EOT;
 			$visibility = null;
 			$finalOrAbstract = null;
 			$static = null;
+            $readonly = null;
             $type = null;
 			$skipWhitespaces = false;
 			$touchedClassInterfaceTrait = false;
@@ -6524,6 +6525,11 @@ EOT;
                     if ($static !== null) {
                         $this->appendCode($static. ' ');
                         $static = null;
+                        $skipWhitespaces = false;
+                    }
+                    if ($readonly !== null) {
+                        $this->appendCode($readonly. ' ');
+                        $readonly = null;
                         $skipWhitespaces = false;
                     }
 					$this->appendCode($text);
@@ -6651,6 +6657,23 @@ EOT;
 					$this->appendCode($text);
 					break;
                 case T_READONLY:
+                    if (! $this->leftTokenIs(T_DOUBLE_COLON)) {
+                        if (!is_null($visibility)) {
+                            $readonly = $text;
+                            $skipWhitespaces = true;
+                            break;
+                        } elseif ($this->leftTokenIs([T_FINAL])) { // ??
+                            $readonly = $text;
+                            $visibility = 'public';
+                            break;
+                        } elseif (!$this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && !$this->leftTokenIs([T_NEW, ST_COMMA])) {
+                            $readonly = $text;
+                            $skipWhitespaces = true;
+                            break;
+                        }
+                    }
+                    $this->appendCode($text);
+                    break;
 				case T_STATIC:
                     if (! $this->leftTokenIs(T_DOUBLE_COLON)) {
     					if (!is_null($visibility)) {
@@ -6679,9 +6702,11 @@ EOT;
 						null !== $finalOrAbstract && $this->appendCode($finalOrAbstract . $this->getSpace());
 						null !== $visibility && $this->appendCode($visibility . $this->getSpace());
 						null !== $static && $this->appendCode($static . $this->getSpace());
+                        null !== $readonly && $this->appendCode($readonly . $this->getSpace());
                         null !== $type && $this->appendCode($type . $this->getSpace());
 						$finalOrAbstract = null;
 						$visibility = null;
+                        $readonly = null;
 						$static = null;
                         $type = null;
 						$skipWhitespaces = false;
@@ -6733,6 +6758,7 @@ EOT;
 					$this->appendCode($text);
 					$visibility = null;
 					$static = null;
+                    $readonly = null;
 					$skipWhitespaces = false;
 					if ($finalOrAbstract !== null && 'abstract' == strtolower($finalOrAbstract)) {
 						$finalOrAbstract = null;
