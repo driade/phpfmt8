@@ -1,7 +1,7 @@
 <?php
 //passes:AutoSemicolon
 
-echo ($a);
+echo($a);
 
 foreach ($a as $v) {
 

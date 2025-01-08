@@ -4829,6 +4829,7 @@ EOT;
             $touchedUse = false;
             $touchedGroupedUse = false;
             $hasEchoAfterOpenTag = false;
+            $hasOpenTagWithEcho = false;
             $attributeStack = [];
 
             while (list($index, $token) = $this->each($this->tkns)) {
@@ -5148,7 +5149,7 @@ EOT;
                     if ($this->leftMemoUsefulTokenIs(T_OPEN_TAG)) {
                         $hasEchoAfterOpenTag = false;
                     }
-                    $this->appendCode($text . $this->getSpace(!$this->rightTokenIs(ST_SEMI_COLON)));
+                    $this->appendCode($text . $this->getSpace(!$this->rightTokenIs(ST_SEMI_COLON) && !$this->rightTokenIs(ST_PARENTHESES_OPEN)));
                     break;
                 case T_RETURN:
                 case T_YIELD:
@@ -5379,13 +5380,21 @@ EOT;
                     break;
 
                 case T_CLOSE_TAG:
-                    $this->appendCode($this->getSpace(!$hasEchoAfterOpenTag && !$this->hasLnBefore()));
+                    $space = $this->getSpace(!$hasEchoAfterOpenTag && !$this->hasLnBefore());
+                    if ($space === '') {
+                        if ($this->leftTokenIs([ST_SEMI_COLON]) && !$this->hasLnBefore() && !$hasOpenTagWithEcho) {
+                            $space = $this->getSpace();
+                        }
+                    }
+                    $this->appendCode($space);
                     $this->appendCode($text);
                     $hasEchoAfterOpenTag = false;
+                    $hasOpenTagWithEcho = false;
                     break;
 
                 case T_OPEN_TAG_WITH_ECHO:
                     $hasEchoAfterOpenTag = true;
+                    $hasOpenTagWithEcho = true;
                     $this->appendCode($text);
                     break;
 
