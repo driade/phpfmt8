@@ -7179,7 +7179,7 @@ EOT;
 				$this->ptr = $index;
 				switch ($id) {
 				case ST_COMMA:
-					if (!$this->hasLnAfter() && !$this->hasLnRightToken()) {
+                    if (!$this->hasLnAfter() && !$this->hasLnRightToken() && !$this->rightTokenIs([T_COMMENT, T_DOC_COMMENT])) {
 						if (!isset($levelEntranceCounter[$levelCounter])) {
 							$levelEntranceCounter[$levelCounter] = 0;
 						}
