@@ -1,0 +1,8 @@
+<?php
+//passes:AlignEquals
+$first   = '1';
+$second  = '0';
+$t       = '0';
+$longer .= '2';
+$loner  .= '23';
+$b       = 1;
