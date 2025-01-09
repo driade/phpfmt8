@@ -7531,12 +7531,6 @@ EOT;
                     case T_XOR_EQUAL:
                     case T_SL_EQUAL:
                     case T_SR_EQUAL:
-                    case T_IS_EQUAL:
-                    case T_IS_NOT_EQUAL:
-                    case T_IS_IDENTICAL:
-                    case T_IS_NOT_IDENTICAL:
-                    case T_IS_SMALLER_OR_EQUAL:
-                    case T_IS_GREATER_OR_EQUAL:
                         $len = strlen($text);
                         if ($len > $blockCountEquals[$blockCounter]) {
                             $blockCountEquals[$blockCounter] = $len;
@@ -7605,12 +7599,6 @@ EOT;
                     case T_XOR_EQUAL:
                     case T_SL_EQUAL:
                     case T_SR_EQUAL:
-                    case T_IS_EQUAL:
-                    case T_IS_NOT_EQUAL:
-                    case T_IS_IDENTICAL:
-                    case T_IS_NOT_IDENTICAL:
-                    case T_IS_SMALLER_OR_EQUAL:
-                    case T_IS_GREATER_OR_EQUAL:
                         if (!$parenCount && !$bracketCount) {
                             $this->appendCode(sprintf(self::ALIGNABLE_EQUAL, $contextCounter));
                             if ($blockCountEquals[$blockCounter] > 1) {

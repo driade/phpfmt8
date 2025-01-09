@@ -26,24 +26,16 @@ $ab += 1;
 $abc -= 1;
      
 $a = 1;
-$a == $b;
 $ab .= $b;
 $abc += $b;
 $abcd -= $b;
 $abcde *= $b;
 $abcdef &= $b;
 $abcdefg |= $b;
-$abcdefgh >= $b;
-$abcdefghi != $b;
-$abcdefghij <= $b;
 $abcdefghijk <<= $b;
 $abcdefghijkl >>= $b;
 $abcdefghijklm ^= $b;
 $abcdefghijklmn %= $b;
-$abcdef <> $b;
-$abcdefg    !== $b;
-$abcdefgh === $b;
-$abcdefghi == $b;
 
 $a .= 1;
 $bb = 22;
