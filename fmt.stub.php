@@ -8394,7 +8394,7 @@ EOT;
                         }
                     }
                     if (T_MATCH == $last_real_curly) {
-                        if ($this->rightUsefulToken() !== ST_SEMI_COLON) {
+                        if (! in_array($this->rightUsefulToken(), [ST_SEMI_COLON, ST_BRACKET_CLOSE])) {
                             $this->appendCode(ST_SEMI_COLON);
                         }
                         break;
