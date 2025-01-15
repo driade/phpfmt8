@@ -1,5 +1,6 @@
 <?php
 //passes:AutoSemicolon
+//version:8.0
 
 $test = 'a';
 $array = [
