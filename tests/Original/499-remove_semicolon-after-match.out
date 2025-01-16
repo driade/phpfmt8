@@ -9,3 +9,9 @@ $array = [
 		'b' => 2,
 	},
 ];
+$array = [
+	'value' => match ($test) {
+		'a' => 1,
+		'b' => 2,
+	},
+];

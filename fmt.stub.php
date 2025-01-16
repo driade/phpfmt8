@@ -8358,6 +8358,9 @@ EOT;
 
                 case T_MATCH:
 				case T_FUNCTION:
+                    if ($id === T_MATCH && $this->leftTokenIs([T_DOUBLE_COLON])) {
+                        $id = T_FUNCTION; // Route::match() gets tokenized as "T_MATCH"
+                    }
                     $realCurlyStack[] = $id;
 					$foundId = $id;
 					if ($this->rightUsefulTokenIs(ST_PARENTHESES_OPEN)) {
@@ -8394,7 +8397,7 @@ EOT;
                         }
                     }
                     if (T_MATCH == $last_real_curly) {
-                        if (! in_array($this->rightUsefulToken(), [ST_SEMI_COLON, ST_BRACKET_CLOSE])) {
+                        if (! in_array($this->rightUsefulToken(), [ST_SEMI_COLON, ST_BRACKET_CLOSE, ST_COMMA])) {
                             $this->appendCode(ST_SEMI_COLON);
                         }
                         break;
@@ -8491,7 +8494,6 @@ EOT;
 							T_DO,
 							T_DOUBLE_ARROW,
 							T_DOUBLE_CAST,
-							T_DOUBLE_COLON,
 							T_DOUBLE_COLON,
 							T_ECHO,
 							T_ELLIPSIS,
