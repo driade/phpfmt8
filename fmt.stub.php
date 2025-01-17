@@ -8340,7 +8340,7 @@ EOT;
                         break;
                     }
                     if ($this->rightTokenIs(ST_CURLY_CLOSE)) {
-                        if (count($realCurlyStack) > 0) {
+                        if (count($realCurlyStack) > 0 && ! $quote_stack) {
                             if (! in_array($realCurlyStack[count($realCurlyStack)-1], [T_MATCH])) {
                                 $this->appendCode(ST_SEMI_COLON);
                                 break;
