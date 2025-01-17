@@ -8397,7 +8397,24 @@ EOT;
                         }
                     }
                     if (T_MATCH == $last_real_curly) {
-                        if (! in_array($this->rightUsefulToken(), [ST_SEMI_COLON, ST_BRACKET_CLOSE, ST_COMMA])) {
+                        $match_inside_match = false;
+                        $c = count($realCurlyStack);
+                        if ($c > 0) {
+                            $last_real_curly_prev = $realCurlyStack[$c - 1];
+                            if ($last_real_curly_prev == T_MATCH) {
+                                $match_inside_match = true;
+                            }
+                        }
+                        /**
+                         * Not valid cases
+                         *    match (true) { 1 => 2 }()
+                         *    match (true) { 1 => 2 }[1]
+                         * So if you write it so, we'll add ";" but the code would be wrong anyway
+                         * */
+                        if (! $match_inside_match  && in_array($this->rightUsefulToken(), [
+                                ST_CURLY_CLOSE, ST_PARENTHESES_OPEN, T_VARIABLE, ST_BRACKET_OPEN
+                            ])
+                        ) {
                             $this->appendCode(ST_SEMI_COLON);
                         }
                         break;
