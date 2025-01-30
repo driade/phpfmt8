@@ -7783,9 +7783,16 @@ EOT;
 				$this->ptr = $index;
 				switch ($id) {
 				case T_OPEN_TAG:
-					list(, $prevText) = $this->getToken($this->leftToken());
 
-					$prevSpace = substr(strrchr($prevText, $this->newLine), 1);
+                    $prevText = null;
+                    if ($this->ptr > 0) {
+                        list($id2, $prevText) = $this->getToken($this->leftToken());
+                    }
+
+                    $prevSpace = '';
+                    if ($prevText !== null) {
+					   $prevSpace = substr(strrchr($prevText, $this->newLine), 1);
+                    }
 					$skipPadLeft = false;
 					if (rtrim($prevSpace) == $prevSpace) {
 						$skipPadLeft = true;
@@ -7795,18 +7802,37 @@ EOT;
 					$placeholders = [];
 					$strings = [];
 					$stack = $text;
+                    $heredoc = null;
 					while (list($index, $token) = $this->each($this->tkns)) {
-						list($id, $text) = $this->getToken($token);
+						list($id2, $text) = $this->getToken($token);
 						$this->ptr = $index;
 
-						if (T_CONSTANT_ENCAPSED_STRING == $id || T_ENCAPSED_AND_WHITESPACE == $id) {
+                        if (T_START_HEREDOC === $id2) {
+                            $heredoc = $text;
+                            continue;
+                        }
+                        if (T_END_HEREDOC === $id2) {
+                            $heredoc .= $text;
+                            $strings[] = $heredoc;
+                            $heredoc = null;
+                            $text = sprintf(self::PLACEHOLDER_STRING, $this->ptr);
+                            $placeholders[] = $text;
+                            $stack .= $text;
+                            continue;
+                        }
+                        if ($heredoc !== null) {
+                            $heredoc .= $text;
+                            continue;
+                        }
+
+						if (T_CONSTANT_ENCAPSED_STRING === $id2 || T_ENCAPSED_AND_WHITESPACE === $id2) {
 							$strings[] = $text;
 							$text = sprintf(self::PLACEHOLDER_STRING, $this->ptr);
 							$placeholders[] = $text;
 						}
 						$stack .= $text;
 
-						if (T_CLOSE_TAG == $id) {
+						if (T_CLOSE_TAG == $id2) {
 							break;
 						}
 					}
