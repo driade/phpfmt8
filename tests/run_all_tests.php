@@ -126,6 +126,13 @@ foreach ($cases as $caseIn) {
                 echo 'S';
                 continue 2;
             }
+        } elseif (T_COMMENT == $id && '//versionup:' == substr($text, 0, 12)) {
+            $version = str_replace('//versionup:', '', $text);
+            if (version_compare(PHP_VERSION, $version, '>')) {
+                $skippedTests[] = $caseIn;
+                echo 'S';
+                continue 2;
+            }
         } elseif (T_COMMENT == $id && '//passes:' == substr($text, 0, 9)) {
             $passes = explode(',', str_replace('//passes:', '', $text));
             $specialPasses = true;

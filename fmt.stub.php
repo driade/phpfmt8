@@ -7837,6 +7837,11 @@ EOT;
 						}
 					}
 
+                    if ($heredoc !== null) {
+                        $stack .= $heredoc;
+                        $heredoc = null;
+                    }
+
 					$tmp = explode($this->newLine, $stack);
 					$lastLine = sizeof($tmp) - 2;
 					foreach ($tmp as $idx => $line) {
