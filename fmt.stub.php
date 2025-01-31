@@ -5420,6 +5420,13 @@ EOT;
                     }
                     $this->appendCode($text . $this->getSpace($this->isWordpress()));
                     break;
+
+                case T_ARRAY:
+                    if (PHP_VERSION_ID >= 80300) {
+                        $this->appendCode($text. $this->getSpace($this->rightTokenIs(T_STRING)));
+                        break;
+                    }
+
                 default:
                     $this->appendCode($text);
                     break;
