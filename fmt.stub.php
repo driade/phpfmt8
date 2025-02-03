@@ -3979,7 +3979,7 @@ EOT;
                         break;
                     case ST_CURLY_CLOSE:
                         $hadNewLineOpen = array_pop($stack);
-                        if ($hadNewLineOpen && ! $this->myHasLnBefore()) {
+                        if ($hadNewLineOpen && ! $this->myHasLnBefore() && ! $this->leftUsefulTokenIs([T_OPEN_TAG])) {
                             $this->appendCode($this->newLine);
                         }
                         $this->appendCode($text);
