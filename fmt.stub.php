@@ -4921,6 +4921,7 @@ EOT;
                 case '%':
                 case '/':
                 case T_POW:
+                case T_POW_EQUAL:
                 case ST_QUESTION:
                 case ST_CONCAT:
                     if (ST_QUESTION == $id) {

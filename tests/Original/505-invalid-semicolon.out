@@ -1,7 +1,7 @@
 <?php
 //passes:Autosemicolon
 
-$a**=
+$a **=
 	$b;
 $a =
 1 >
