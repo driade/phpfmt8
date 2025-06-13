@@ -13204,7 +13204,7 @@ EOT;
 				switch ($id) {
 				case T_TRAIT:
 				case T_CLASS:
-					if ($this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
+					if ($this->leftUsefulTokenIs(T_DOUBLE_COLON) || $this->rightUsefulTokenIs(ST_COLON)) {
 						$this->appendCode($text);
 						break;
 					}
