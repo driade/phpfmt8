@@ -19,7 +19,8 @@
         "RestoreComments",
         "ShortArray",
         "ExtraCommaInArray",
-        "AlignDoubleSlashComments"
+        "AlignDoubleSlashComments",
+        "IndentTernaryConditions"
     ],
     "php_bin": "/usr/local/bin/php",
     "psr1": false,
