@@ -10653,11 +10653,22 @@ EOT;
 			}
 
 			$return = '';
+            $i = count(array_filter($newTokens, function($token) {
+                return $token instanceof SurrogateToken;
+            }));
+
 			foreach ($newTokens as $idx => $token) {
 				if ($token instanceof SurrogateToken) {
 					$return .= array_shift($useStack);
 					if ($blanklineAfterUseBlock && !isset($useStack[0])) {
-						$return .= $this->newLine;
+                        $i--;
+                        if ($i > 0) {
+                            $return .= $this->newLine;
+                        } else { // last subrogate token. we need one an just one return after it
+                            if (isset($newTokens[$idx + 1]) && substr_count($newTokens[$idx + 1][1], $this->newLine) === 1) {
+                                $return .= $this->newLine;
+                            }
+                        }
 					}
 					continue;
 				} elseif (T_WHITESPACE == $token[0] && isset($newTokens[$idx - 1], $newTokens[$idx + 1]) && $newTokens[$idx - 1] instanceof SurrogateToken && $newTokens[$idx + 1] instanceof SurrogateToken) {
