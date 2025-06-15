@@ -1,3 +1,4 @@
 <?php
 //passes:Default,CakePHPStyle
-$a =& $b;
+//version:8
+$a = &$b;

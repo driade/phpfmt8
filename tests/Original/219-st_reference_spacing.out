@@ -1,7 +1,8 @@
 <?php
-($obj->get() & $var);
-($obj->get() & ($var));
-($obj->property & $var);
+//version:8
+($obj->get() &$var);
+($obj->get()&($var));
+($obj->property &$var);
 $b = &$a;
 function a(Typehint &$var) {
 
