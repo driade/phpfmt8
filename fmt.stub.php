@@ -6589,8 +6589,9 @@ EOT;
 					}
 					break;
                 case '?':
-                    if ($this->rightUsefulTokenIs([T_STRING, T_ARRAY, T_NAME_RELATIVE, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED])) {
-                        $this->tkns[$this->ptr + 1][1] = $text . $this->tkns[$this->ptr + 1][1];
+                    $tidx = $this->rightUsefulTokenIdx();
+                    if (in_array($this->tkns[$tidx][0], [T_STRING, T_ARRAY, T_NAME_RELATIVE, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED]) && (! isset($this->tkns[$tidx + 1]) || $this->tkns[$tidx + 1][0] !== '(')) {
+                       $this->tkns[$tidx][1] = $text . $this->tkns[$tidx][1];
                     } else {
                         $this->appendCode($text);
                     }
