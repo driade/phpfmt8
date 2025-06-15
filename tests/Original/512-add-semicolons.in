@@ -1,0 +1,16 @@
+<?php
+//passes:AutoSemicolon
+
+$a = 1//
+$B = 2;
+
+$a = 1
+//
+$B = 2;
+
+$a = 1
+//
+/** other comment */
+$B = 2;
+
+$a = 1// $b=2

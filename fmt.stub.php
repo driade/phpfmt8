@@ -8304,6 +8304,8 @@ EOT;
             $isAttribute = false;
             $quote_stack = false;
 
+            $max = count($this->tkns);
+
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
 				$this->ptr = $index;;
@@ -8326,9 +8328,19 @@ EOT;
                     if ($this->hasLnAfter() && $this->rightTokenIs(ST_CURLY_CLOSE) && ! $isMatch) {
                         $this->appendCode(ST_SEMI_COLON);
                     }
+                    else
                     if ($this->hasLnAfter() && $this->rightTokenIs([T_COMMENT, T_DOC_COMMENT]) && ! $isMatch) {
                         $this->appendCode(ST_SEMI_COLON);
                     }
+                    else
+                    if ($this->rightUsefulTokenIs(T_VARIABLE) && $this->rightTokenIs([T_COMMENT, T_DOC_COMMENT])) {
+                        $this->appendCode(ST_SEMI_COLON);
+                    }
+                    else
+                    if ($this->ptr === $max - 2 && $this->rightTokenIs([T_COMMENT, T_DOC_COMMENT])) {
+                        $this->appendCode(ST_SEMI_COLON);
+                    }
+
                     break;
 
                 case T_ATTRIBUTE:
