@@ -8,6 +8,3 @@ $j->first(fn($a) => $a === 1)
 
  $j->first(fn($a) => $a === 1)
  < 1;
-
- $j->first(fn($a) => $a === 1)
- ??= 1;
