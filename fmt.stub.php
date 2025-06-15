@@ -9722,7 +9722,10 @@ EOT;
 				case ST_COLON:
 				case ST_QUESTION:
 					if ($this->hasLnBefore()) {
-						$this->appendCode($this->getIndent(+1));
+                        // is it an argument?
+                        if (! $this->leftUsefulTokenIs(ST_COMMA) && ! $this->leftUsefulTokenIs(ST_PARENTHESES_OPEN)) {
+						  $this->appendCode($this->getIndent(+1));
+                        }
 					}
 					$this->appendCode($text);
 					break;
