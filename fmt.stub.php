@@ -8392,6 +8392,9 @@ EOT;
                             $this->appendCode(ST_SEMI_COLON);
                             break;
                         }
+                    } else
+                    if ($this->rightUsefulTokenIs(T_VARIABLE) && $this->rightTokenIs([T_COMMENT, T_DOC_COMMENT])) {
+                        $this->appendCode(ST_SEMI_COLON);
                     }
 					break;
 
