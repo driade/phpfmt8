@@ -4877,7 +4877,7 @@ EOT;
                 case T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG:
                     if ($this->rightTokenIs(T_VARIABLE)) {
                         if (!$this->leftTokenIs([T_FUNCTION,ST_EQUAL, ST_PARENTHESES_OPEN, T_AS, ST_COMMA, T_DOUBLE_ARROW])) {
-                            if (! isset($this->tkns[$index - 1]) || $this->tkns[$index - 1][1] !== ' ') {
+                            if (! isset($this->tkns[$index - 1][1]) || $this->tkns[$index - 1][1] !== ' ') {
                                 $this->appendCode(" ");
                             }
                         }
