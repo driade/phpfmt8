@@ -6346,7 +6346,9 @@ EOT;
 			'throw' => 1, 'trait' => 1, 'try' => 1,
 			'unset' => 1, 'use' => 1, 'var' => 1,
 			'while' => 1, 'xor' => 1,
-            'match' => 1, 'readonly' => 1
+            'match' => 1, 'readonly' => 1,
+            // don't dare to add "enum", it can create troubles
+            'fn' => 1, 'yield' => 1, 'self' => 1, 'parent' => 1,
 		];
 
 		public function candidate($source, $foundTokens) {
