@@ -1591,6 +1591,11 @@ namespace {
         define("T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG", "&");
     }
 
+    // 8.5
+    if (!defined("T_PIPE")) {
+        define("T_PIPE", "|>");
+    }
+
 	abstract class FormatterPass {
 		protected $cache = [];
 
@@ -2627,6 +2632,7 @@ namespace {
 
 			'EliminateDuplicatedEmptyLines' => false,
 			'IndentTernaryConditions' => false,
+            'IndentPipeOperator' => false,
 			'ReindentComments' => false,
 			'ReindentEqual' => false,
 			'Reindent' => false,
@@ -5056,6 +5062,10 @@ EOT;
                     if ($this->leftMemoUsefulTokenIs(T_THROW)) {
                         $this->appendCode(' ');
                     }
+                    break;
+
+                case T_PIPE:
+                    $this->appendCode($text . " ");
                     break;
 
                 case T_PRINT:
@@ -8547,7 +8557,7 @@ EOT;
                             T_DIV_EQUAL, T_IS_EQUAL, T_IS_GREATER_OR_EQUAL, T_IS_IDENTICAL, T_IS_NOT_EQUAL,
                             T_IS_NOT_IDENTICAL, T_IS_SMALLER_OR_EQUAL, T_LOGICAL_AND, T_LOGICAL_OR, T_LOGICAL_XOR, T_MOD_EQUAL,
                             T_MUL_EQUAL, T_OR_EQUAL, T_PLUS_EQUAL, T_POW, T_POW_EQUAL, T_SL, T_SL_EQUAL, T_SPACESHIP, T_SR_EQUAL,
-                            T_XOR_EQUAL, ST_IS_GREATER, ST_IS_SMALLER
+                            T_XOR_EQUAL, ST_IS_GREATER, ST_IS_SMALLER, T_PIPE
                     ])) {
                         $this->appendCode($text);
                         break;
@@ -14906,6 +14916,57 @@ EOT;
     // To:
     if ( true ) foo(); foo( $a );
     ';
+        }
+    }
+
+    final class IndentPipeOperator extends AdditionalPass {
+        public function candidate($source, $foundTokens) {
+            if (isset($foundTokens[T_PIPE])) {
+                return true;
+            }
+
+            return false;
+        }
+
+        public function format($source) {
+            $this->tkns = token_get_all($source);
+            $this->code = '';
+            while (list($index, $token) = $this->each($this->tkns)) {
+                list($id, $text) = $this->getToken($token);
+                $this->ptr = $index;
+                switch ($id) {
+                    case T_PIPE:
+                        if ($this->hasLnBefore()) {
+                            $this->appendCode($this->getIndent(+1));
+                        }
+                        $this->appendCode($text);
+                        break;
+                    default:
+                        $this->appendCode($text);
+                }
+            }
+
+            return $this->code;
+        }
+
+        public function getDescription() {
+            return 'Applies indentation to the pipe operator.';
+        }
+
+        public function getExample() {
+            return <<<'EOT'
+<?php
+$a =  "Hello World"
+|> 'strtoupper'
+|> str_shuffle(...);
+?>
+    to
+<?php
+$a =  "Hello World"
+    |> 'strtoupper'
+    |> str_shuffle(...);
+?>
+EOT;
         }
     }
 }

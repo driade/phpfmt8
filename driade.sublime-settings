@@ -20,7 +20,8 @@
         "ShortArray",
         "ExtraCommaInArray",
         "AlignDoubleSlashComments",
-        "IndentTernaryConditions"
+        "IndentTernaryConditions",
+        "IndentPipeOperator"
     ],
     "php_bin": "/usr/local/bin/php",
     "psr1": false,

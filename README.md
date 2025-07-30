@@ -84,6 +84,7 @@ PHPFmt provides a variety of commands accessible via the command palette (`Ctrl+
  * EncapsulateNamespaces             Encapsulate namespaces with curly braces
  * GeneratePHPDoc                    Automatically generates PHPDoc blocks
  * IndentTernaryConditions           Applies indentation to ternary conditions.
+ * IndentPipeOperator                Applies indentation to the pipe operator (|>).
  * JoinToImplode                     Replace implode() alias (join() -> implode()).
  * LeftWordWrap                      Word wrap at 80 columns - left justify.
  * LongArray                         Convert short to long arrays.
