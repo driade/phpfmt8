@@ -7552,6 +7552,28 @@ EOT;
                             $blockCountEquals[$blockCounter] = 0;
                         }
                         break;
+                    case T_WHILE:
+                    case T_FOR:
+                    case T_FOREACH:
+                    case T_IF:
+                    case T_ELSEIF:
+                    case T_ELSE:
+                    case T_SWITCH:
+                    case T_TRY:
+                    case T_CATCH:
+                    case T_FINALLY:
+                    case T_FUNCTION:
+                    case T_CLASS:
+                    case ST_CURLY_OPEN:
+                        // Start a new block when entering control structures
+                        $blockCounter++;
+                        $blockCountEquals[$blockCounter] = 0;
+                        break;
+                    case ST_CURLY_CLOSE:
+                        // Start a new block when exiting control structures
+                        $blockCounter++;
+                        $blockCountEquals[$blockCounter] = 0;
+                        break;
                     case ST_EQUAL:
                     case T_PLUS_EQUAL:
                     case T_MINUS_EQUAL:
@@ -7590,18 +7612,43 @@ EOT;
                         }
                         $this->appendCode($text);
                         break;
+                    case T_WHILE:
+                    case T_FOR:
+                    case T_FOREACH:
+                    case T_IF:
+                    case T_ELSEIF:
+                    case T_ELSE:
+                    case T_SWITCH:
+                    case T_TRY:
+                    case T_CATCH:
+                    case T_FINALLY:
+                        // Start a new block when entering control structures
+                        $blockCounter++;
+                        $this->appendCode($text);
+                        break;
                     case T_FUNCTION:
                         ++$contextCounter;
+                        // Start a new block when entering function
+                        $blockCounter++;
+                        $this->appendCode($text);
+                        break;
+                    case T_CLASS:
+                        // Start a new block when entering class
+                        $blockCounter++;
                         $this->appendCode($text);
                         break;
 
                     case ST_CURLY_OPEN:
+                        // Start a new block when entering curly block
+                        $blockCounter++;
                         $this->appendCode($text);
                         $block = $this->walkAndAccumulateCurlyBlock($this->tkns);
                         $aligner = new self();
                         $this->appendCode(
                             str_replace(self::OPEN_TAG, '', $aligner->format(self::OPEN_TAG . $block))
                         );
+                        // Start a new block when exiting curly block
+                        $blockCounter++;
                         break;
 
                     case ST_PARENTHESES_OPEN:
