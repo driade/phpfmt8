@@ -1,0 +1,7 @@
+<?php
+function foo() {}
+
+function bar(int $baz, string $qux) {
+	noop();
+}
+//passes:PSR2EmptyFunction

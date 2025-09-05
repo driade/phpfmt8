@@ -11317,15 +11317,49 @@ EOT;
 					$this->appendCode($text);
 					$this->printUntil(ST_PARENTHESES_OPEN);
 					$this->printBlock(ST_PARENTHESES_OPEN, ST_PARENTHESES_CLOSE);
-					$this->printAndStopAt(ST_CURLY_OPEN);
-					if ($this->rightTokenIs(ST_CURLY_CLOSE)) {
+					
+					// Look ahead to check if function is empty before deciding how to format
+					$lookAheadPtr = $this->ptr;
+					$isEmptyFunction = false;
+					
+					// Walk forward to find ST_CURLY_OPEN
+					while ($lookAheadPtr < count($this->tkns)) {
+						$lookAheadPtr++;
+						if (!isset($this->tkns[$lookAheadPtr])) break;
+						
+						list($lookId, $lookText) = $this->getToken($this->tkns[$lookAheadPtr]);
+						if ($lookId == ST_CURLY_OPEN) {
+							// Found opening brace, now check if next non-whitespace token is closing brace
+							$nextPtr = $lookAheadPtr;
+							while ($nextPtr < count($this->tkns)) {
+								$nextPtr++;
+								if (!isset($this->tkns[$nextPtr])) break;
+								
+								list($nextId, $nextText) = $this->getToken($this->tkns[$nextPtr]);
+								if ($nextId == T_WHITESPACE) continue; // Skip whitespace
+								
+								if ($nextId == ST_CURLY_CLOSE) {
+									$isEmptyFunction = true;
+								}
+								break;
+							}
+							break;
+						}
+					}
+					
+					if ($isEmptyFunction) {
+						// Format as single line for empty functions
+						$this->printAndStopAt(ST_CURLY_OPEN);
 						$this->rtrimAndAppendCode($this->getSpace() . ST_CURLY_OPEN);
-						$this->printAndStopAt(ST_CURLY_CLOSE);
+						$this->walkUntil(ST_CURLY_CLOSE);
 						$this->rtrimAndAppendCode(ST_CURLY_CLOSE);
 						break;
+					} else {
+						// For non-empty functions, preserve original formatting
+						$this->printAndStopAt(ST_CURLY_OPEN);
+						prev($this->tkns);
+						break;
 					}
-					prev($this->tkns);
-					break;
 				default:
 					$this->appendCode($text);
 				}
