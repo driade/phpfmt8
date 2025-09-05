@@ -7815,7 +7815,13 @@ EOT;
 
                     $prevSpace = '';
                     if ($prevText !== null) {
-					   $prevSpace = substr(strrchr($prevText, $this->newLine), 1);
+					   $lastNewlineText = strrchr($prevText, $this->newLine);
+                       if ($lastNewlineText !== false) {
+                           $prevSpace = substr($lastNewlineText, 1);
+                       } elseif (preg_match('/^\s+$/', $prevText)) {
+                           // If prevText contains only whitespace, use it as prevSpace
+                           $prevSpace = $prevText;
+                       }
                     }
 					$skipPadLeft = false;
 					if (rtrim($prevSpace) == $prevSpace) {
