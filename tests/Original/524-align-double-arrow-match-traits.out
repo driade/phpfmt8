@@ -1,5 +1,6 @@
 <?php
 //passes: AlignDoubleArrow
+//version:8
 
 class TestManyTraits {
 	use T1, T2, T3, T3;

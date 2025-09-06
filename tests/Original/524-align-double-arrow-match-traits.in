@@ -1,5 +1,6 @@
 <?php
 //passes: AlignDoubleArrow
+//version:8
 
 class TestManyTraits
 {
