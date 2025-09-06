@@ -7247,6 +7247,7 @@ EOT;
 
 				case ST_PARENTHESES_OPEN:
 				case ST_BRACKET_OPEN:
+				case ST_CURLY_OPEN:
 					++$levelCounter;
 					if (!isset($levelEntranceCounter[$levelCounter])) {
 						$levelEntranceCounter[$levelCounter] = 0;
@@ -7264,6 +7265,7 @@ EOT;
 
 				case ST_PARENTHESES_CLOSE:
 				case ST_BRACKET_CLOSE:
+				case ST_CURLY_CLOSE:
 					--$levelCounter;
 					$this->appendCode($text);
 					break;

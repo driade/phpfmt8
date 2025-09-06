@@ -9,8 +9,8 @@ enum Status: int {
 	public function getStr(): string {
 		return match ($this) {
 			self::public => 'a',
-			self::foo => 'b',
-			default => null,
+			self::foo    => 'b',
+			default      => null,
 		};
 	}
 }
