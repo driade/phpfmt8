@@ -6885,17 +6885,33 @@ EOT;
     final class WP {
         public static function decorate(CodeFormatter $fmt) {
             $fmt->enablePass('PSR2KeywordsLowerCase');
-            $fmt->enablePass('PSR2IndentWithSpace');
+            $fmt->disablePass('PSR2IndentWithSpace');
             $fmt->enablePass('PSR2LnAfterNamespace');
-            $fmt->enablePass('PSR2CurlyOpenNextLine');
+            $fmt->disablePass('PSR2CurlyOpenNextLine');
             $fmt->enablePass('PSR2ModifierVisibilityStaticOrder');
             $fmt->enablePass('PSR2SingleEmptyLineAndStripClosingTag');
             $fmt->enablePass('ReindentSwitchBlocks');
             $fmt->enablePass('ReindentEnumBlocks');
             $fmt->disablePass('ReindentComments');
-            $fmt->disablePass('StripNewlineWithinClassBody');
+            $fmt->enablePass('StripSpaceWithinControlStructures');
             $fmt->enablePass('WPResizeSpaces');
             $fmt->disablePass('ResizeSpaces');
+            $fmt->disablePass('EncapsulateNamespaces');
+            $fmt->enablePass('SpaceAroundControlStructures');
+            $fmt->enablePass('SpaceAfterExclamationMark');
+            $fmt->enablePass('SpaceAroundParentheses');
+            $fmt->enablePass('LongArray');
+            $fmt->disablePass('ShortArray');
+            $fmt->enablePass('MergeElseIf');
+            $fmt->disablePass('SplitElseIf');
+            $fmt->enablePass('ExtraCommaInArray');
+            $fmt->disablePass('StripExtraCommaInArray');
+            $fmt->enablePass('YodaComparisons');
+            $fmt->enablePass('AddMissingParentheses');
+            $fmt->enablePass('AutoPreincrement');
+            $fmt->enablePass('AlignGroupDoubleArrow');
+            $fmt->disablePass('AlignDoubleArrow');
+            $fmt->enablePass('AlignEquals');
         }
     }
 
