@@ -32,10 +32,20 @@
 
 ## Running tests
 
+## PHP version compatibility
+
+- Treat **PHP 5.6** as the minimum supported runtime for any code changes in this repo.
+- New formatter logic should avoid syntax/features newer than PHP 5.6 (e.g. scalar type hints, return types, null coalescing `??`, spaceship `<=>`, arrow functions, etc.).
+- Some fixtures and passes are intentionally **version-gated** (e.g. PHP 8 attributes, `match`, etc.) and will be skipped when running under older runtimes.
+
 ### 1) Fixture tests (`.in`/`.out`)
 
 - Run the full fixture suite:
   - From `tests/`: `php ./run_all_tests.php`
+
+- If you don’t have PHP 5.6 locally, validate compatibility by running with PHP 7.4:
+  - `php74 tests/run_all_tests.php`
+  - If your system uses `php7.4` instead: `php7.4 tests/run_all_tests.php`
 - Run a subset by test number prefix:
   - `php ./run_all_tests.php --testNumber 525`
 - Show diffs (verbose):
@@ -73,6 +83,14 @@
 - Run from the repository root:
   - `./vendor/bin/phpunit`
 
+- Under PHP 7.4 (if available):
+  - `php74 ./vendor/bin/phpunit`
+
+Notes:
+- The **fixture harness** (`tests/run_all_tests.php`) is the primary “hard gate” for formatter behavior and should stay at `Broken:0`.
+- Under older runtimes (e.g. PHP 7.4), PHPUnit may report many **Skipped** tests due to runtime/dependency constraints; this is expected.
+- Prefer running PHPUnit with the default `php` (newer runtime) for full coverage, and use `php74 tests/run_all_tests.php` as the compatibility proxy.
+
 ## Creating a new fixture test (`.in`/`.out`)
 
 1) Pick a new number
@@ -99,6 +117,9 @@
 - Run the full fixture suite and PHPUnit before finishing a change:
   - `php tests/run_all_tests.php`
   - `./vendor/bin/phpunit`
+
+- Also run the fixture suite with PHP 7.4 when possible (as a proxy for older runtimes):
+  - `php74 tests/run_all_tests.php`
 
 ## Debugging tips
 
