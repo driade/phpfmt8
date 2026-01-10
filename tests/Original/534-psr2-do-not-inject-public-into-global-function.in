@@ -1,0 +1,13 @@
+<?php
+//passes:PSR2ModifierVisibilityStaticOrder
+namespace {
+abstract class A {
+	abstract function m();
+}
+
+if (true) {
+	function cofunc(callable $fn) {
+		return $fn();
+	}
+}
+}
