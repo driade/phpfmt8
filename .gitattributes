@@ -1,0 +1,6 @@
+# Keep test fixtures stable across platforms (avoid CRLF/LF mismatches)
+/tests/**/*.in  text eol=lf
+/tests/**/*.out text eol=lf
+
+# Also keep plain-text message fixtures stable
+/messages/**/*.txt text eol=lf
