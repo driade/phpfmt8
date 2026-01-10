@@ -4921,7 +4921,7 @@ EOT;
                     if (count($attributeStack)) {
                         $this->printUntil(T_END_HEREDOC);
                     } else {
-                        $this->printUntil(ST_SEMI_COLON);
+						$this->printUntil(T_END_HEREDOC);
                     }
                     break;
 

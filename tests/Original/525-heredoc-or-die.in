@@ -1,0 +1,20 @@
+<?php
+//passes:AutoSemicolon
+// Have a free MRE for both options. Run the formatter over this and both will break.
+print_r(<<<SQL
+    SELECT *
+    FROM EXAMPLE
+    WHERE foo = 'bar'
+    OR answer = 42
+SQL) or die("Imagine this being a function that produced a proper HTTP 500 error page and a log entry");
+
+function do_or_die() {
+    print_r(<<<'SQL'
+        SELECT *
+        FROM EXAMPLE
+        WHERE foo = 'bar'
+        OR answer = 42
+    SQL)
+    or die("Imagine this being a function that produced a proper HTTP 500 error page and a log entry");
+}
+do_or_die();

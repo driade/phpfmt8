@@ -6,6 +6,6 @@ class Child extends ParentClass
         return <<<EOF
 HEREDOC
 EOF
-        .parent::parentalMethod();
+        . parent::parentalMethod();
     }
 }
