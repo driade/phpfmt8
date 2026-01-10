@@ -4222,6 +4222,9 @@ EOT;
 	}
 
 	final class ReindentColonBlocks extends FormatterPass {
+		private $lastCloseTagHadNewline = false;
+		private $inTemplateGap = false;
+
 		public function candidate($source, $foundTokens) {
 			if (isset($foundTokens[T_ENDIF]) || isset($foundTokens[T_ENDWHILE]) || isset($foundTokens[T_ENDFOREACH]) || isset($foundTokens[T_ENDFOR])) {
 				return true;
@@ -4233,6 +4236,8 @@ EOT;
 		public function format($source) {
 			$this->tkns = token_get_all($source);
 			$this->code = '';
+			$this->lastCloseTagHadNewline = false;
+			$this->inTemplateGap = false;
 
 			while (list($index, $token) = $this->each($this->tkns)) {
 				list($id, $text) = $this->getToken($token);
@@ -4274,15 +4279,51 @@ EOT;
 					$this->printUntil(T_END_HEREDOC);
 					break;
 
+				case T_CLOSE_TAG:
+					$this->appendCode($text);
+					$this->lastCloseTagHadNewline = $this->hasLn($text);
+					$this->inTemplateGap = $this->lastCloseTagHadNewline;
+					break;
+
+				case T_OPEN_TAG:
+				case T_OPEN_TAG_WITH_ECHO:
+					$this->inTemplateGap = false;
+					if ($this->hasLn($text) && $this->indent > 0 && !$this->lastCloseTagHadNewline) {
+						$indent = $this->getIndent();
+						$text = preg_replace("/\n$/", "\n" . $indent, $text);
+					}
+					$this->appendCode($text);
+					break;
+
 				default:
 					$hasLn = $this->hasLn($text);
-					if ($hasLn) {
-						if ($this->rightTokenIs([T_ENDIF, T_ELSE, T_ELSEIF, T_ENDFOR, T_ENDFOREACH, T_ENDWHILE])) {
-							$this->setIndent(-1);
-							$text = str_replace($this->newLine, $this->newLine . $this->getIndent(), $text);
-							$this->setIndent(+1);
-						} else {
-							$text = str_replace($this->newLine, $this->newLine . $this->getIndent(), $text);
+					if ($hasLn && !$this->inTemplateGap) {
+						$skipIndent = false;
+						if ($this->rightTokenIs(T_CLOSE_TAG)) {
+							list(, $closeTagText) = $this->inspectToken(+1);
+							if ($this->hasLn($closeTagText)) {
+								$skipIndent = true;
+							}
+						}
+						if (!$skipIndent) {
+							$indent = $this->getIndent();
+							if ($this->rightUsefulTokenIs([T_ENDIF, T_ELSE, T_ELSEIF, T_ENDFOR, T_ENDFOREACH, T_ENDWHILE])) {
+								$this->setIndent(-1);
+								$indent = $this->getIndent();
+								$this->setIndent(+1);
+							}
+							// For T_INLINE_HTML, only add indentation after newlines if the content doesn't already start with whitespace
+							if ($id === T_INLINE_HTML) {
+								$text = preg_replace_callback('/\n([^\n])/', function($m) use ($indent) {
+									// If the char after newline is already whitespace, don't add more
+									if ($m[1] === "\t" || $m[1] === " ") {
+										return "\n" . $m[1];
+									}
+									return "\n" . $indent . $m[1];
+								}, $text);
+							} else {
+								$text = str_replace($this->newLine, $this->newLine . $indent, $text);
+							}
 						}
 					}
 					$this->appendCode($text);
@@ -7975,6 +8016,18 @@ EOT;
 						if (0 != $idx && $idx < $lastLine) {
 							$indent = $this->indentChar;
 						}
+						// Don't add padding if the line already has sufficient leading whitespace
+						$expectedPrefix = $before . $indent;
+						$expectedLen = strlen($expectedPrefix);
+						if ($expectedLen > 0) {
+							// Get leading whitespace from the line
+							preg_match('/^[\t ]*/', $line, $m);
+							$lineLeadingWs = isset($m[0]) ? $m[0] : '';
+							if (strlen($lineLeadingWs) >= $expectedLen) {
+								// Line already has enough indentation, don't add more
+								continue;
+							}
+						}
 						$tmp[$idx] = $before . $indent . $line;
 					}
 
@@ -9292,6 +9345,11 @@ EOT;
 
 				if (T_OPEN_TAG_WITH_ECHO == $id) {
 					$text = '<?php echo ';
+					// Skip following whitespace to avoid double space
+					$nextToken = isset($this->tkns[$index + 1]) ? $this->tkns[$index + 1] : null;
+					if ($nextToken && is_array($nextToken) && T_WHITESPACE == $nextToken[0]) {
+						$this->each($this->tkns);
+					}
 				}
 
 				$this->appendCode($text);

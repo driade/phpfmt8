@@ -1,0 +1,11 @@
+<?php
+// Test nested colon structures (if inside foreach)
+//passes:AlignPHPCode,ConvertOpenTagWithEcho,DoubleToSingleQuote
+?>
+<ul>
+    <?php foreach ($items as $item) : ?>
+        <?php if ($item->isVisible()) : ?>
+            <li><?= $item->getName(); ?></li>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</ul>

@@ -1,0 +1,10 @@
+<?php
+// Test foreach with key => value
+//passes:AlignPHPCode,ConvertOpenTagWithEcho,DoubleToSingleQuote
+?>
+<dl>
+    <?php foreach ($attributes as $key => $value) : ?>
+        <dt><?= $key; ?></dt>
+        <dd><?= $value; ?></dd>
+    <?php endforeach; ?>
+</dl>

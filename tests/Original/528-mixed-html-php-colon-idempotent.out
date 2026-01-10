@@ -1,0 +1,26 @@
+<?php
+	// Repro for https://github.com/kokororin/vscode-phpfmt/issues/122
+	// Ensure formatting mixed HTML/PHP templates with colon syntax is idempotent
+	//passes:AlignPHPCode,ConvertOpenTagWithEcho,DoubleToSingleQuote
+?>
+<?php get_header(); ?>
+
+<div class="container my-8 mx-auto flex flex-col">
+    <?php if (have_posts()): ?>
+        <?php
+        	while (have_posts()):
+        		the_post();
+        ?>
+            <div class="section-title mb-8">
+                <h1><?php echo get_the_title(); ?></h1>
+            </div>
+            <?php get_template_part('template-parts/content', 'tribe_event_series'); ?>
+
+        <?php endwhile; ?>
+
+    <?php endif; ?>
+
+</div>
+
+<?php
+get_footer();

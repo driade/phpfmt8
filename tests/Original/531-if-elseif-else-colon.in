@@ -1,0 +1,13 @@
+<?php
+// Test if/elseif/else with colon syntax
+//passes:AlignPHPCode,ConvertOpenTagWithEcho,DoubleToSingleQuote
+?>
+<div>
+    <?php if ($status === "active") : ?>
+        <span class="badge green"><?= $status; ?></span>
+    <?php elseif ($status === "pending") : ?>
+        <span class="badge yellow"><?= $status; ?></span>
+    <?php else : ?>
+        <span class="badge red">inactive</span>
+    <?php endif; ?>
+</div>

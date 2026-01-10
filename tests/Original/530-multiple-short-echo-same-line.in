@@ -1,0 +1,12 @@
+<?php
+// Test multiple short echo tags on same line
+//passes:AlignPHPCode,ConvertOpenTagWithEcho,DoubleToSingleQuote
+?>
+<table>
+    <?php foreach ($rows as $row) : ?>
+        <tr>
+            <td><?= $row->id; ?></td>
+            <td><?= $row->name; ?> - <?= $row->email; ?></td>
+        </tr>
+    <?php endforeach; ?>
+</table>

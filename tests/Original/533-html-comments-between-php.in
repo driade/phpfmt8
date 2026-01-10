@@ -1,0 +1,15 @@
+<?php
+// Test HTML comments between PHP blocks
+//passes:AlignPHPCode,ConvertOpenTagWithEcho,DoubleToSingleQuote
+?>
+<div>
+    <?php if ($showSection) : ?>
+        <!-- Section header -->
+        <h2><?= $title; ?></h2>
+        <!-- Section content -->
+        <?php while ($item = getNext()) : ?>
+            <p><?= $item; ?></p>
+        <?php endwhile; ?>
+        <!-- Section footer -->
+    <?php endif; ?>
+</div>
