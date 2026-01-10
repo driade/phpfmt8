@@ -30,7 +30,7 @@ namespace Symfony\Component\Console\Helper {
 
 	interface HelperInterface {
 
-		public function setHelperSet(HelperSet $helperSet = null);
+		public function setHelperSet($helperSet = null);
 
 		public function getHelperSet();
 
@@ -46,7 +46,7 @@ namespace Symfony\Component\Console\Helper {
 	abstract class Helper implements HelperInterface {
 		protected $helperSet = null;
 
-		public function setHelperSet(HelperSet $helperSet = null) {
+		public function setHelperSet($helperSet = null) {
 			$this->helperSet = $helperSet;
 		}
 
@@ -129,7 +129,7 @@ namespace Symfony\Component\Console\Formatter {
 
 		private $emptyStyle;
 
-		public function __construct(OutputFormatterStyleInterface $emptyStyle = null) {
+		public function __construct($emptyStyle = null) {
 			$this->emptyStyle = $emptyStyle ?: new OutputFormatterStyle();
 			$this->reset();
 		}
@@ -142,7 +142,7 @@ namespace Symfony\Component\Console\Formatter {
 			$this->styles[] = $style;
 		}
 
-		public function pop(OutputFormatterStyleInterface $style = null) {
+		public function pop($style = null) {
 			if (empty($this->styles)) {
 				return $this->emptyStyle;
 			}
@@ -536,7 +536,7 @@ namespace Symfony\Component\Console\Output {
 		private $verbosity;
 		private $formatter;
 
-		public function __construct($verbosity = self::VERBOSITY_NORMAL, $decorated = false, OutputFormatterInterface $formatter = null) {
+		public function __construct($verbosity = self::VERBOSITY_NORMAL, $decorated = false, $formatter = null) {
 			$this->verbosity = null === $verbosity ? self::VERBOSITY_NORMAL : $verbosity;
 			$this->formatter = $formatter ?: new OutputFormatter();
 			$this->formatter->setDecorated($decorated);
@@ -623,7 +623,7 @@ namespace Symfony\Component\Console\Output {
 	class StreamOutput extends Output {
 		private $stream;
 
-		public function __construct($stream, $verbosity = self::VERBOSITY_NORMAL, $decorated = null, OutputFormatterInterface $formatter = null) {
+		public function __construct($stream, $verbosity = self::VERBOSITY_NORMAL, $decorated = null, $formatter = null) {
 			if (!is_resource($stream) || 'stream' !== get_resource_type($stream)) {
 				throw new \InvalidArgumentException('The StreamOutput class needs a stream as its first argument.');
 			}
@@ -668,7 +668,7 @@ namespace Symfony\Component\Console\Output {
 
 		private $stderr;
 
-		public function __construct($verbosity = self::VERBOSITY_NORMAL, $decorated = null, OutputFormatterInterface $formatter = null) {
+		public function __construct($verbosity = self::VERBOSITY_NORMAL, $decorated = null, $formatter = null) {
 			$outputStream = $this->hasStdoutSupport() ? 'php://stdout' : 'php://output';
 			$errorStream = $this->hasStderrSupport() ? 'php://stderr' : 'php://output';
 
@@ -10694,7 +10694,7 @@ EOT;
 
 		private $sortFunction = null;
 
-		public function __construct(callable $sortFunction = null) {
+		public function __construct($sortFunction = null) {
 			$this->sortFunction = $sortFunction;
 			if (null == $sortFunction) {
 				$this->sortFunction = function ($useStack) {
