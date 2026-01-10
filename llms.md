@@ -90,7 +90,34 @@ Notes:
 - The **fixture harness** (`tests/run_all_tests.php`) is the primary “hard gate” for formatter behavior and should stay at `Broken:0`.
 - Under older runtimes (e.g. PHP 7.4), PHPUnit may report many **Skipped** tests due to runtime/dependency constraints; this is expected.
 - Prefer running PHPUnit with the default `php` (newer runtime) for full coverage, and use `php74 tests/run_all_tests.php` as the compatibility proxy.
+### 3) Docker matrix (multi-PHP testing)
 
+Run tests across multiple PHP versions (5.6 → 8.5) in Docker containers:
+
+```bash
+# Run all versions (default: 5.6 7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3 8.5)
+./tests/docker-test-matrix.sh
+
+# Run specific versions
+PHP_VERSIONS="5.6 7.4 8.2" ./tests/docker-test-matrix.sh
+
+# Disable PHPUnit (only run fixture tests)
+RUN_PHPUNIT=0 ./tests/docker-test-matrix.sh
+```
+
+Scripts:
+- `tests/docker-test-matrix.sh` — Wrapper that iterates PHP versions and runs Docker containers.
+- `tests/docker-test-matrix-inner.sh` — Runs inside each container: executes `run_all_tests.php` and PHPUnit.
+
+Behavior:
+- Stops at the first failing PHP version (fail-fast).
+- PHP 5.6 uses `phpunit-5.7.phar` directly (avoids Debian EOL apt issues).
+- PHP 7.3+ installs PHPUnit via Composer inside the container.
+- PHP 7.0–7.2 skips PHPUnit by default (set `RUN_PHPUNIT_LEGACY=1` to try).
+
+Requirements:
+- Docker installed and running.
+- On macOS/Apple Silicon, images run with `--platform linux/amd64` (configurable via `DOCKER_PLATFORM`).
 ## Creating a new fixture test (`.in`/`.out`)
 
 1) Pick a new number
