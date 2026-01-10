@@ -248,6 +248,10 @@ if (!$bailOut) {
         if (file_exists($caseOut)) {
             $expected = file_get_contents($caseOut);
         }
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $got = str_replace("\r\n", "\n", $got);
+            $expected = str_replace("\r\n", "\n", $expected);
+        }
         if ($got != $expected) {
             $brokenTests[$caseOut] = $got;
             if (isset($opt['stop'])) {
