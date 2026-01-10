@@ -4826,8 +4826,18 @@ EOT;
             $tkns = token_get_all($source);
 
             $this->tkns = [];
+				$inShortEcho = false;
             foreach ($tkns as $i => $token) {
-                if (T_WHITESPACE === $token[0] && !$this->hasLn($token[1])) {
+					if (isset($token[0]) && T_OPEN_TAG_WITH_ECHO === $token[0]) {
+						$inShortEcho = true;
+					} elseif (isset($token[0]) && T_CLOSE_TAG === $token[0]) {
+						$inShortEcho = false;
+					}
+				if (T_WHITESPACE === $token[0] && !$this->hasLn($token[1])) {
+					if ($inShortEcho) {
+						$this->tkns[] = $token;
+						continue;
+					}
                     $c = count($this->tkns);
                     if (PHP_VERSION_ID >= 80000 && $c) {
                         if (isset($tkns[$i + 1][1]) && $tkns[$i + 1][1] === '&'
@@ -5418,7 +5428,7 @@ EOT;
                     break;
 
                 case T_CLOSE_TAG:
-                    $space = $this->getSpace(!$hasEchoAfterOpenTag && !$this->hasLnBefore());
+					$space = $this->getSpace(!$hasEchoAfterOpenTag && !$this->hasLnBefore());
                     if ($space === '') {
                         if ($this->leftTokenIs([ST_SEMI_COLON]) && !$this->hasLnBefore() && !$hasOpenTagWithEcho) {
                             $space = $this->getSpace();
@@ -5433,8 +5443,11 @@ EOT;
                 case T_OPEN_TAG_WITH_ECHO:
                     $hasEchoAfterOpenTag = true;
                     $hasOpenTagWithEcho = true;
-                    $this->appendCode($text);
-                    break;
+					$this->appendCode($text);
+					$this->printUntil(T_CLOSE_TAG);
+					$hasEchoAfterOpenTag = false;
+					$hasOpenTagWithEcho = false;
+					continue 2;
 
                 case T_OPEN_TAG:
                     $hasEchoAfterOpenTag = true;
@@ -7883,26 +7896,30 @@ EOT;
 				switch ($id) {
 				case T_OPEN_TAG:
 
-                    $prevText = null;
-                    if ($this->ptr > 0) {
-                        list($id2, $prevText) = $this->getToken($this->leftToken());
-                    }
-
-                    $prevSpace = '';
-                    if ($prevText !== null) {
-					   $lastNewlineText = strrchr($prevText, $this->newLine);
-                       if ($lastNewlineText !== false) {
-                           $prevSpace = substr($lastNewlineText, 1);
-                       } elseif (preg_match('/^\s+$/', $prevText)) {
-                           // If prevText contains only whitespace, use it as prevSpace
-                           $prevSpace = $prevText;
-                       }
-                    }
-					$skipPadLeft = false;
-					if (rtrim($prevSpace) == $prevSpace) {
-						$skipPadLeft = true;
+					$prevText = null;
+					if ($this->ptr > 0) {
+						list($id2, $prevText) = $this->getToken($this->leftToken());
 					}
-					$prevSpace = preg_replace('/[^\s\t]/', ' ', $prevSpace);
+
+					$linePrefix = '';
+					if ($prevText !== null) {
+						$lastNewlineText = strrchr($prevText, $this->newLine);
+						if ($lastNewlineText !== false) {
+							$linePrefix = substr($lastNewlineText, 1);
+						} else {
+							$linePrefix = $prevText;
+						}
+					}
+
+					// For the first line, only restore trailing whitespace before the open tag.
+					// For subsequent lines, align using a same-width prefix (non-whitespace becomes spaces).
+					$padFirstLine = '';
+					if ($linePrefix !== '') {
+						if (preg_match('/[ \t]*$/', $linePrefix, $m)) {
+							$padFirstLine = $m[0];
+						}
+					}
+					$padOtherLines = ($linePrefix === '') ? '' : preg_replace('/[^\s\t]/', ' ', $linePrefix);
 
 					$placeholders = [];
 					$strings = [];
@@ -7950,17 +7967,13 @@ EOT;
 					$tmp = explode($this->newLine, $stack);
 					$lastLine = sizeof($tmp) - 2;
 					foreach ($tmp as $idx => $line) {
-						$before = $prevSpace;
+						$before = (0 === $idx) ? $padFirstLine : $padOtherLines;
 						if ('' === trim($line)) {
 							continue;
 						}
 						$indent = '';
 						if (0 != $idx && $idx < $lastLine) {
 							$indent = $this->indentChar;
-						}
-						if ($skipPadLeft) {
-							$before = '';
-							$skipPadLeft = false;
 						}
 						$tmp[$idx] = $before . $indent . $line;
 					}

@@ -1,0 +1,13 @@
+<body>
+    <div class="this-is-a-template">
+        <?php echo exampleFunction( '<div class="test">Label</div>' ); ?>
+        <?php echo exampleFunction( '<div class="test">Label</div>' ); ?>
+        <?php echo exampleFunction( '<div class="test">Label</div>' ); ?>
+    </div>
+
+    <div class="my-container <?php echo $myVariable; ?>">
+       <!-- Write something here -->
+    </div>
+</body>
+
+<?php //passes:AlignPHPCode ?>

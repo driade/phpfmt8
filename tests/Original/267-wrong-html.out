@@ -6,7 +6,7 @@
       </h1>
     </td>
     <td>
-    <?='another'?>
+    <?= 'another' ?>
     </td>
   </tr>
 </table>

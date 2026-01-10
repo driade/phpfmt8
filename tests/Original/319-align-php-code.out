@@ -20,7 +20,7 @@
 
 
 <div>
-a 	<?php
+a	<?php
  		//passes:AlignPHPCode
  		echo 'a';
  		if ($a) {

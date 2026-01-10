@@ -1,0 +1,9 @@
+<?php
+// Repro for https://github.com/kokororin/vscode-phpfmt/issues/176
+// Desired: keep spaces in short echo tags.
+//passes:AlignDoubleArrow,SpaceAroundParentheses
+//excludes:AllmanStyleBraces
+?>
+<div>
+    <?= $variableName; ?>
+</div>
