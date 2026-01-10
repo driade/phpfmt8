@@ -5,6 +5,18 @@ namespace {
 		fwrite(STDERR, "PHP needs to be a minimum version of PHP 5.6.0\n");
 		exit(255);
 	}
+
+	// When fmt.stub.php is executed as a CLI script, any runtime warnings/deprecations
+	// would corrupt the formatter output (and break tests that compare stdout).
+	// Keep the library behavior unchanged when this file is included by other PHP code.
+	if (
+		PHP_SAPI === 'cli' &&
+		isset($_SERVER['SCRIPT_FILENAME']) &&
+		@realpath($_SERVER['SCRIPT_FILENAME']) === @realpath(__FILE__)
+	) {
+		@ini_set('display_errors', '0');
+		@ini_set('display_startup_errors', '0');
+	}
 }
 
 namespace Symfony\Component\Console\Formatter {
@@ -1623,15 +1635,15 @@ namespace {
 
 		abstract public function format($source);
 
-        protected function each(array &$ar) {
-            $k = key($ar);
-            if ($k === null) {
-                return false;
-            }
-            $v = current($ar);
-            next($ar);
-            return [$k, $v];
-        }
+		protected function each(array &$ar) {
+			$k = key($ar);
+			if ($k === null) {
+				return false;
+			}
+			$v = current($ar);
+			next($ar);
+			return [$k, $v];
+		}
 
 		protected function alignPlaceholders($origPlaceholder, $contextCounter) {
 			for ($j = 0; $j <= $contextCounter; ++$j) {
@@ -8493,7 +8505,7 @@ EOT;
                     $quote_stack = !$quote_stack;
                     break;
 
-                case T_STRING;
+				case T_STRING:
                 case T_LNUMBER:
                 case T_DNUMBER:
                 case T_CONSTANT_ENCAPSED_STRING:
