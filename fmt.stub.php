@@ -6577,7 +6577,9 @@ EOT;
 			$this->tkns = token_get_all($source);
 			$this->code = '';
 
-			$found = [];
+			$curlyDepth = 0;
+			$classCurlyDepthStack = [];
+			$awaitingClassCurly = false;
 			$visibility = null;
 			$finalOrAbstract = null;
 			$static = null;
@@ -6635,7 +6637,7 @@ EOT;
                         $this->appendCode($text);
                         break;
                     }
-					$found[] = T_CLASS;
+					$awaitingClassCurly = true;
 					$touchedClassInterfaceTrait = true;
                     if ($static !== null) {
                         $this->appendCode($static. ' ');
@@ -6648,46 +6650,64 @@ EOT;
                         $skipWhitespaces = false;
                     }
 					$this->appendCode($text);
-					$this->printUntilAny([T_EXTENDS, T_IMPLEMENTS, ST_CURLY_OPEN]);
+					while (list($index, $token) = $this->each($this->tkns)) {
+						list($id, $text) = $this->getToken($token);
+						$this->ptr = $index;
+						if (ST_CURLY_OPEN === $id) {
+							++$curlyDepth;
+							if ($awaitingClassCurly) {
+								$classCurlyDepthStack[] = $curlyDepth;
+								$awaitingClassCurly = false;
+							}
+							$this->appendCode($text);
+							$touchedClassInterfaceTrait = false;
+							break;
+						}
+						$this->appendCode($text);
+					}
 					break;
                 case T_NAMESPACE:
-                    $found[] = T_NAMESPACE;
                     $touchedClassInterfaceTrait = true;
                     $this->appendCode($text);
                     break;
 				case T_INTERFACE:
-					// $found[] = T_INTERFACE;
+					$awaitingClassCurly = true;
 					$touchedClassInterfaceTrait = true;
 					$this->appendCode($text);
 					break;
                 case T_TRAIT:
-                    $found[] = T_TRAIT;
+					$awaitingClassCurly = true;
                     $touchedClassInterfaceTrait = true;
                     $this->appendCode($text);
                     break;
                 case T_ENUM:
-                    $found[] = T_ENUM;
+					$awaitingClassCurly = true;
                     $touchedClassInterfaceTrait = true;
                     $this->appendCode($text);
                     break;
 				case ST_CURLY_OPEN:
-				case ST_PARENTHESES_OPEN:
-					if ($touchedClassInterfaceTrait) {
-						$found[] = $text;
+					++$curlyDepth;
+					if ($awaitingClassCurly) {
+						$classCurlyDepthStack[] = $curlyDepth;
+						$awaitingClassCurly = false;
 					}
 					$this->appendCode($text);
 					$touchedClassInterfaceTrait = false;
 					break;
 				case ST_CURLY_CLOSE:
-				case ST_PARENTHESES_CLOSE:
-					array_pop($found);
-					if (1 === sizeof($found)) {
-						array_pop($found);
+					if (!empty($classCurlyDepthStack) && end($classCurlyDepthStack) === $curlyDepth) {
+						array_pop($classCurlyDepthStack);
 					}
-                    if (count($found) === 0) {
-                        $touchedClassInterfaceTrait = false;
-                    }
+					$curlyDepth = max(0, $curlyDepth - 1);
+					if (count($classCurlyDepthStack) === 0) {
+						$touchedClassInterfaceTrait = false;
+					}
 					$this->appendCode($text);
+					break;
+				case ST_PARENTHESES_OPEN:
+				case ST_PARENTHESES_CLOSE:
+					$this->appendCode($text);
+					$touchedClassInterfaceTrait = false;
 					break;
 				case T_WHITESPACE:
 					if (!$skipWhitespaces) {
@@ -6695,12 +6715,17 @@ EOT;
 					}
 					break;
                 case '?':
-                    $tidx = $this->rightUsefulTokenIdx();
-                    if (in_array($this->tkns[$tidx][0], [T_STRING, T_ARRAY, T_NAME_RELATIVE, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED]) && (! isset($this->tkns[$tidx + 1]) || $this->tkns[$tidx + 1][0] !== '(')) {
-                       $this->tkns[$tidx][1] = $text . $this->tkns[$tidx][1];
-                    } else {
-                        $this->appendCode($text);
-                    }
+					// Only merge ? with following type for nullable types (e.g., ?string)
+					// Skip this optimization inside function bodies (ternary operator)
+					$insideFunctionBody = !empty($classCurlyDepthStack) && $curlyDepth > end($classCurlyDepthStack);
+					if (!$insideFunctionBody) {
+						$tidx = $this->rightUsefulTokenIdx();
+						if (in_array($this->tkns[$tidx][0], [T_STRING, T_ARRAY, T_NAME_RELATIVE, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED]) && (! isset($this->tkns[$tidx + 1]) || $this->tkns[$tidx + 1][0] !== '(')) {
+						   $this->tkns[$tidx][1] = $text . $this->tkns[$tidx][1];
+						   break;
+						}
+					}
+					$this->appendCode($text);
                     break;
                 case '|':
                 case T_NAME_RELATIVE:
@@ -6819,45 +6844,49 @@ EOT;
 
                 case T_CONST:
 				case T_FUNCTION:
-                    if (count($found) === 0 || (count($found) === 1 && $found[0] === T_NAMESPACE)) {
-                        $this->appendCode($text);
-                        break;
-                    }
-					$hasFoundClassOrInterface = isset($found[0]) && (ST_CURLY_OPEN == $found[0] || T_CLASS === $found[0] || T_INTERFACE === $found[0] || T_TRAIT === $found[0] || T_ENUM === $found[0] || T_NAMESPACE === $found[0]) && ! $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN]);
+					if (empty($classCurlyDepthStack)) {
+						// Global scope (incl. namespace blocks). Do not inject visibility.
+						// Preserve `static function () {}` for closures: if we captured a preceding static, flush it here.
+						if ($id === T_FUNCTION && null !== $static && $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN])) {
+							$this->appendCode($static . $this->getSpace());
+							$static = null;
+							$skipWhitespaces = false;
+						}
+						$this->appendCode($text);
+						break;
+					}
+					$classDepth = end($classCurlyDepthStack);
+					$hasFoundClassOrInterface = (
+						$curlyDepth === $classDepth &&
+						! $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN])
+					);
+
+					// Inside class but not at top-level (e.g. closure inside method): do not inject visibility.
+					if (!$hasFoundClassOrInterface) {
+						if ($id === T_FUNCTION && null !== $static && $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN])) {
+							$this->appendCode($static . $this->getSpace());
+						}
+						$this->appendCode($text);
+						$visibility = null;
+						$static = null;
+						$readonly = null;
+						$skipWhitespaces = false;
+						break;
+					}
+
+					if ($id === T_FUNCTION && null === $visibility) {
+						$visibility = 'public';
+					}
 
 					if ($hasFoundClassOrInterface && null !== $finalOrAbstract) {
 						$this->appendCode($finalOrAbstract . $this->getSpace());
 					}
 					if ($hasFoundClassOrInterface && null !== $visibility) {
 						$this->appendCode($visibility . $this->getSpace());
-					} elseif (
-						$hasFoundClassOrInterface &&
-						!$this->leftTokenIs([T_DOUBLE_ARROW, T_RETURN, ST_EQUAL, ST_COMMA, ST_PARENTHESES_OPEN])
-					) {
-                        if (count($found) - 2 >= 0 && $found[count($found)-2] !== T_NAMESPACE) {
-                            if ($id === T_FUNCTION) {
-                                $visibility = 'public';
-						        $this->appendCode('public' . $this->getSpace());
-                            }
-                        }
 					}
-                    if ($visibility === null && $static !== null) {
-                        if ($id === T_FUNCTION) {
-                            $visibility = 'public';
-                            $this->appendCode('public' . $this->getSpace());
-                        }
-                    }
 					if ($hasFoundClassOrInterface && null !== $static) {
 						$this->appendCode($static . $this->getSpace());
 					}
-                    if ($visibility === null && $static === null) {
-                        if (count($found) === 1 || (count($found) > 1 && $found[count($found) - 2] !== T_NAMESPACE)) {
-                            if ($id === T_FUNCTION) {
-                                $visibility = 'public';
-                                $this->appendCode('public' . $this->getSpace());
-                            }
-                        }
-                    }
 					$this->appendCode($text);
 					$visibility = null;
 					$static = null;
@@ -6869,10 +6898,28 @@ EOT;
 						break;
 					}
 					$finalOrAbstract = null;
-                    if ($id === T_FUNCTION) {
-					   $this->printUntil(ST_CURLY_OPEN);
-					   $this->printCurlyBlock();
-                    } else {
+					if ($id === T_FUNCTION) {
+						// Skip to the opening curly or semicolon (for abstract/interface methods)
+						// but do NOT consume the curly block - let the main loop handle it
+						// so that $curlyDepth stays synchronized for nested anonymous classes
+						$parenCount = 0;
+						while (list($index, $token) = $this->each($this->tkns)) {
+							list($subId, $subText) = $this->getToken($token);
+							$this->ptr = $index;
+							$this->appendCode($subText);
+							if (ST_PARENTHESES_OPEN === $subId) {
+								++$parenCount;
+							} elseif (ST_PARENTHESES_CLOSE === $subId) {
+								$parenCount = max(0, $parenCount - 1);
+							} elseif (0 === $parenCount && ST_SEMI_COLON === $subId) {
+								break;
+							} elseif (0 === $parenCount && ST_CURLY_OPEN === $subId) {
+								// Increment curlyDepth and continue - main loop will handle the rest
+								++$curlyDepth;
+								break;
+							}
+						}
+					} else {
                         $this->printUntil(ST_SEMI_COLON);
                     }
 					break;

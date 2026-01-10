@@ -17,10 +17,10 @@ class User {
 	}
 	protected function test4() {
 	}
-	function test5() {
+	public function test5() {
 	}
 
-	function testOut(): ?string {
+	public function testOut(): ?string {
 		return $this->testP;
 	}
 }
