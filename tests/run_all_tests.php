@@ -13,10 +13,23 @@
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN' && !ini_get('short_open_tag')) {
-    unset($argv[0]);
+if (!ini_get('short_open_tag') && '1' !== getenv('PHPFMT_SHORTTAG_RERUN')) {
+    $args = $argv;
+    array_shift($args);
+
+    $cmd = escapeshellarg(PHP_BINARY) . ' -dshort_open_tag=1 ' . escapeshellarg(__FILE__);
+    if (!empty($args)) {
+        $cmd .= ' ' . implode(' ', array_map('escapeshellarg', $args));
+    }
+
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $cmd = 'set PHPFMT_SHORTTAG_RERUN=1&& ' . $cmd;
+    } else {
+        $cmd = 'PHPFMT_SHORTTAG_RERUN=1 ' . $cmd;
+    }
+
     $ret = 0;
-    passthru($_SERVER['_'] . ' -dshort_open_tag=1 ' . __DIR__ . DIRECTORY_SEPARATOR . 'run_all_tests.php ' . implode(' ', $argv) . ' 2>&1', $ret);
+    passthru($cmd . ' 2>&1', $ret);
     exit($ret);
 }
 
