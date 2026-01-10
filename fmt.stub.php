@@ -3538,7 +3538,7 @@ namespace {
 	}
 
 	final class LeftAlignComment extends FormatterPass {
-		const NON_INDENTABLE_COMMENT = "/*\x2 COMMENT \x3*/";
+		const NON_INDENTABLE_COMMENT = "/*__PHPFMT_NON_INDENTABLE_COMMENT__*/";
 
 		public function candidate($source, $foundTokens) {
 			if (
@@ -3821,6 +3821,9 @@ namespace {
 				case T_START_HEREDOC:
 					$this->appendCode($text);
 					$this->printUntil(T_END_HEREDOC);
+					if ($this->rightUsefulTokenIs(ST_SEMI_COLON)) {
+						$this->printUntil(ST_SEMI_COLON);
+					}
 					break;
 
 				case T_COMMENT:
@@ -4969,11 +4972,10 @@ EOT;
                     break;
                 case T_START_HEREDOC:
                     $this->appendCode($text);
-                    if (count($attributeStack)) {
-                        $this->printUntil(T_END_HEREDOC);
-                    } else {
-						$this->printUntil(T_END_HEREDOC);
-                    }
+					$this->printUntil(T_END_HEREDOC);
+					if ($this->rightUsefulTokenIs(ST_SEMI_COLON)) {
+						$this->printUntil(ST_SEMI_COLON);
+					}
                     break;
 
                 case T_CALLABLE:

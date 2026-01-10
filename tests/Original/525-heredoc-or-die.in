@@ -1,5 +1,6 @@
 <?php
 //passes:AutoSemicolon
+//version:7.3
 // Have a free MRE for both options. Run the formatter over this and both will break.
 print_r(<<<SQL
     SELECT *
