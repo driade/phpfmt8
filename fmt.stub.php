@@ -6701,12 +6701,17 @@ EOT;
 					}
 					break;
                 case '?':
-                    $tidx = $this->rightUsefulTokenIdx();
-                    if (in_array($this->tkns[$tidx][0], [T_STRING, T_ARRAY, T_NAME_RELATIVE, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED]) && (! isset($this->tkns[$tidx + 1]) || $this->tkns[$tidx + 1][0] !== '(')) {
-                       $this->tkns[$tidx][1] = $text . $this->tkns[$tidx][1];
-                    } else {
-                        $this->appendCode($text);
-                    }
+					// Only merge ? with following type for nullable types (e.g., ?string)
+					// Skip this optimization inside function bodies (ternary operator)
+					$insideFunctionBody = !empty($classCurlyDepthStack) && $curlyDepth > end($classCurlyDepthStack);
+					if (!$insideFunctionBody) {
+						$tidx = $this->rightUsefulTokenIdx();
+						if (in_array($this->tkns[$tidx][0], [T_STRING, T_ARRAY, T_NAME_RELATIVE, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED]) && (! isset($this->tkns[$tidx + 1]) || $this->tkns[$tidx + 1][0] !== '(')) {
+						   $this->tkns[$tidx][1] = $text . $this->tkns[$tidx][1];
+						   break;
+						}
+					}
+					$this->appendCode($text);
                     break;
                 case '|':
                 case T_NAME_RELATIVE:
@@ -6880,6 +6885,9 @@ EOT;
 					}
 					$finalOrAbstract = null;
 					if ($id === T_FUNCTION) {
+						// Skip to the opening curly or semicolon (for abstract/interface methods)
+						// but do NOT consume the curly block - let the main loop handle it
+						// so that $curlyDepth stays synchronized for nested anonymous classes
 						$parenCount = 0;
 						while (list($index, $token) = $this->each($this->tkns)) {
 							list($subId, $subText) = $this->getToken($token);
@@ -6892,7 +6900,8 @@ EOT;
 							} elseif (0 === $parenCount && ST_SEMI_COLON === $subId) {
 								break;
 							} elseif (0 === $parenCount && ST_CURLY_OPEN === $subId) {
-								$this->printCurlyBlock();
+								// Increment curlyDepth and continue - main loop will handle the rest
+								++$curlyDepth;
 								break;
 							}
 						}

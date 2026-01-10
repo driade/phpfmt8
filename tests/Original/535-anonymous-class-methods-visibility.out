@@ -1,0 +1,22 @@
+<?php
+//passes:PSR2ModifierVisibilityStaticOrder
+class Outer {
+	public function outerMethod() {
+		return new class {
+			public function innerMethod() {}
+			private function alreadyPrivate() {}
+		};
+	}
+}
+
+class DeepNesting {
+	public function level1() {
+		return new class {
+			public function level2() {
+				return new class {
+					public function level3() {}
+				};
+			}
+		};
+	}
+}
