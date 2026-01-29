@@ -1,0 +1,8 @@
+<?php
+//version:8.2
+//passes:PSR2ModifierVisibilityStaticOrder
+
+abstract readonly class Example {
+    public function example() {
+    }
+}

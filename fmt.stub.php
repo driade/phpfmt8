@@ -7168,22 +7168,37 @@ EOT;
                         break;
                     case T_FINAL:
                     case T_ABSTRACT:
-                        if (! $this->rightTokenIs([T_CLASS]) && ! $this->leftTokenIs(T_DOUBLE_COLON)) {
-                            $finalOrAbstract = $text;
-                            $skipWhitespaces = true;
+                        if ($this->leftTokenIs(T_DOUBLE_COLON)) {
+                            $this->appendCode($text);
                             break;
                         }
-                        $this->appendCode($text);
+
+                        $nextIdx = $this->rightUsefulTokenIdx();
+                        if (isset($this->tkns[$nextIdx]) && T_READONLY === $this->tkns[$nextIdx][0]) {
+                            $nextIdx = $this->rightTokenSubsetAtIdx($this->tkns, $nextIdx, $this->ignoreFutileTokens);
+                        }
+
+                        if (isset($this->tkns[$nextIdx]) && in_array($this->tkns[$nextIdx][0], [T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM], true)) {
+                            $this->appendCode($text);
+                            break;
+                        }
+
+                        $finalOrAbstract = $text;
+                        $skipWhitespaces = true;
                         break;
                     case T_READONLY:
                         if (! $this->leftTokenIs(T_DOUBLE_COLON)) {
-                            if (! is_null($visibility)) {
+                            // `readonly` can be a class modifier (PHP 8.2): `readonly class Foo {}`
+                            // Handle it here so combinations like `final readonly class` and
+                            // `abstract readonly class` keep the modifier on the class.
+                            if ($this->rightUsefulTokenIs([T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM])) {
                                 $readonly        = $text;
                                 $skipWhitespaces = true;
                                 break;
-                            } elseif ($this->leftTokenIs([T_FINAL])) { // ??
-                                $readonly   = $text;
-                                $visibility = 'public';
+                            }
+                            if (! is_null($visibility)) {
+                                $readonly        = $text;
+                                $skipWhitespaces = true;
                                 break;
                             } elseif (! $this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && ! $this->leftTokenIs([T_NEW, ST_COMMA])) {
                                 $readonly        = $text;

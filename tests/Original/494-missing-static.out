@@ -9,5 +9,5 @@ class a {
 	private static readonly string $endpoint4 = '';
 	public static readonly string $endpoint5 = '';
 	static readonly string $endpoint6 = '';
-	final public readonly string $endpoint7 = '';
+	final readonly string $endpoint7 = '';
 }

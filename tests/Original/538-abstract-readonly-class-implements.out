@@ -1,0 +1,11 @@
+<?php
+//version:8.2
+//passes:PSR2ModifierVisibilityStaticOrder
+
+interface IFoo {
+}
+
+abstract readonly class Example implements IFoo {
+	public function example() {
+	}
+}
