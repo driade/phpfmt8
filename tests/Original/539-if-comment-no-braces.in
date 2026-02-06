@@ -1,0 +1,20 @@
+<?php
+// Issue 195: semicolon incorrectly added after if with inline comment
+if ($i) // comment
+    $i = 0;
+
+if ($x) /* block comment */
+    $x = 1;
+
+if ($a) // comment 1
+    if ($b) // comment 2
+        $b = 2;
+
+while ($w) // comment
+    $w = false;
+
+for ($f = 0; $f < 10; $f++) // comment
+    $f = $f;
+
+foreach ($arr as $item) // comment
+    $item = $item;

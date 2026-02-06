@@ -9113,7 +9113,10 @@ EOT;
                             }
                         } else
                         if ($this->rightUsefulTokenIs(T_VARIABLE) && $this->rightTokenIs([T_COMMENT, T_DOC_COMMENT])) {
-                            $this->appendCode(ST_SEMI_COLON);
+                            // Don't add semicolon after control structure parentheses
+                            if (! in_array($lastParen, [T_IF, T_WHILE, T_FOR, T_FOREACH, T_ELSEIF, T_SWITCH])) {
+                                $this->appendCode(ST_SEMI_COLON);
+                            }
                         }
                         break;
 

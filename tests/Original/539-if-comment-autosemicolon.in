@@ -1,0 +1,8 @@
+<?php
+//passes:AutoSemicolon
+// Issue 195: semicolon incorrectly added after if with inline comment
+if ($i) // comment
+    $i = 0;
+
+if ($x) /* block comment */
+    $x = 1;
