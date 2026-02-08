@@ -1,0 +1,11 @@
+<?php
+//version:7.4.0
+
+class Example
+{
+    public Closure $fn;
+    public function __construct()
+    {
+        $this->fn = static fn() => 'fn';
+    }
+}

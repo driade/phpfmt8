@@ -1709,6 +1709,11 @@ namespace {
         define('T_NAME_RELATIVE', 'namespace');
     }
 
+    // PHP 7.4
+    if (! defined("T_FN")) {
+        define("T_FN", "fn");
+    }
+
     // PHP 8
     if (! defined("T_READONLY")) {
         define("T_READONLY", "readonly");
@@ -7248,6 +7253,18 @@ EOT;
                         $this->appendCode($text);
                         break;
 
+                    case T_FN:
+                        if (null !== $static) {
+                            $this->appendCode($static . $this->getSpace());
+                            $static          = null;
+                            $skipWhitespaces = false;
+                        }
+                        $this->appendCode($text);
+                        $visibility      = null;
+                        $readonly        = null;
+                        $finalOrAbstract = null;
+                        $type            = null;
+                        break;
                     case T_CONST:
                     case T_FUNCTION:
                         if (empty($classCurlyDepthStack)) {

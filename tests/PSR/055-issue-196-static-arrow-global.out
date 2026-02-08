@@ -1,0 +1,18 @@
+<?php
+//version:7.4.0
+
+$fn = static fn() => 'root';
+
+class Example
+{
+    public function __construct()
+    {
+        $local = static fn() => 'local';
+        $this->run($local);
+    }
+
+    private function run(Closure $fn)
+    {
+        $fn();
+    }
+}

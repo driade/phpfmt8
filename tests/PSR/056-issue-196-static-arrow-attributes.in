@@ -1,0 +1,10 @@
+<?php
+//version:8.0.0
+
+class Example {
+    #[SomeAttr]
+    public function build()
+    {
+        return static fn() => 'attr';
+    }
+}

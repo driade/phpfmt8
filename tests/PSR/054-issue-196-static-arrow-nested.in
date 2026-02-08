@@ -1,0 +1,11 @@
+<?php
+//version:7.4.0
+
+class Example {
+    public function build()
+    {
+        $factory = static fn(int $x): int => $x + 1;
+        $wrapper = static fn() => static fn() => 'ok';
+        return $factory(1) . $wrapper()();
+    }
+}
