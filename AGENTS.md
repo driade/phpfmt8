@@ -71,12 +71,18 @@
 - `//versionup:X.Y.Z`
   - Skips the test when the running PHP version is **higher** than `X.Y.Z`.
 
+- **Version-gated fixtures**
+  - For syntax added after PHP 5.6 (e.g., arrow functions, attributes), add a `//version:X.Y.Z` line at the top of the `.in`/`.out` to avoid failures on older runtimes.
+
 - `//skipShortTag`
   - If `short_open_tag` is disabled in the current runtime and the fixture contains `//skipShortTag` in inline HTML, the test is skipped.
 
 - If there is **no** `//passes:...` or `//excludes:...`, the harness applies a baseline set and calls `PsrDecorator::decorate($fmt)`.
 
 - Some tests may be skipped depending on PHP version or `short_open_tag` settings (see the logic in `tests/run_all_tests.php`).
+
+- **Alignment note**
+  - `AlignDoubleArrow` can align `=>` even inside arrow functions when they appear on the same line; update `.out` expectations accordingly.
 
 ### 2) PHPUnit
 
