@@ -1,0 +1,9 @@
+<?php
+//version:8.0
+//passes:PSR2ModifierVisibilityStaticOrder
+
+class Example {
+	public function me(): static {
+		return $this;
+	}
+}

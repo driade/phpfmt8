@@ -1,0 +1,10 @@
+<?php
+//passes:PSR2ModifierVisibilityStaticOrder
+
+class Example {
+    public function check(object $object) {
+        return $object instanceof static;
+    }
+}
+
+$example = new Example();

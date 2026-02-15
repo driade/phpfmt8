@@ -7214,16 +7214,22 @@ EOT;
                         $this->appendCode($text);
                         break;
                     case T_STATIC:
-                        if (! $this->leftTokenIs(T_DOUBLE_COLON)) {
+                        // `static` can be used as a type (e.g. `instanceof static`, `function f(): static`).
+                        // Do not treat it as a member modifier in those contexts.
+                        if ($this->leftUsefulTokenIs([T_INSTANCEOF, ST_COLON])) {
+                            $this->appendCode($text);
+                            break;
+                        }
+                        if (! $this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
                             if (! is_null($visibility)) {
                                 $static          = $text;
                                 $skipWhitespaces = true;
                                 break;
-                            } elseif ($this->leftTokenIs([T_FINAL])) {
+                            } elseif ($this->leftUsefulTokenIs([T_FINAL])) {
                                 $static     = $text;
                                 $visibility = 'public';
                                 break;
-                            } elseif (! $this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && ! $this->leftTokenIs([T_NEW, ST_COMMA])) {
+                            } elseif (! $this->rightTokenIs([T_VARIABLE, T_DOUBLE_COLON]) && ! $this->leftUsefulTokenIs([T_NEW, ST_COMMA])) {
                                 $static          = $text;
                                 $skipWhitespaces = true;
                                 break;

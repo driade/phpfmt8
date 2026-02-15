@@ -1,0 +1,8 @@
+<?php
+//passes:PSR2ModifierVisibilityStaticOrder
+
+class Example {
+	public function make() {
+		return new static();
+	}
+}
