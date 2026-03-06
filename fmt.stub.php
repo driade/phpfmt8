@@ -11448,6 +11448,7 @@ EOT;
             $aliasList    = [];
             $aliasCount   = [];
             $unusedImport = [];
+            $currentUsePrefix = 'use ';
 
             while ($this->eachPair($index, $token, $tokens)) {
                 list($id, $text) = $this->getToken($token);
@@ -11494,25 +11495,36 @@ EOT;
                 if (T_USE === $id || $foundComma) {
                     list($useTokens, $foundToken) = $this->walkAndAccumulateStopAtAny($tokens, $stopTokens);
 
+                    if (! $foundComma) {
+                        list($currentUsePrefix, $useTokens) = $this->normalizeUseClauseParts($useTokens);
+                    }
+
                     if (ST_SEMI_COLON == $foundToken) {
-                        $useStack[$groupCount][] = 'use ' . ltrim($useTokens) . ';';
+                        $useStack[$groupCount][] = $this->buildUseClause($currentUsePrefix, $useTokens);
                         $newTokens[]             = new SurrogateToken();
                         next($tokens);
 
                         $foundComma = false;
                     } elseif (ST_COMMA == $foundToken) {
-                        $useStack[$groupCount][] = 'use ' . ltrim($useTokens) . ';';
+                        $useStack[$groupCount][] = $this->buildUseClause($currentUsePrefix, $useTokens);
                         $newTokens[]             = new SurrogateToken();
                         $newTokens[]             = [T_WHITESPACE, $this->newLine . $this->newLine];
 
                         $foundComma = true;
                     } elseif (ST_CURLY_OPEN == $foundToken) {
                         next($tokens);
-                        $base = $this->newLine . 'use ' . ltrim($useTokens);
+                        list($baseUsePrefix, $base) = $this->normalizeUseClauseParts($useTokens);
+                        if ('use ' === $baseUsePrefix && T_USE === $id) {
+                            if ($this->rightTokenSubsetIsAtIdx($tokens, $index, [T_FUNCTION], $this->ignoreFutileTokens)) {
+                                $baseUsePrefix = 'use function ';
+                            } elseif ($this->rightTokenSubsetIsAtIdx($tokens, $index, [T_CONST], $this->ignoreFutileTokens)) {
+                                $baseUsePrefix = 'use const ';
+                            }
+                        }
 
                         do {
                             list($groupText, $groupFoundToken) = $this->walkAndAccumulateStopAtAny($tokens, [ST_COMMA, ST_CURLY_CLOSE]);
-                            $useStack[$groupCount][]           = $base . trim($groupText) . ';';
+                            $useStack[$groupCount][]           = $this->newLine . $this->expandGroupUseClause($baseUsePrefix, $base, $groupText);
                             $newTokens[]                       = new SurrogateToken();
                             next($tokens);
                         } while (ST_COMMA == $groupFoundToken);
@@ -11612,12 +11624,43 @@ EOT;
             return $return;
         }
 
+        private function buildUseClause($usePrefix, $useText)
+        {
+            return $usePrefix . ltrim($useText) . ';';
+        }
+
         private function calculateAlias($use)
         {
             if (false !== stripos($use, ' as ')) {
                 return substr(stristr($use, ' as '), strlen(' as '), -1);
             }
             return basename(str_replace('\\', '/', trim(substr($use, strlen('use'), -1))));
+        }
+
+        private function expandGroupUseClause($baseUsePrefix, $baseUseText, $groupText)
+        {
+            list($groupUsePrefix, $groupUseText) = $this->normalizeUseClauseParts($groupText);
+
+            if ('use ' !== $groupUsePrefix) {
+                return $this->buildUseClause($groupUsePrefix, $baseUseText . trim($groupUseText));
+            }
+
+            return $this->buildUseClause($baseUsePrefix, $baseUseText . trim($groupText));
+        }
+
+        private function normalizeUseClauseParts($useText)
+        {
+            $useText = ltrim($useText);
+
+            if (0 === stripos($useText, 'function ')) {
+                return ['use function ', ltrim(substr($useText, strlen('function ')))];
+            }
+
+            if (0 === stripos($useText, 'const ')) {
+                return ['use const ', ltrim(substr($useText, strlen('const ')))];
+            }
+
+            return ['use ', $useText];
         }
 
         private function sortWithinNamespaces($source)

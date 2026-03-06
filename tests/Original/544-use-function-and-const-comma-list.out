@@ -1,0 +1,16 @@
+<?php
+//version:5.6.0
+namespace Demo;
+use const Vendor\Lib\BETA as BETA_CONST;
+use const Vendor\Lib\OMEGA;
+use const Vendor\Other\GAMMA;
+use function Vendor\Lib\alpha as alpha_fn;
+use function Vendor\Lib\zeta;
+use function Vendor\Other\beta as beta_fn;
+
+alpha_fn();
+beta_fn();
+zeta();
+echo BETA_CONST;
+echo GAMMA;
+echo OMEGA;

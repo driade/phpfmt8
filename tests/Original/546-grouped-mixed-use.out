@@ -1,0 +1,13 @@
+<?php
+//version:7.0.0
+namespace Demo;
+
+use const Vendor\Package\OMEGA;
+use function Vendor\Package\alpha;
+use Vendor\Package\Bee as LocalBee;
+use Vendor\Package\Zed;
+
+new LocalBee();
+new Zed();
+alpha();
+echo OMEGA;

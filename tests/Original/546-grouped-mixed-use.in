@@ -1,0 +1,9 @@
+<?php
+//version:7.0.0
+namespace Demo;
+use Vendor\Package\{Zed, function alpha, const OMEGA, Bee as LocalBee};
+
+new LocalBee();
+new Zed();
+alpha();
+echo OMEGA;
