@@ -8025,6 +8025,7 @@ EOT;
             $docBlocks      = [];
             $declares       = [];
             $namespaceBlock = '';
+            $sawTopFileSection = false;
             $useBlocks      = [
                 'class'    => [],
                 'function' => [],
@@ -8045,12 +8046,18 @@ EOT;
                 }
 
                 if (T_COMMENT === $id) {
+                    if ($sawTopFileSection) {
+                        break;
+                    }
                     $prefixComments[] = trim($text);
                     ++$idx;
                     continue;
                 }
 
                 if (T_DOC_COMMENT === $id) {
+                    if ($sawTopFileSection) {
+                        break;
+                    }
                     $docBlocks[] = trim($text);
                     ++$idx;
                     continue;
@@ -8062,18 +8069,21 @@ EOT;
                     }
                     list($declareText, $idx) = $this->accumulateStatement($tokens, $idx);
                     $declares[] = trim($declareText);
+                    $sawTopFileSection = true;
                     continue;
                 }
 
                 if (T_NAMESPACE === $id) {
                     list($namespaceBlock, $idx) = $this->accumulateStatement($tokens, $idx);
                     $namespaceBlock = trim($namespaceBlock);
+                    $sawTopFileSection = true;
                     continue;
                 }
 
                 if (T_USE === $id) {
                     list($useText, $idx) = $this->accumulateStatement($tokens, $idx);
                     $useText = trim($useText);
+                    $sawTopFileSection = true;
                     if (0 === stripos($useText, 'use function ')) {
                         $useBlocks['function'][] = $useText;
                     } elseif (0 === stripos($useText, 'use const ')) {
