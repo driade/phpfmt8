@@ -6392,6 +6392,11 @@ EOT;
                         $awaitingClassCurly = true;
                         $this->appendCode($text);
                         break;
+                    case T_CURLY_OPEN:
+                    case T_DOLLAR_OPEN_CURLY_BRACES:
+                        ++$curlyDepth;
+                        $this->appendCode($text);
+                        break;
                     case ST_CURLY_OPEN:
                         ++$curlyDepth;
                         if ($awaitingClassCurly) {
@@ -7718,6 +7723,10 @@ EOT;
                 return false;
             }
 
+            if (preg_match('/\b(?:function|fn)$/', $prefix)) {
+                return false;
+            }
+
             return 1 === preg_match('/(?:[A-Za-z_][A-Za-z0-9_]*|\$[A-Za-z_][A-Za-z0-9_]*|\]|\)|->\s*[A-Za-z_][A-Za-z0-9_]*|::\s*[A-Za-z_][A-Za-z0-9_]*)$/', $prefix);
         }
     }
@@ -7851,6 +7860,11 @@ EOT;
 
                     case ST_SEMI_COLON:
                         $this->appendCode($text);
+                        if (null !== $pendingControl) {
+                            $pendingControl = null;
+                            $pendingParenDepth = 0;
+                            $skipWhitespaceAfterDeclare = false;
+                        }
                         if (! empty($braceStack) && T_SWITCH === end($braceStack) && $this->rightUsefulTokenIs([T_CASE, T_DEFAULT, ST_CURLY_CLOSE])) {
                             $this->appendCode($this->newLine);
                         }
@@ -8224,7 +8238,7 @@ EOT;
     {
         public function candidate($source, $foundTokens)
         {
-            return isset($foundTokens[T_USE], $foundTokens[T_CLASS]);
+            return isset($foundTokens[T_USE]) && (isset($foundTokens[T_CLASS]) || isset($foundTokens[T_TRAIT]));
         }
 
         public function format($source)

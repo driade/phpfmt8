@@ -1,0 +1,16 @@
+<?php
+//passes:Default,AddMissingParentheses,PSR12TopFileFormat,PSR12MultilineCalls
+
+$y = array_map(function ($item) {
+    return $item * 2;
+}, $arr);
+
+$z = usort($arr, function ($a, $b) {
+    return $a - $b;
+});
+
+foo(
+    $a,
+    $b,
+    $c
+);

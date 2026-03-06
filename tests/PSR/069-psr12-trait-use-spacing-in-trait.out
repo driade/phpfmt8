@@ -1,0 +1,11 @@
+<?php
+//passes:Default,PSR12TraitUseSpacing,PSR12TopFileFormat
+
+namespace Vendor\Package;
+
+trait ReusableTrait
+{
+    use InnerTrait;
+
+    private $property;
+}
