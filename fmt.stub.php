@@ -13133,6 +13133,12 @@ EOT;
                         $this->appendCode($text);
                         break;
 
+                    case T_CURLY_OPEN:
+                    case T_DOLLAR_OPEN_CURLY_BRACES:
+                        $curlyStack[] = $id;
+                        $this->appendCode($text);
+                        break;
+
                     case ST_CURLY_OPEN:
                         $curlyType = ST_CURLY_OPEN;
                         if (! $touchedFunction) {

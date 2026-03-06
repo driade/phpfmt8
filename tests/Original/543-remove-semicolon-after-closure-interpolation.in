@@ -1,0 +1,6 @@
+<?php
+//passes:RemoveSemicolonAfterCurly
+
+function ()  {
+	echo "id={$a->id}" . ($a  ? '' : '') . ($a ? '' : '') ;
+};
