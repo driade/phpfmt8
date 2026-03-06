@@ -7546,7 +7546,18 @@ EOT;
             $count = count($lines);
 
             for ($idx = 0; $idx < $count - 1; ++$idx) {
-                if (false === strpos($lines[$idx], '?') || false === strpos($lines[$idx], ':')) {
+                $line = $lines[$idx];
+                $trimmed = ltrim($line);
+
+                if ('' === $trimmed || 0 === strpos($trimmed, '//') || 0 === strpos($trimmed, '#') || 0 === strpos($trimmed, '/*') || 0 === strpos($trimmed, '*')) {
+                    continue;
+                }
+
+                if (false === strpos($line, '?') || false === strpos($line, ':')) {
+                    continue;
+                }
+
+                if (preg_match('/["\"][^"\"]*\?[^"\"]*:[^"\"]*["\"]/u', $line)) {
                     continue;
                 }
 
@@ -7555,7 +7566,7 @@ EOT;
                     continue;
                 }
 
-                if (! preg_match('/^(\s*)(.+?)\s*\?\s*(.+?)\s*:\s*$/', $lines[$idx], $matches)) {
+                if (! preg_match('/^(\s*)(.+?)\s*\?\s*(.+?)\s*:\s*$/', $line, $matches)) {
                     continue;
                 }
 
@@ -7610,16 +7621,20 @@ EOT;
                     continue;
                 }
 
-                if (false === strpos($lines[$idx], '(') || substr_count($lines[$idx], '(') <= substr_count($lines[$idx], ')')) {
-                    continue;
-                }
-
-                $baseIndent = substr($lines[$idx], 0, strlen($lines[$idx]) - strlen($trimmed));
                 $parenPos = strrpos($lines[$idx], '(');
                 if (false === $parenPos) {
                     continue;
                 }
 
+                if (! $this->isCallPrefix(substr($lines[$idx], 0, $parenPos))) {
+                    continue;
+                }
+
+                if (substr_count($lines[$idx], '(') <= substr_count($lines[$idx], ')')) {
+                    continue;
+                }
+
+                $baseIndent = substr($lines[$idx], 0, strlen($lines[$idx]) - strlen($trimmed));
                 $prefix = rtrim(substr($lines[$idx], 0, $parenPos));
                 $firstArg = trim(substr($lines[$idx], $parenPos + 1));
 
@@ -7634,8 +7649,7 @@ EOT;
                     continue;
                 }
 
-                $block = array_slice($lines, $idx, $endIdx - $idx + 1);
-                $lastLine = array_pop($block);
+                $lastLine = $lines[$endIdx];
                 $closePos = strpos($lastLine, ')');
                 if (false === $closePos) {
                     continue;
@@ -7695,6 +7709,16 @@ foo(
     $c
 );
 EOT;
+        }
+
+        private function isCallPrefix($prefix)
+        {
+            $prefix = rtrim($prefix);
+            if ('' === $prefix) {
+                return false;
+            }
+
+            return 1 === preg_match('/(?:[A-Za-z_][A-Za-z0-9_]*|\$[A-Za-z_][A-Za-z0-9_]*|\]|\)|->\s*[A-Za-z_][A-Za-z0-9_]*|::\s*[A-Za-z_][A-Za-z0-9_]*)$/', $prefix);
         }
     }
 
@@ -7975,8 +7999,7 @@ EOT;
 
         public function format($source)
         {
-            $source = preg_replace('/declare\s+\(/i', 'declare(', $source);
-            $source = preg_replace('/declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;(?!\s*:)/i', 'declare(strict_types=1);', $source);
+            $source = $this->normalizeDeclareStatements($source);
             $source = (new OnlyOrderUseClauses())->format($source);
 
             $tokens = token_get_all($source);
@@ -8161,6 +8184,39 @@ EOT;
             }
 
             return false;
+        }
+
+        private function normalizeDeclareStatements($source)
+        {
+            $tokens = token_get_all($source);
+            $normalized = '';
+            $count = count($tokens);
+
+            for ($idx = 0; $idx < $count; ++$idx) {
+                list($id, $text) = $this->getToken($tokens[$idx]);
+                if (T_DECLARE !== $id) {
+                    $normalized .= $text;
+                    continue;
+                }
+
+                $statement = $text;
+                ++$idx;
+                while ($idx < $count) {
+                    list($subId, $subText) = $this->getToken($tokens[$idx]);
+                    $statement .= $subText;
+                    if (ST_SEMI_COLON === $subId || ST_COLON === $subId) {
+                        break;
+                    }
+                    ++$idx;
+                }
+
+                $statement = preg_replace('/^declare\s*\(/i', 'declare(', $statement);
+                $statement = preg_replace('/\(\s*strict_types\s*=\s*1\s*\)(\s*[;:])/i', '(strict_types=1)$1', $statement);
+                $statement = preg_replace('/\(\s*ticks\s*=\s*([0-9]+)\s*\)(\s*[;:])/i', '(ticks = $1)$2', $statement);
+                $normalized .= $statement;
+            }
+
+            return $normalized;
         }
     }
 
