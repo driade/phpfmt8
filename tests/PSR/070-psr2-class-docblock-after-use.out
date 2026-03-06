@@ -1,5 +1,4 @@
 <?php
-
 namespace App\DDD\Orders\Jobs;
 
 use App\DDD\Cities\Models\City;
