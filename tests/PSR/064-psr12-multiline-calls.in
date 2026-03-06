@@ -1,0 +1,9 @@
+<?php
+//passes:Default,AddMissingParentheses,PSR12TopFileFormat,PSR12MultilineCalls
+foo($a,
+$b,
+$c);
+$obj->call(
+$a,
+$b
+)->next();

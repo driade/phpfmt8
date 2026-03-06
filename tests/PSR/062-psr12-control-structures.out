@@ -1,0 +1,25 @@
+<?php
+//passes:Default,SpaceAroundControlStructures,MergeElseIf,ReindentSwitchBlocks,PSR12ControlStructureBlocks,PSR12TopFileFormat
+
+if (true) {
+    echo 1;
+} elseif (false) {
+    echo 2;
+} else {
+    echo 3;
+}
+
+try {
+    foo();
+} catch (Exception $e) {
+    bar();
+} finally {
+    baz();
+}
+
+switch ($x) {
+    case 1:
+        break;
+    default:
+        break;
+}

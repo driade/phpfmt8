@@ -2826,6 +2826,14 @@ namespace {
     abstract class BaseCodeFormatter
     {
         protected $passes = [
+            'PSR12TernaryConditions'              => false,
+            'PSR12MultilineCalls'                => false,
+            'PSR12ControlStructureBlocks'          => false,
+            'PSR12TopFileFormat'                   => false,
+            'PSR12TypeHints'                       => false,
+            'PSR12TraitUseSpacing'                 => false,
+            'PSR12IndentImplementsList'            => false,
+
             'StripSpaces'                           => false,
 
             'ReplaceBooleanAndOr'                   => false,
@@ -6366,12 +6374,41 @@ EOT;
             $this->tkns = token_get_all($source);
             $this->code = '';
             $ucConst    = false;
+            $curlyDepth = 0;
+            $classCurlyDepthStack = [];
+            $awaitingClassCurly = false;
             while ($this->eachPair($index, $token, $this->tkns)) {
                 list($id, $text) = $this->getToken($token);
                 $this->ptr       = $index;
                 switch ($id) {
+                    case T_CLASS:
+                        if (! $this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
+                            $awaitingClassCurly = true;
+                        }
+                        $this->appendCode($text);
+                        break;
+                    case T_INTERFACE:
+                    case T_TRAIT:
+                        $awaitingClassCurly = true;
+                        $this->appendCode($text);
+                        break;
+                    case ST_CURLY_OPEN:
+                        ++$curlyDepth;
+                        if ($awaitingClassCurly) {
+                            $classCurlyDepthStack[] = $curlyDepth;
+                            $awaitingClassCurly = false;
+                        }
+                        $this->appendCode($text);
+                        break;
+                    case ST_CURLY_CLOSE:
+                        if (! empty($classCurlyDepthStack) && end($classCurlyDepthStack) === $curlyDepth) {
+                            array_pop($classCurlyDepthStack);
+                        }
+                        $curlyDepth = max(0, $curlyDepth - 1);
+                        $this->appendCode($text);
+                        break;
                     case T_CONST:
-                        $ucConst = true;
+                        $ucConst = ! empty($classCurlyDepthStack);
                         $this->appendCode($text);
                         break;
                     case T_STRING:
@@ -6826,9 +6863,52 @@ EOT;
         {
             $this->tkns = token_get_all($source);
             $this->code = '';
+            $inUseImport = false;
+            $nonImportDepth = 0;
+            $pendingScopeDepth = 0;
             while ($this->eachPair($index, $token, $this->tkns)) {
                 list($id, $text) = $this->getToken($token);
                 $this->ptr       = $index;
+
+                if (in_array($id, [T_CLASS, T_INTERFACE, T_TRAIT, T_FUNCTION], true)) {
+                    ++$pendingScopeDepth;
+                }
+
+                if (in_array($id, [ST_CURLY_OPEN, T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES], true)) {
+                    if ($pendingScopeDepth > 0) {
+                        --$pendingScopeDepth;
+                        ++$nonImportDepth;
+                    } elseif ($nonImportDepth > 0) {
+                        ++$nonImportDepth;
+                    }
+                } elseif (ST_CURLY_CLOSE === $id && $nonImportDepth > 0) {
+                    --$nonImportDepth;
+                }
+
+                if ($inUseImport) {
+                    if (ST_SEMI_COLON === $id) {
+                        $inUseImport = false;
+                        $this->appendCode($text);
+                        continue;
+                    }
+
+                    if (in_array($id, [T_CONST, T_FUNCTION, T_AS], true)) {
+                        $this->appendCode(strtolower($text));
+                        continue;
+                    }
+
+                    if (in_array($id, [T_STRING, T_NS_SEPARATOR, T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED, T_NAME_RELATIVE, T_WHITESPACE, ST_COMMA, ST_CURLY_OPEN, ST_CURLY_CLOSE], true)) {
+                        $this->appendCode($text);
+                        continue;
+                    }
+                }
+
+                if (T_USE === $id && 0 === $nonImportDepth && ! $this->rightTokenSubsetIsAtIdx($this->tkns, $index, [ST_PARENTHESES_OPEN], $this->ignoreFutileTokens)) {
+                    $inUseImport = true;
+                    $this->appendCode(strtolower($text));
+                    continue;
+                }
+
                 if (
                     T_WHITESPACE == $id ||
                     T_VARIABLE == $id ||
@@ -7426,11 +7506,778 @@ EOT;
             $fmt->disablePass('StripNewlineWithinClassBody');
         }
 
+        public static function PSR12(CodeFormatter $fmt)
+        {
+            self::decorate($fmt);
+            $fmt->enablePass('OnlyOrderUseClauses');
+            $fmt->enablePass('SpaceBetweenMethods');
+            $fmt->enablePass('SpaceAroundControlStructures');
+            $fmt->enablePass('MergeElseIf');
+            $fmt->enablePass('AddMissingParentheses');
+            $fmt->enablePass('IndentTernaryConditions');
+            $fmt->enablePass('ReindentSwitchBlocks');
+            $fmt->enablePass('PSR12ControlStructureBlocks');
+            $fmt->enablePass('PSR12TopFileFormat');
+            $fmt->enablePass('PSR12TypeHints');
+            $fmt->enablePass('PSR12TraitUseSpacing');
+            $fmt->enablePass('PSR12IndentImplementsList');
+            $fmt->enablePass('PSR12MultilineCalls');
+            $fmt->enablePass('PSR12TernaryConditions');
+        }
+
         public static function decorate(CodeFormatter $fmt)
         {
             self::PSR1($fmt);
             self::PSR1Naming($fmt);
             self::PSR2($fmt);
+        }
+    }
+
+    final class PSR12TernaryConditions extends AdditionalPass
+    {
+        public function candidate($source, $foundTokens)
+        {
+            return isset($foundTokens[ST_QUESTION]) && false !== strpos($source, "\n");
+        }
+
+        public function format($source)
+        {
+            $lines = explode($this->newLine, $source);
+            $count = count($lines);
+
+            for ($idx = 0; $idx < $count - 1; ++$idx) {
+                if (false === strpos($lines[$idx], '?') || false === strpos($lines[$idx], ':')) {
+                    continue;
+                }
+
+                $nextTrimmed = ltrim($lines[$idx + 1]);
+                if ('' === $nextTrimmed || '?' === $nextTrimmed[0] || ':' === $nextTrimmed[0]) {
+                    continue;
+                }
+
+                if (! preg_match('/^(\s*)(.+?)\s*\?\s*(.+?)\s*:\s*$/', $lines[$idx], $matches)) {
+                    continue;
+                }
+
+                $indent = $matches[1];
+                $lines[$idx] = $indent . rtrim($matches[2]);
+                array_splice($lines, $idx + 1, 1, [
+                    $indent . '    ? ' . trim($matches[3]),
+                    $indent . '    : ' . $nextTrimmed,
+                ]);
+                $count = count($lines);
+                ++$idx;
+            }
+
+            return implode($this->newLine, $lines);
+        }
+
+        public function getDescription()
+        {
+            return 'Normalize multiline ternary operators to PSR-12-style hanging lines.';
+        }
+
+        public function getExample()
+        {
+            return <<<'EOT'
+<?php
+$a = $b ? $c :
+$d;
+
+<?php
+$a = $b
+    ? $c
+    : $d;
+EOT;
+        }
+    }
+
+    final class PSR12MultilineCalls extends AdditionalPass
+    {
+        public function candidate($source, $foundTokens)
+        {
+            return isset($foundTokens[ST_PARENTHESES_OPEN], $foundTokens[ST_PARENTHESES_CLOSE]) && false !== strpos($source, "\n");
+        }
+
+        public function format($source)
+        {
+            $lines = explode($this->newLine, $source);
+            $count = count($lines);
+
+            for ($idx = 0; $idx < $count; ++$idx) {
+                $trimmed = ltrim($lines[$idx]);
+                if ('' === $trimmed || preg_match('/^(if|elseif|for|foreach|while|switch|catch|function|fn|class|interface|trait|declare)\b/', $trimmed)) {
+                    continue;
+                }
+
+                if (false === strpos($lines[$idx], '(') || substr_count($lines[$idx], '(') <= substr_count($lines[$idx], ')')) {
+                    continue;
+                }
+
+                $baseIndent = substr($lines[$idx], 0, strlen($lines[$idx]) - strlen($trimmed));
+                $parenPos = strrpos($lines[$idx], '(');
+                if (false === $parenPos) {
+                    continue;
+                }
+
+                $prefix = rtrim(substr($lines[$idx], 0, $parenPos));
+                $firstArg = trim(substr($lines[$idx], $parenPos + 1));
+
+                $balance = substr_count($lines[$idx], '(') - substr_count($lines[$idx], ')');
+                $endIdx = $idx;
+                while ($balance > 0 && $endIdx + 1 < $count) {
+                    ++$endIdx;
+                    $balance += substr_count($lines[$endIdx], '(') - substr_count($lines[$endIdx], ')');
+                }
+
+                if ($endIdx === $idx) {
+                    continue;
+                }
+
+                $block = array_slice($lines, $idx, $endIdx - $idx + 1);
+                $lastLine = array_pop($block);
+                $closePos = strpos($lastLine, ')');
+                if (false === $closePos) {
+                    continue;
+                }
+
+                $lastArg = trim(substr($lastLine, 0, $closePos));
+                $afterClose = ltrim(substr($lastLine, $closePos + 1));
+
+                $newBlock = [$prefix . '('];
+                if ('' !== $firstArg) {
+                    $newBlock[] = $baseIndent . '    ' . $firstArg;
+                }
+
+                foreach (array_slice($lines, $idx + 1, max(0, $endIdx - $idx - 1)) as $innerLine) {
+                    $innerTrimmed = trim($innerLine);
+                    if ('' === $innerTrimmed) {
+                        continue;
+                    }
+                    $newBlock[] = $baseIndent . '    ' . $innerTrimmed;
+                }
+
+                if ('' !== $lastArg) {
+                    $newBlock[] = $baseIndent . '    ' . $lastArg;
+                }
+
+                $closeLine = $baseIndent . ')';
+                if ('' !== $afterClose) {
+                    $closeLine .= $afterClose;
+                }
+                $newBlock[] = $closeLine;
+
+                array_splice($lines, $idx, $endIdx - $idx + 1, $newBlock);
+                $count = count($lines);
+                $idx += count($newBlock) - 1;
+            }
+
+            return implode($this->newLine, $lines);
+        }
+
+        public function getDescription()
+        {
+            return 'Normalize multiline function and method calls to PSR-12 hanging indentation.';
+        }
+
+        public function getExample()
+        {
+            return <<<'EOT'
+<?php
+foo($a,
+    $b,
+    $c);
+
+<?php
+foo(
+    $a,
+    $b,
+    $c
+);
+EOT;
+        }
+    }
+
+    final class PSR12ControlStructureBlocks extends AdditionalPass
+    {
+        public function candidate($source, $foundTokens)
+        {
+            return isset($foundTokens[T_IF]) || isset($foundTokens[T_ELSEIF]) || isset($foundTokens[T_ELSE]) || isset($foundTokens[T_FOR]) || isset($foundTokens[T_FOREACH]) || isset($foundTokens[T_WHILE]) || isset($foundTokens[T_DO]) || isset($foundTokens[T_SWITCH]) || isset($foundTokens[T_TRY]) || isset($foundTokens[T_CATCH]) || isset($foundTokens[T_FINALLY]) || isset($foundTokens[T_DECLARE]);
+        }
+
+        public function format($source)
+        {
+            $this->tkns = token_get_all($source);
+            $this->code = '';
+
+            $braceStack = [];
+            $pendingControl = null;
+            $pendingParenDepth = 0;
+            $pendingCaseColon = false;
+            $skipWhitespaceAfterDeclare = false;
+
+            while ($this->eachPair($index, $token, $this->tkns)) {
+                list($id, $text) = $this->getToken($token);
+                $this->ptr = $index;
+
+                switch ($id) {
+                    case T_IF:
+                    case T_ELSEIF:
+                    case T_FOR:
+                    case T_FOREACH:
+                    case T_WHILE:
+                    case T_SWITCH:
+                    case T_CATCH:
+                        $pendingControl = $id;
+                        $pendingParenDepth = 0;
+                        $this->appendCode($text);
+                        break;
+
+                    case T_ELSE:
+                    case T_DO:
+                    case T_TRY:
+                    case T_FINALLY:
+                        $pendingControl = $id;
+                        $pendingParenDepth = -1;
+                        $this->appendCode($text);
+                        break;
+
+                    case T_DECLARE:
+                        $pendingControl = $id;
+                        $pendingParenDepth = 0;
+                        $skipWhitespaceAfterDeclare = true;
+                        $this->appendCode($text);
+                        break;
+
+                    case T_WHITESPACE:
+                        if ($skipWhitespaceAfterDeclare && $this->rightUsefulTokenIs([ST_PARENTHESES_OPEN])) {
+                            break;
+                        }
+                        if (! empty($braceStack) && ($this->endsWithNewline() || $this->endsWithIndentOnly())) {
+                            break;
+                        }
+                        if (! empty($braceStack) && null !== end($braceStack) && $this->rightUsefulTokenIs([ST_CURLY_CLOSE])) {
+                            break;
+                        }
+                        $this->appendCode($text);
+                        break;
+
+                    case ST_PARENTHESES_OPEN:
+                        if (null !== $pendingControl && $pendingParenDepth >= 0) {
+                            ++$pendingParenDepth;
+                        }
+                        $this->appendCode($text);
+                        break;
+
+                    case ST_PARENTHESES_CLOSE:
+                        if (null !== $pendingControl && $pendingParenDepth > 0) {
+                            --$pendingParenDepth;
+                        }
+                        $this->appendCode($text);
+                        break;
+
+                    case ST_CURLY_OPEN:
+                        if (null !== $pendingControl && $pendingParenDepth <= 0) {
+                            $braceStack[] = $pendingControl;
+                            $pendingControl = null;
+                            $pendingParenDepth = 0;
+                            $skipWhitespaceAfterDeclare = false;
+
+                            $this->rtrimAndAppendCode(' {');
+                            if (! $this->rightUsefulTokenIs([ST_CURLY_CLOSE])) {
+                                $this->appendCode($this->newLine . $this->indent(count($braceStack)));
+                            }
+                            break;
+                        }
+
+                        $braceStack[] = null;
+                        $skipWhitespaceAfterDeclare = false;
+                        $this->appendCode($text);
+                        break;
+
+                    case ST_CURLY_CLOSE:
+                        $isControlBlock = ! empty($braceStack) ? array_pop($braceStack) : null;
+                        if (null !== $isControlBlock && ! $this->endsWithNewline()) {
+                            $this->appendCode($this->newLine . $this->indent(count($braceStack)));
+                        }
+                        $this->appendCode($text);
+                        break;
+
+                    case T_CASE:
+                    case T_DEFAULT:
+                        if (! empty($braceStack) && T_SWITCH === end($braceStack)) {
+                            if (! $this->endsWithNewline() && ! $this->endsWithIndentOnly()) {
+                                $this->appendCode($this->newLine);
+                            }
+                            if ($this->endsWithNewline()) {
+                                $this->appendCode($this->indent(count($braceStack)));
+                            }
+                            $pendingCaseColon = true;
+                        }
+                        $this->appendCode($text);
+                        break;
+
+                    case ST_COLON:
+                        $this->appendCode($text);
+                        if ($pendingCaseColon && ! empty($braceStack) && T_SWITCH === end($braceStack) && ! $this->rightUsefulTokenIs([T_CASE, T_DEFAULT, ST_CURLY_CLOSE])) {
+                            $this->appendCode($this->newLine . $this->indent(count($braceStack) + 1));
+                        }
+                        $pendingCaseColon = false;
+                        break;
+
+                    case ST_SEMI_COLON:
+                        $this->appendCode($text);
+                        if (! empty($braceStack) && T_SWITCH === end($braceStack) && $this->rightUsefulTokenIs([T_CASE, T_DEFAULT, ST_CURLY_CLOSE])) {
+                            $this->appendCode($this->newLine);
+                        }
+                        break;
+
+                    default:
+                        $skipWhitespaceAfterDeclare = false;
+                        $this->appendCode($text);
+                        break;
+                }
+            }
+
+            return $this->code;
+        }
+
+        public function getDescription()
+        {
+            return 'Expand PSR-12 control-structure blocks and switch cases to multiline form.';
+        }
+
+        private function endsWithNewline()
+        {
+            if ('' === $this->code) {
+                return false;
+            }
+
+            return substr($this->code, -strlen($this->newLine)) === $this->newLine;
+        }
+
+        private function endsWithIndentOnly()
+        {
+            if ('' === $this->code) {
+                return false;
+            }
+
+            $pos = strrpos($this->code, $this->newLine);
+            if (false === $pos) {
+                return false;
+            }
+
+            return '' === trim(substr($this->code, $pos + strlen($this->newLine)));
+        }
+
+        private function indent($depth)
+        {
+            return str_repeat('    ', max(0, $depth));
+        }
+
+        public function getExample()
+        {
+            return <<<'EOT'
+<?php
+if (true) { echo 1; } else if (false) { echo 2; }
+switch ($x) { case 1: break; default: break; }
+declare(ticks=1) { foo(); }
+
+<?php
+if (true) {
+    echo 1;
+} elseif (false) {
+    echo 2;
+}
+switch ($x) {
+    case 1:
+        break;
+    default:
+        break;
+}
+declare(ticks=1) {
+    foo();
+}
+EOT;
+        }
+    }
+
+    final class PSR12IndentImplementsList extends AdditionalPass
+    {
+        public function candidate($source, $foundTokens)
+        {
+            return isset($foundTokens[T_IMPLEMENTS]);
+        }
+
+        public function format($source)
+        {
+            $lines            = explode($this->newLine, $source);
+            $inImplementsList = false;
+            $baseIndent       = '';
+            $itemIndent       = '';
+
+            foreach ($lines as $idx => $line) {
+                $trimmed = ltrim($line);
+
+                if (! $inImplementsList && false !== strpos($line, 'implements') && false === strpos($line, '{')) {
+                    $inImplementsList = true;
+                    $baseIndent       = substr($line, 0, strlen($line) - strlen($trimmed));
+                    $itemIndent       = $baseIndent . '    ';
+                    continue;
+                }
+
+                if (! $inImplementsList) {
+                    continue;
+                }
+
+                if ('{' === $trimmed) {
+                    $lines[$idx]      = $baseIndent . '{';
+                    $inImplementsList = false;
+                    continue;
+                }
+
+                $lines[$idx] = $itemIndent . $trimmed;
+            }
+
+            return implode($this->newLine, $lines);
+        }
+
+        public function getDescription()
+        {
+            return 'Indent wrapped implements lists to match PSR-12 expectations.';
+        }
+
+        public function getExample()
+        {
+            return <<<'EOT'
+<?php
+$instance = new class extends \Foo implements
+\ArrayAccess,
+\Countable
+{
+};
+
+$instance = new class extends \Foo implements
+    \ArrayAccess,
+    \Countable
+{
+};
+EOT;
+        }
+    }
+
+    final class PSR12TopFileFormat extends AdditionalPass
+    {
+        public function candidate($source, $foundTokens)
+        {
+            return isset($foundTokens[T_OPEN_TAG]);
+        }
+
+        public function format($source)
+        {
+            $source = preg_replace('/declare\s+\(/i', 'declare(', $source);
+            $source = preg_replace('/declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;(?!\s*:)/i', 'declare(strict_types=1);', $source);
+            $source = (new OnlyOrderUseClauses())->format($source);
+
+            $tokens = token_get_all($source);
+            $count  = count($tokens);
+            $idx    = 0;
+
+            $openTag        = '';
+            $prefixComments = [];
+            $docBlocks      = [];
+            $declares       = [];
+            $namespaceBlock = '';
+            $useBlocks      = [
+                'class'    => [],
+                'function' => [],
+                'const'    => [],
+            ];
+
+            if ($count && is_array($tokens[0]) && T_OPEN_TAG === $tokens[0][0]) {
+                $openTag = '<?php';
+                $idx     = 1;
+            }
+
+            while ($idx < $count) {
+                list($id, $text) = $this->getToken($tokens[$idx]);
+
+                if (T_WHITESPACE === $id) {
+                    ++$idx;
+                    continue;
+                }
+
+                if (T_COMMENT === $id) {
+                    $prefixComments[] = trim($text);
+                    ++$idx;
+                    continue;
+                }
+
+                if (T_DOC_COMMENT === $id) {
+                    $docBlocks[] = trim($text);
+                    ++$idx;
+                    continue;
+                }
+
+                if (T_DECLARE === $id) {
+                    if (! $this->isSimpleDeclareStatement($tokens, $idx)) {
+                        break;
+                    }
+                    list($declareText, $idx) = $this->accumulateStatement($tokens, $idx);
+                    $declares[] = trim($declareText);
+                    continue;
+                }
+
+                if (T_NAMESPACE === $id) {
+                    list($namespaceBlock, $idx) = $this->accumulateStatement($tokens, $idx);
+                    $namespaceBlock = trim($namespaceBlock);
+                    continue;
+                }
+
+                if (T_USE === $id) {
+                    list($useText, $idx) = $this->accumulateStatement($tokens, $idx);
+                    $useText = trim($useText);
+                    if (0 === stripos($useText, 'use function ')) {
+                        $useBlocks['function'][] = $useText;
+                    } elseif (0 === stripos($useText, 'use const ')) {
+                        $useBlocks['const'][] = $useText;
+                    } else {
+                        $useBlocks['class'][] = $useText;
+                    }
+                    continue;
+                }
+
+                break;
+            }
+
+            $remainder = '';
+            for (; $idx < $count; ++$idx) {
+                list(, $text) = $this->getToken($tokens[$idx]);
+                $remainder .= $text;
+            }
+            $remainder = ltrim($remainder);
+
+            foreach ($useBlocks as $type => $block) {
+                natcasesort($block);
+                $useBlocks[$type] = array_values($block);
+            }
+
+            $sections = [];
+            $firstSection = $openTag;
+            if (! empty($prefixComments)) {
+                $firstSection .= $this->newLine . implode($this->newLine, $prefixComments);
+            }
+            $sections[] = $firstSection;
+            if (! empty($docBlocks)) {
+                $sections[] = implode($this->newLine . $this->newLine, $docBlocks);
+            }
+            if (! empty($declares)) {
+                $sections[] = implode($this->newLine . $this->newLine, $declares);
+            }
+            if ('' !== $namespaceBlock) {
+                $sections[] = $namespaceBlock;
+            }
+            foreach (['class', 'function', 'const'] as $type) {
+                if (! empty($useBlocks[$type])) {
+                    $sections[] = implode($this->newLine, $useBlocks[$type]);
+                }
+            }
+            if ('' !== $remainder) {
+                $sections[] = rtrim($remainder);
+            }
+
+            return implode($this->newLine . $this->newLine, array_filter($sections, function ($section) {
+                return '' !== $section;
+            })) . $this->newLine;
+        }
+
+        public function getDescription()
+        {
+            return 'Normalize top-of-file PSR-12 blocks and group imports by type.';
+        }
+
+        public function getExample()
+        {
+            return <<<'EOT'
+<?php
+declare( strict_types = 1 );
+namespace Vendor\Package;
+use function Vendor\Package\b;
+use Vendor\Package\A;
+
+<?php
+
+declare(strict_types=1);
+
+namespace Vendor\Package;
+
+use Vendor\Package\A;
+
+use function Vendor\Package\b;
+EOT;
+        }
+
+        private function accumulateStatement($tokens, $idx)
+        {
+            $statement = '';
+            $count     = count($tokens);
+
+            for (; $idx < $count; ++$idx) {
+                list($id, $text) = $this->getToken($tokens[$idx]);
+                $statement .= $text;
+                if (ST_SEMI_COLON === $id) {
+                    ++$idx;
+                    break;
+                }
+            }
+
+            return [$statement, $idx];
+        }
+
+        private function isSimpleDeclareStatement($tokens, $idx)
+        {
+            $count = count($tokens);
+            $parenCount = 0;
+
+            for (; $idx < $count; ++$idx) {
+                list($id,) = $this->getToken($tokens[$idx]);
+                if (ST_PARENTHESES_OPEN === $id) {
+                    ++$parenCount;
+                    continue;
+                }
+                if (ST_PARENTHESES_CLOSE === $id) {
+                    --$parenCount;
+                    if (0 === $parenCount) {
+                        for ($j = $idx + 1; $j < $count; ++$j) {
+                            list($nextId,) = $this->getToken($tokens[$j]);
+                            if (T_WHITESPACE === $nextId) {
+                                continue;
+                            }
+
+                            return ST_SEMI_COLON === $nextId;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
+
+    final class PSR12TraitUseSpacing extends AdditionalPass
+    {
+        public function candidate($source, $foundTokens)
+        {
+            return isset($foundTokens[T_USE], $foundTokens[T_CLASS]);
+        }
+
+        public function format($source)
+        {
+            return preg_replace(
+                '/(^[ ]+use\s+[^;]+;\n)(^[ ]+(?:public|protected|private|var|static|abstract|final|const|function)\b)/m',
+                "$1\n$2",
+                $source
+            );
+        }
+
+        public function getDescription()
+        {
+            return 'Ensure a blank line after trait use statements before class members.';
+        }
+
+        public function getExample()
+        {
+            return <<<'EOT'
+<?php
+class Example
+{
+    use TraitA;
+    private $a;
+}
+
+<?php
+class Example
+{
+    use TraitA;
+
+    private $a;
+}
+EOT;
+        }
+    }
+
+    final class PSR12TypeHints extends AdditionalPass
+    {
+        public function candidate($source, $foundTokens)
+        {
+            return isset($foundTokens[T_FUNCTION]);
+        }
+
+        public function format($source)
+        {
+            $this->tkns = token_get_all($source);
+            $this->code = '';
+
+            while ($this->eachPair($index, $token, $this->tkns)) {
+                list($id, $text) = $this->getToken($token);
+                $this->ptr       = $index;
+
+                if (ST_QUESTION === $id && $this->isNullableTypeContext()) {
+                    if (isset($this->tkns[$index - 1]) && is_array($this->tkns[$index - 1]) && T_WHITESPACE === $this->tkns[$index - 1][0]) {
+                        $this->code = rtrim($this->code, " \t");
+                        if ($this->leftUsefulTokenIs([ST_COMMA, ST_PARENTHESES_OPEN, ST_COLON])) {
+                            $this->appendCode(' ');
+                        }
+                    }
+                    $this->appendCode('?');
+                    if (isset($this->tkns[$index + 1]) && is_array($this->tkns[$index + 1]) && T_WHITESPACE === $this->tkns[$index + 1][0]) {
+                        next($this->tkns);
+                    }
+                    continue;
+                }
+
+                if (ST_COLON === $id && $this->leftUsefulTokenIs([ST_PARENTHESES_CLOSE]) && $this->rightUsefulTokenIs([ST_QUESTION, T_STRING, T_ARRAY, T_CALLABLE, T_NS_SEPARATOR, T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED, T_NAME_RELATIVE, T_STATIC])) {
+                    $this->appendCode(':');
+                    $this->appendCode(' ');
+                    if (isset($this->tkns[$index + 1]) && is_array($this->tkns[$index + 1]) && T_WHITESPACE === $this->tkns[$index + 1][0]) {
+                        next($this->tkns);
+                    }
+                    continue;
+                }
+
+                $this->appendCode($text);
+            }
+
+            return $this->code;
+        }
+
+        public function getDescription()
+        {
+            return 'Normalize nullable type-hint spacing for PSR-12.';
+        }
+
+        public function getExample()
+        {
+            return <<<'EOT'
+<?php
+function a( ?string $a ): ?int {
+}
+
+<?php
+function a(?string $a): ?int {
+}
+EOT;
+        }
+
+        private function isNullableTypeContext()
+        {
+            $typeTokens = [T_STRING, T_ARRAY, T_CALLABLE, T_NS_SEPARATOR, T_NAME_FULLY_QUALIFIED, T_NAME_QUALIFIED, T_NAME_RELATIVE, T_STATIC];
+            list($nextId) = $this->getToken($this->rightUsefulToken());
+            if (! in_array($nextId, $typeTokens)) {
+                return false;
+            }
+
+            return $this->leftUsefulTokenIs([ST_PARENTHESES_OPEN, ST_COMMA, ST_COLON]);
         }
     }
 
@@ -15316,6 +16163,7 @@ EOT;
                 '--psr1'                           => 'activate PSR1 style',
                 '--psr1-naming'                    => 'activate PSR1 style - Section 3 and 4.3 - Class and method names case.',
                 '--psr2'                           => 'activate PSR2 style',
+                '--psr12'                          => 'activate PSR-12 style',
                 '--wp'                             => 'activate WP style',
                 '--setters_and_getters=type'       => 'analyse classes for attributes and generate setters and getters - camel, snake, golang',
                 '--smart_linebreak_after_curly'    => 'convert multistatement blocks into multiline blocks',
@@ -15368,6 +16216,7 @@ EOT;
             'psr1',
             'psr1-naming',
             'psr2',
+            'psr12',
             'wp',
             'setters_and_getters:',
             'smart_linebreak_after_curly',
@@ -15582,6 +16431,11 @@ EOT;
             $argv = extractFromArgv($argv, 'psr2');
         }
 
+        if (isset($opts['psr12'])) {
+            PsrDecorator::PSR12($fmt);
+            $argv = extractFromArgv($argv, 'psr12');
+        }
+
         if (isset($opts['wp'])) {
             WP::decorate($fmt);
             $argv = extractFromArgv($argv, 'wp');
@@ -15592,7 +16446,7 @@ EOT;
             $argv = extractFromArgv($argv, 'indent_with_space');
         }
 
-        if ((isset($opts['psr1']) || isset($opts['psr2']) || isset($opts['psr'])) && isset($opts['enable_auto_align'])) {
+        if ((isset($opts['psr1']) || isset($opts['psr2']) || isset($opts['psr12']) || isset($opts['psr'])) && isset($opts['enable_auto_align'])) {
             $fmt->enablePass('PSR2AlignObjOp');
         }
 

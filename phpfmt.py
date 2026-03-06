@@ -40,6 +40,7 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
     psr1 = getSetting( view, s, "psr1", False)
     psr1_naming = getSetting( view, s, "psr1_naming", psr1)
     psr2 = getSetting( view, s, "psr2", False)
+    psr12 = getSetting( view, s, "psr12", False)
     wp = getSetting( view, s, "wp", False)
     smart_linebreak_after_curly = getSetting( view, s, "smart_linebreak_after_curly", True)
     skip_if_ini_missing = getSetting( view, s, "skip_if_ini_missing", False)
@@ -176,8 +177,11 @@ def dofmt(eself, eview, sgter = None, src = None, force = False):
         if psr1_naming:
             cmd_fmt.append("--psr1-naming")
 
-        if psr2:
+        if psr2 and not psr12:
             cmd_fmt.append("--psr2")
+
+        if psr12:
+            cmd_fmt.append("--psr12")
 
         if wp:
             cmd_fmt.append("--wp")
@@ -274,6 +278,7 @@ def dogeneratephpdoc(eself, eview):
     psr1 = s.get("psr1", False)
     psr1_naming = s.get("psr1_naming", psr1)
     psr2 = s.get("psr2", False)
+    psr12 = s.get("psr12", False)
     wp = s.get("wp", False)
     smart_linebreak_after_curly = s.get("smart_linebreak_after_curly", True)
     visibility_order = s.get("visibility_order", False)
@@ -331,8 +336,11 @@ def dogeneratephpdoc(eself, eview):
         if psr1_naming:
             cmd_fmt.append("--psr1-naming")
 
-        if psr2:
+        if psr2 and not psr12:
             cmd_fmt.append("--psr2")
+
+        if psr12:
+            cmd_fmt.append("--psr12")
 
         if wp:
             cmd_fmt.append("--wp")
@@ -384,6 +392,7 @@ def doreordermethod(eself, eview):
     psr1 = s.get("psr1", False)
     psr1_naming = s.get("psr1_naming", psr1)
     psr2 = s.get("psr2", False)
+    psr12 = s.get("psr12", False)
     wp = s.get("wp", False)
     smart_linebreak_after_curly = s.get("smart_linebreak_after_curly", True)
     visibility_order = s.get("visibility_order", False)
@@ -442,8 +451,10 @@ def doreordermethod(eself, eview):
         if psr1_naming:
             cmd_fmt.append("--psr1-naming")
 
-        if psr2:
+        if psr2 and not psr12:
             cmd_fmt.append("--psr2")
+        if psr12:
+            cmd_fmt.append("--psr12")
         if wp:
             cmd_fmt.append("--wp")
 
@@ -790,6 +801,7 @@ class ToggleCommand(sublime_plugin.TextCommand):
             "psr1":"PSR1",
             "psr1_naming":"PSR1 Class and Method Naming",
             "psr2":"PSR2",
+            "psr12":"PSR-12",
             "wp":"WP Coding Standards",
             "readini":"look for .php.tools.ini",
             "smart_linebreak_after_curly":"smart linebreak after curly",
@@ -807,6 +819,10 @@ class ToggleCommand(sublime_plugin.TextCommand):
             sublime.status_message(msg)
         else:
             s.set(option, True)
+            if option == "psr12":
+                s.set("psr2", False)
+            elif option == "psr2":
+                s.set("psr12", False)
             msg = "phpfmt: "+options[option]+" enabled"
             print_debug(msg)
             sublime.status_message(msg)

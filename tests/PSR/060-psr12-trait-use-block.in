@@ -1,0 +1,8 @@
+<?php
+//passes:Default,PSR12TraitUseSpacing,PSR12TopFileFormat
+namespace Vendor\Package;
+use Vendor\Package\FirstTrait;
+class ClassName{
+use FirstTrait;
+private $property;
+}
