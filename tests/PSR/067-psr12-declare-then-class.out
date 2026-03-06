@@ -1,0 +1,20 @@
+<?php
+//passes:Default,SpaceAroundControlStructures,MergeElseIf,ReindentSwitchBlocks,PSR12ControlStructureBlocks,PSR12TopFileFormat
+
+declare(strict_types=1);
+
+namespace Vendor\Package;
+
+class Example
+{
+    public function run()
+    {
+
+        if (true) {
+            return 1;
+        }
+
+        return false;
+    }
+
+}

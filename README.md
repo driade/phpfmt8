@@ -7,7 +7,7 @@ PHPFmt is a PHP code formatter tailored for Sublime Text 4 with full support for
 ## Features
 
 - **PHP 8 Support**: Seamlessly format PHP >= 5.6 code.
-- **Rich Formatting Options**: Includes PSR-1, PSR-2, and WordPress coding standards, among others.
+- **Rich Formatting Options**: Includes PSR-1, PSR-2, PSR-12, and WordPress coding standards, among others.
 - **Customization**: Supports a wide array of transformations and formatting tweaks.
 - **Easy Integration**: Simple setup and configuration within Sublime Text.
 
@@ -32,7 +32,9 @@ Edit the configuration file at `%AppData%\Sublime Text\Packages\phpfmt\phpfmt.su
 
 ```json
 {
-    "php_bin": "c:/PHP/php.exe"
+    "php_bin": "c:/PHP/php.exe",
+    "psr2": true,
+    "psr12": false
 }
 ```
 
@@ -42,9 +44,13 @@ Edit `phpfmt.sublime-settings` and set the `php_bin` path:
 
 ```json
 {
-    "php_bin": "/usr/local/bin/php"
+    "php_bin": "/usr/local/bin/php",
+    "psr2": true,
+    "psr12": false
 }
 ```
+
+`psr12` is opt-in and does not change the existing `psr2` profile. In the Sublime plugin, `psr12` and `psr2` are treated as mutually exclusive profile toggles so enabling one disables the other.
 
 You may find an example configuration file in https://github.com/driade/phpfmt8/blob/master/driade.sublime-settings , where you can see how to configure the extension.
 
@@ -55,8 +61,18 @@ PHPFmt provides a variety of commands accessible via the command palette (`Ctrl+
 - `phpfmt: format now`
 - `phpfmt: toggle format on save`
 - `phpfmt: toggle PSR2`
+- `phpfmt: toggle PSR-12`
 
 ... and more.
+
+## PSR Profiles
+
+- `psr1`: enables the PSR-1 profile.
+- `psr1_naming`: enables PSR-1 naming rules for classes and methods.
+- `psr2`: keeps the legacy PSR-2 behavior unchanged.
+- `psr12`: enables the newer PSR-12 profile on top of the existing PSR base without changing `psr2` semantics.
+
+In the Sublime plugin, enabling `psr12` disables `psr2`, and enabling `psr2` disables `psr12`.
 
 
 ## Currently Supported Transformations:
@@ -102,6 +118,13 @@ PHPFmt provides a variety of commands accessible via the command palette (`Ctrl+
  * PrettyPrintDocBlocks              Prettify Doc Blocks
  * PSR2EmptyFunction                 Merges in the same line of function header the body of empty functions.
  * PSR2MultilineFunctionParams       Break function parameters into multiple lines.
+ * PSR12ControlStructureBlocks       Expand control-structure blocks, switch cases, and block declare syntax to multiline PSR-12 form.
+ * PSR12IndentImplementsList         Indent wrapped anonymous-class implements lists for PSR-12.
+ * PSR12MultilineCalls               Normalize multiline function and method calls to PSR-12 hanging indentation.
+ * PSR12TernaryConditions            Normalize multiline ternary operators to PSR-12 hanging indentation.
+ * PSR12TopFileFormat                Normalize top-of-file PSR-12 blocks and import grouping.
+ * PSR12TraitUseSpacing              Ensure a blank line after trait use blocks before class members.
+ * PSR12TypeHints                    Normalize nullable and return-type spacing for PSR-12.
  * ReindentAndAlignObjOps            Align object operators.
  * ReindentSwitchBlocks              Reindent one level deeper the content of switch blocks.
  * ReindentEnumBlocks                Reindent one level deeper the content of enum blocks.

@@ -1,0 +1,32 @@
+<?php
+//version:7.0.0
+//passes:Default,OnlyOrderUseClauses,PSR12TypeHints,PSR12TraitUseSpacing,PSR12IndentImplementsList,PSR12TopFileFormat
+
+/**
+ * Example file.
+ */
+
+declare(strict_types=1);
+
+namespace Vendor\Package;
+
+use Vendor\Package\ClassA as A;
+use Vendor\Package\ClassB;
+
+use function Vendor\Package\functionA;
+use function Vendor\Package\functionB;
+
+use const Vendor\Package\CONSTANT_A;
+use const Vendor\Package\CONSTANT_B;
+
+class Example
+{
+    public function run()
+    {
+        functionA();
+        functionB();
+        echo CONSTANT_A;
+        echo CONSTANT_B;
+        return new A();
+    }
+}

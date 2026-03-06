@@ -1,0 +1,16 @@
+<?php
+//version:7.0.0
+//passes:Default,PSR12TypeHints,PSR12TopFileFormat
+
+$app->get('/hello/{name}', function ($name) use ($app): string {
+    return 'Hello ' . $app->escape($name);
+});
+$closure = function (
+    $arg1,
+    $arg2
+) use (
+    $var1,
+    $var2
+): bool {
+    return true;
+};

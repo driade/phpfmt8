@@ -1,0 +1,18 @@
+<?php
+//version:5.6.0
+//passes:PSR1ClassConstants
+class Example {
+    public function interpolateBraces() {
+        return "{$value}";
+    }
+
+    const foo = 1;
+}
+
+class ExampleWithDollarOpenCurly {
+    public function interpolateDollarBraces() {
+        return "${value}";
+    }
+
+    const bar = 2;
+}
