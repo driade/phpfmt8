@@ -28,6 +28,7 @@
     "psr1": false,
     "psr1_naming": false,
     "psr2": true,
+    "psr12": false,
     "readini": true,
     "smart_linebreak_after_curly": false,
     "version": 4,

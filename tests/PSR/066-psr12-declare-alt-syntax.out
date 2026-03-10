@@ -1,0 +1,7 @@
+<?php
+//version:5.6.0
+//passes:Default,PSR12TopFileFormat
+
+declare(ticks = 1):
+foo();
+enddeclare;

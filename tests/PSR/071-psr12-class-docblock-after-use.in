@@ -1,0 +1,15 @@
+<?php
+//passes:Default,SpaceAroundControlStructures,AddMissingParentheses,PSR12ControlStructureBlocks,PSR12TopFileFormat
+namespace App\DDD\Orders\Jobs;
+
+use App\DDD\Cities\Models\City;
+use App\DDD\Devops\Models\WebhookResponse;
+
+/**
+ * @covered Unit/DDD/Orders/Jobs/OrderNotifyToWebhookJobTest.php
+ */
+class X {
+    public function y(City $city, WebhookResponse $response) {
+        return [$city, $response];
+    }
+}
