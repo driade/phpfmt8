@@ -1,0 +1,18 @@
+<?php
+//version:8.1.0
+
+class A
+{}
+interface B
+{}
+
+class Example
+{
+    public A&B $plain;
+    private readonly A&B $readonlyProp;
+    protected static A&B $shared;
+
+    public function __construct(public A&B $promoted, private readonly A&B $promotedReadonly)
+    {
+    }
+}

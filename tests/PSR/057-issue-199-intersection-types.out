@@ -1,0 +1,15 @@
+<?php
+//version:8.1.0
+
+class A
+{
+
+}
+class B
+{
+
+}
+class C
+{
+    public A&B $test;
+}

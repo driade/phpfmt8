@@ -1,0 +1,19 @@
+<?php
+//version:8.2.0
+
+class A
+{}
+interface B
+{}
+interface C
+{}
+
+class Example
+{
+    public (A&B)|C $choice;
+    private C|(A&B) $choice2;
+
+    public function __construct(public (A&B)|C $promoted)
+    {
+    }
+}

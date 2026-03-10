@@ -7102,8 +7102,17 @@ EOT;
                         break;
                     case ST_PARENTHESES_OPEN:
                     case ST_PARENTHESES_CLOSE:
-                        $this->appendCode($text);
-                        $touchedClassInterfaceTrait = false;
+                        if (
+                            null !== $visibility ||
+                            null !== $finalOrAbstract ||
+                            null !== $static ||
+                            null !== $type
+                        ) {
+                            $type .= $text;
+                        } else {
+                            $this->appendCode($text);
+                            $touchedClassInterfaceTrait = false;
+                        }
                         break;
                     case T_WHITESPACE:
                         if (! $skipWhitespaces) {
@@ -7124,6 +7133,7 @@ EOT;
                         $this->appendCode($text);
                         break;
                     case '|':
+                    case T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG:
                     case T_NAME_RELATIVE:
                     case T_NAME_QUALIFIED:
                     case T_NAME_FULLY_QUALIFIED:
