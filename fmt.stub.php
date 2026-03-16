@@ -6411,7 +6411,7 @@ EOT;
                 $this->ptr       = $index;
                 switch ($id) {
                     case T_CLASS:
-                        if (! $this->leftUsefulTokenIs(T_DOUBLE_COLON)) {
+                        if (! $this->leftUsefulTokenIs([T_DOUBLE_COLON, T_NEW])) {
                             $foundClass = true;
                         }
 
@@ -13155,6 +13155,10 @@ EOT;
                         break;
 
                     case T_CLASS:
+                        if ($this->leftUsefulTokenIs([T_DOUBLE_COLON])) {
+                            $this->appendCode($text);
+                            break;
+                        }
                         if ($this->leftUsefulTokenIs([T_NEW])) {
                             $touchedFunction = false;
                             $this->appendCode($text);

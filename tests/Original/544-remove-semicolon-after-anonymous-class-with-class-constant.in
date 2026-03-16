@@ -1,0 +1,14 @@
+<?php
+//passes:RemoveSemicolonAfterCurly
+//version:8.0.0
+
+$worker = new class($this->sample_item_id, SampleEvent::class) extends BaseCacheRefreshTask {
+	protected function afterStored(): void {
+		self::queueGrouped(
+			item_id: $this->item_id,
+			event_class: SampleEvent::class,
+		);
+	}
+};
+
+$worker->run();
