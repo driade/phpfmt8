@@ -1,0 +1,8 @@
+<?php
+//passes:AutoSemicolon
+
+function () use ($job) {
+    return $job === 'workspace-owner-id'
+    /** @phpstan-ignore-next-line */
+    && $job === 'foo';
+};

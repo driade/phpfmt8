@@ -9083,7 +9083,7 @@ EOT;
                         if ($this->hasLnAfter() && $this->rightTokenIs(ST_CURLY_CLOSE) && ! $isMatch) {
                             $this->appendCode(ST_SEMI_COLON);
                         } else
-                        if ($this->hasLnAfter() && $this->rightTokenIs([T_COMMENT, T_DOC_COMMENT]) && ! $isMatch) {
+                        if ($this->hasLnAfter() && $this->rightTokenIs([T_COMMENT, T_DOC_COMMENT]) && ! $isMatch && ! $this->nextUsefulTokenContinuesExpression()) {
                             $this->appendCode(ST_SEMI_COLON);
                         } else
                         if ($this->rightUsefulTokenIs(T_VARIABLE) && $this->rightTokenIs([T_COMMENT, T_DOC_COMMENT])) {
@@ -9150,6 +9150,10 @@ EOT;
                             if (! in_array($lastParen, [T_IF, T_WHILE, T_FOR, T_FOREACH, T_ELSEIF, T_SWITCH])) {
                                 $this->appendCode(ST_SEMI_COLON);
                             }
+                        } else
+                        if ($this->rightTokenIs([T_COMMENT, T_DOC_COMMENT]) && ! $this->nextUsefulTokenContinuesExpression()) {
+                            // A comment after ")" doesn't necessarily terminate the statement.
+                            $this->appendCode(ST_SEMI_COLON);
                         }
                         break;
 
@@ -9525,6 +9529,63 @@ EOT;
                 return $this->tkns[$i][0] === T_OBJECT_OPERATOR;
             }
             return false;
+        }
+
+        private function nextUsefulTokenContinuesExpression()
+        {
+            return $this->rightUsefulTokenIs([
+                ST_BITWISE_OR,
+                ST_BITWISE_XOR,
+                ST_BRACKET_CLOSE,
+                ST_BRACKET_OPEN,
+                ST_COLON,
+                ST_COMMA,
+                ST_CONCAT,
+                ST_DIVIDE,
+                ST_IS_GREATER,
+                ST_IS_SMALLER,
+                ST_MINUS,
+                ST_PARENTHESES_CLOSE,
+                ST_PARENTHESES_OPEN,
+                ST_PLUS,
+                ST_QUESTION,
+                ST_TIMES,
+
+                T_AND_EQUAL,
+                T_AS,
+                T_BOOLEAN_AND,
+                T_BOOLEAN_OR,
+                T_COALESCE,
+                T_COALESCE_EQUAL,
+                T_CONCAT_EQUAL,
+                T_DIV_EQUAL,
+                T_DOUBLE_ARROW,
+                T_DOUBLE_COLON,
+                T_INSTANCEOF,
+                T_IS_EQUAL,
+                T_IS_GREATER_OR_EQUAL,
+                T_IS_IDENTICAL,
+                T_IS_NOT_EQUAL,
+                T_IS_NOT_IDENTICAL,
+                T_IS_SMALLER_OR_EQUAL,
+                T_LOGICAL_AND,
+                T_LOGICAL_OR,
+                T_LOGICAL_XOR,
+                T_MINUS_EQUAL,
+                T_MOD_EQUAL,
+                T_MUL_EQUAL,
+                T_OBJECT_OPERATOR,
+                T_OR_EQUAL,
+                T_PLUS_EQUAL,
+                T_POW,
+                T_POW_EQUAL,
+                T_SL,
+                T_SL_EQUAL,
+                T_SPACESHIP,
+                T_SR,
+                T_SR_EQUAL,
+                T_XOR_EQUAL,
+            ]);
         }
 
         public function getDescription()
