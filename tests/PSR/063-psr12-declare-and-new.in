@@ -1,0 +1,4 @@
+<?php
+//passes:Default,SpaceAroundControlStructures,AddMissingParentheses,PSR12ControlStructureBlocks,PSR12TopFileFormat
+declare(ticks=1){ foo(); }
+$a = new Foo;

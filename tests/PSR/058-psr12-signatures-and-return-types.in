@@ -1,0 +1,17 @@
+<?php
+//version:7.1.0
+//passes:Default,PSR12TypeHints,PSR12TopFileFormat
+declare(strict_types=1);
+namespace Vendor\Package;
+class ReturnTypeVariations{
+public function functionName( ?string $arg1 , ?int &$arg2 ): ?string{
+return 'foo';
+}
+public function anotherFunction(
+string $foo,
+string $bar,
+int $baz
+): string{
+return 'foo';
+}
+}

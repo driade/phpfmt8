@@ -1,0 +1,9 @@
+<?php
+//passes:Default,IndentTernaryConditions,PSR12TopFileFormat,PSR12TernaryConditions
+
+$z = $a
+    ? $b
+    : $c;
+$w = $a
+    ? $b
+    : $c;
