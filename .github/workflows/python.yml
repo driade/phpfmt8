@@ -1,0 +1,85 @@
+name: Python plugin
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+      - feature/*
+      - fix/*
+  pull_request:
+    branches:
+      - master
+      - dev
+      - feature/*
+
+jobs:
+  legacy:
+    name: plugin (${{ matrix.os }}, 3.3)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-15-intel, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Python 3.3 on Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          curl -fsSL https://www.python.org/ftp/python/3.3.7/Python-3.3.7.tgz -o "$RUNNER_TEMP/python33.tgz"
+          tar -xzf "$RUNNER_TEMP/python33.tgz" -C "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/Python-3.3.7"
+          CFLAGS='-O0 -fcommon' ./configure --prefix="$RUNNER_TEMP/python33"
+          make -j2
+          make install
+          ln -s python3.3 "$RUNNER_TEMP/python33/bin/python"
+          echo "$RUNNER_TEMP/python33/bin" >> "$GITHUB_PATH"
+      - name: Install Python 3.3 on macOS
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          curl -fsSL https://www.python.org/ftp/python/3.3.5/python-3.3.5-macosx10.6.dmg -o "$RUNNER_TEMP/python33.dmg"
+          hdiutil attach "$RUNNER_TEMP/python33.dmg" -mountpoint "$RUNNER_TEMP/python33-image" -nobrowse
+          mkdir -p "$RUNNER_TEMP/python33/Python.framework"
+          tar -xzf "$RUNNER_TEMP/python33-image/Python.mpkg/Contents/Packages/PythonFramework-3.3.pkg/Contents/Archive.pax.gz" -C "$RUNNER_TEMP/python33/Python.framework"
+          hdiutil detach "$RUNNER_TEMP/python33-image"
+          mkdir -p "$RUNNER_TEMP/python33/bin"
+          ln -s "$RUNNER_TEMP/python33/Python.framework/Versions/3.3/bin/python3.3" "$RUNNER_TEMP/python33/bin/python"
+          echo "$RUNNER_TEMP/python33/bin" >> "$GITHUB_PATH"
+          echo "DYLD_FRAMEWORK_PATH=$RUNNER_TEMP/python33" >> "$GITHUB_ENV"
+      - name: Install Python 3.3 on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $installer = Join-Path $env:RUNNER_TEMP 'python33.msi'
+          $installDir = Join-Path $env:RUNNER_TEMP 'python33'
+          Invoke-WebRequest 'https://www.python.org/ftp/python/3.3.5/python-3.3.5.amd64.msi' -OutFile $installer
+          $process = Start-Process msiexec.exe -ArgumentList "/i `"$installer`" /qn TARGETDIR=`"$installDir`" ALLUSERS=0" -Wait -PassThru
+          if ($process.ExitCode -notin @(0, 3010)) { throw "Python installer failed: $($process.ExitCode)" }
+          $installDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Verify the legacy interpreter
+        run: python -c "import sys; assert sys.version_info[:2] == (3, 3), sys.version; print(sys.version)"
+      - name: Compile plugin
+        run: python -W error::SyntaxWarning -m py_compile phpfmt.py diff_match_patch/python3/diff_match_patch.py
+      - name: Test plugin behavior
+        run: python -B -W error::SyntaxWarning -m unittest discover -s tests/python -v
+
+  plugin:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-15-intel, windows-latest]
+        python: ['3.8', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Verify the interpreter
+        run: python -c "import sys; assert sys.version_info[:2] == tuple(map(int, '${{ matrix.python }}'.split('.'))), sys.version; print(sys.version)"
+      - name: Compile plugin with syntax warnings as errors
+        run: python -W error::SyntaxWarning -m py_compile phpfmt.py diff_match_patch/python3/diff_match_patch.py
+      - name: Test plugin behavior
+        run: python -B -W error::SyntaxWarning -m unittest discover -s tests/python -v

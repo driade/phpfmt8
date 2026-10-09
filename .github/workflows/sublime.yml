@@ -1,0 +1,59 @@
+name: Sublime integration
+
+on:
+  push:
+    branches: [master, dev, 'feature/*', 'fix/*']
+  pull_request:
+    branches: [master, dev, 'feature/*']
+
+permissions:
+  contents: read
+
+jobs:
+  editor:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-15-intel, windows-latest]
+        python: ['3.3', '3.8']
+    env:
+      PHPFMT_EXPECTED_PYTHON: ${{ matrix.python }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: SublimeText/UnitTesting
+          ref: d1a2fad376752c1cebfd12f0a7132eead92275bb # UnitTesting 1.9.2
+          path: .ci-unittesting
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: sqlite3
+          coverage: none
+      - name: Prepare editor and test packages
+        run: python tests/sublime/setup_editor.py
+      - name: Start virtual display
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgtk-3-0
+          Xvfb :99 -screen 0 1024x768x24 -ac &
+          echo 'DISPLAY=:99' >> "$GITHUB_ENV"
+      - name: Run tests inside Sublime Text
+        run: python .ci-unittesting/actions/run-tests/run_tests.py phpfmt
+      - name: Upload editor logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sublime-${{ matrix.os }}-${{ matrix.python }}
+          path: |
+            ${{ env.SUBLIME_TEXT_PACKAGES }}/User/UnitTesting/phpfmt/result
+            ${{ env.SUBLIME_TEXT_PACKAGES }}/phpfmt/unittesting.log
+            ${{ env.SUBLIME_TEXT_PACKAGES }}/UnitTesting/unittesting.log

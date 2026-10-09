@@ -301,6 +301,31 @@ Ensure PHP is accessible from the command line. If issues arise, open an issue [
 
 Contributions are welcome! Please submit pull requests or issues with detailed information and code samples.
 
+### Python plugin tests
+
+Run from the repository root with Python 3.14 (no Docker or additional dependencies):
+
+```bash
+python3.14 -W error::SyntaxWarning -m py_compile phpfmt.py diff_match_patch/python3/diff_match_patch.py
+python3.14 -B -W error::SyntaxWarning -m unittest discover -s tests/python -v
+```
+
+The package does not declare `.python-version`, so Python 3.3 is its default runtime
+in Sublime Text. The regular GitHub Actions suite tests Python 3.3, 3.8 and 3.14
+on Linux, macOS and Windows (nine combinations). macOS uses an Intel runner so
+it can also execute the historical interpreters.
+Python 3.14 checks all three syntax warnings reported in issue #102.
+All three versions test autocomplete, patch parsing, buffer updates, and error recovery.
+They replace the Sublime Text API with test doubles; they do not validate the real editor API.
+
+The Sublime integration workflow also runs four tests inside the real editor on
+Linux, macOS and Windows, with both embedded Python hosts (3.3 and 3.8).
+It checks package loading, PHP formatting and idempotence, completion snippets,
+and buffer recovery after a failed merge. It uses the official stable build 4200
+in evaluation mode, without a license or repository secrets.
+Python 3.14 remains covered by the standalone tests; its real editor integration
+requires a future stable build that includes that host without a development license.
+
 ## VSCode
 
 If you're using Visual Studio Code, please consider installing  [vscode-phpfmt](https://marketplace.visualstudio.com/items?itemName=kokororin.vscode-phpfmt) extension by @kokororin
