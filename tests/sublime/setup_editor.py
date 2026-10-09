@@ -47,6 +47,10 @@ packages = data / "Packages"
 packages.mkdir(parents=True)
 shutil.copytree(ROOT, packages / "phpfmt", ignore=shutil.ignore_patterns(".git", "vendor", ".ci-unittesting", "__pycache__"))
 shutil.copytree(ROOT / ".ci-unittesting", packages / "UnitTesting", ignore=shutil.ignore_patterns(".git"))
+(packages / "UnitTesting/aaa_ci_log.py").write_text(
+    "import os, sys\n"
+    "sys.stdout = sys.stderr = open(os.path.join(os.path.dirname(__file__), 'unittesting.log'), 'a', buffering=1)\n"
+)
 package = packages / "phpfmt"
 (package / ".python-version").write_text(os.environ["PHPFMT_EXPECTED_PYTHON"])
 shutil.copyfile(ROOT / "tests/sublime/commands.py", package / "integration_commands.py")
