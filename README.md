@@ -318,6 +318,14 @@ Python 3.14 checks all three syntax warnings reported in issue #102.
 All three versions test autocomplete, patch parsing, buffer updates, and error recovery.
 They replace the Sublime Text API with test doubles; they do not validate the real editor API.
 
+The Sublime integration workflow also runs four tests inside the real editor on
+Linux, macOS and Windows, with both embedded Python hosts (3.3 and 3.8).
+It checks package loading, PHP formatting and idempotence, completion snippets,
+and buffer recovery after a failed merge. It uses the official stable build 4200
+in evaluation mode, without a license or repository secrets.
+Python 3.14 remains covered by the standalone tests; its real editor integration
+requires a future stable build that includes that host without a development license.
+
 ## VSCode
 
 If you're using Visual Studio Code, please consider installing  [vscode-phpfmt](https://marketplace.visualstudio.com/items?itemName=kokororin.vscode-phpfmt) extension by @kokororin
