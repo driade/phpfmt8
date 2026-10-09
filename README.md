@@ -311,10 +311,11 @@ python3.14 -B -W error::SyntaxWarning -m unittest discover -s tests/python -v
 ```
 
 The package does not declare `.python-version`, so Python 3.3 is its default runtime
-in Sublime Text. GitHub Actions tests Python 3.3 on Windows, Python 3.8 on Linux
-and Windows, and Python 3.14 on Linux, macOS, and Windows.
+in Sublime Text. The regular GitHub Actions suite tests Python 3.3, 3.8 and 3.14
+on Linux, macOS and Windows (nine combinations). macOS uses an Intel runner so
+it can also execute the historical interpreters.
 Python 3.14 checks all three syntax warnings reported in issue #102.
-Both versions test autocomplete, patch parsing, buffer updates, and error recovery.
+All three versions test autocomplete, patch parsing, buffer updates, and error recovery.
 They replace the Sublime Text API with test doubles; they do not validate the real editor API.
 
 ## VSCode
