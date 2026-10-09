@@ -3,3 +3,4 @@ composer.json
 composer.lock
 .phpunit.result.cache
 settings.json
+__pycache__/

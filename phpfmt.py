@@ -1008,7 +1008,7 @@ class PHPFmtComplete(sublime_plugin.EventListener):
                 if "method" == row[3]:
                     comps.append((
                         '%s \t %s \t %s' % (row[1], row[2], "method"),
-                        '%s' % (row[0].replace('$','\$')),
+                        '%s' % (row[0].replace('$',r'\$')),
                     ))
 
         return comps
@@ -1091,10 +1091,10 @@ def merge(view, size, text, edit):
         dirty = _merge(view, size, text, edit)
     except MergeException as ex:
         dirty = True
-        err = "Could not merge changes into the buffer, edit aborted: %s" % ex[0]
+        err = "Could not merge changes into the buffer, edit aborted: %s" % ex.args[0]
         view.replace(edit, sublime.Region(0, view.size()), origin_src)
     except Exception as ex:
         err = "error: %s" % ex
     finally:
         vs.set("translate_tabs_to_spaces", ttts)
-        return (dirty, err)
+    return (dirty, err)

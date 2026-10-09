@@ -301,6 +301,21 @@ Ensure PHP is accessible from the command line. If issues arise, open an issue [
 
 Contributions are welcome! Please submit pull requests or issues with detailed information and code samples.
 
+### Python plugin tests
+
+Run from the repository root with Python 3.14 (no Docker or additional dependencies):
+
+```bash
+python3.14 -W error::SyntaxWarning -m py_compile phpfmt.py diff_match_patch/python3/diff_match_patch.py
+python3.14 -B -W error::SyntaxWarning -m unittest discover -s tests/python -v
+```
+
+GitHub Actions runs these checks with Python 3.14 on Linux, macOS, and Windows,
+and with Python 3.8 on Linux and Windows.
+Python 3.14 checks all three syntax warnings reported in issue #102.
+Both versions test autocomplete, patch parsing, buffer updates, and error recovery.
+They replace the Sublime Text API with test doubles; they do not validate the real editor API.
+
 ## VSCode
 
 If you're using Visual Studio Code, please consider installing  [vscode-phpfmt](https://marketplace.visualstudio.com/items?itemName=kokororin.vscode-phpfmt) extension by @kokororin

@@ -1,0 +1,35 @@
+name: Python plugin
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+      - feature/*
+      - fix/*
+  pull_request:
+    branches:
+      - master
+      - dev
+      - feature/*
+
+jobs:
+  plugin:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ['3.8', '3.14']
+        exclude:
+          - os: macos-latest
+            python: '3.8'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Compile plugin with syntax warnings as errors
+        run: python -W error::SyntaxWarning -m py_compile phpfmt.py diff_match_patch/python3/diff_match_patch.py
+      - name: Test plugin behavior
+        run: python -B -W error::SyntaxWarning -m unittest discover -s tests/python -v
