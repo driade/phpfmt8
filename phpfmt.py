@@ -930,8 +930,7 @@ class PHPFmtComplete(sublime_plugin.EventListener):
                 return []
 
         pos = locations[0]
-        scopes = view.scope_name(pos).split()
-        if not ('source.php.embedded.block.html' in scopes or 'source.php' in scopes):
+        if not view.match_selector(pos, 'source.php'):
             return []
 
 

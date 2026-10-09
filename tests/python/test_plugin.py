@@ -78,7 +78,7 @@ class PluginTests(unittest.TestCase):
     def test_method_completion_escapes_dollars(self):
         view = Mock()
         view.file_name.return_value = os.path.join(ROOT, "Example.php")
-        view.scope_name.return_value = "source.php"
+        view.match_selector.return_value = True
         process = Mock()
         process.communicate.return_value = (b'"method($first, $second)",method,Example,method\n', b'')
         with patch.object(self.plugin.sublime, "load_settings", return_value={"autocomplete": True}), \
@@ -86,6 +86,10 @@ class PluginTests(unittest.TestCase):
                 patch.object(self.plugin.os.path, "isfile", return_value=True), \
                 patch.object(self.plugin.subprocess, "Popen", return_value=process):
             completions = self.plugin.PHPFmtComplete().on_query_completions(view, "method", [0])
+            view.match_selector.assert_called_once_with(0, "source.php")
+            view.match_selector.return_value = False
+            self.assertEqual(self.plugin.PHPFmtComplete().on_query_completions(view, "method", [0]), [])
+            self.assertEqual(self.plugin.subprocess.Popen.call_count, 1)
         self.assertEqual(completions[0][1], r"method(\$first, \$second)")
 
     def test_patch_headers_preserve_coordinates_and_content(self):
