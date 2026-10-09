@@ -49,11 +49,16 @@ class PluginTests(unittest.TestCase):
         cls.plugin = ModuleType("phpfmt_under_test")
         cls.plugin.__file__ = os.path.join(ROOT, "phpfmt.py")
         original_path = sys.path[:]
+        module_names = ("sublime", "sublime_plugin")
+        original_modules = {name: sys.modules[name] for name in module_names if name in sys.modules}
+        sys.modules.update(sublime=sublime, sublime_plugin=sublime_plugin)
         try:
-            with patch.dict(sys.modules, sublime=sublime, sublime_plugin=sublime_plugin):
-                with open(cls.plugin.__file__, "rb") as source:
-                    exec(compile(source.read(), cls.plugin.__file__, "exec"), cls.plugin.__dict__)
+            with open(cls.plugin.__file__, "rb") as source:
+                exec(compile(source.read(), cls.plugin.__file__, "exec"), cls.plugin.__dict__)
         finally:
+            for name in module_names:
+                sys.modules.pop(name, None)
+            sys.modules.update(original_modules)
             sys.path[:] = original_path
 
     def setUp(self):
