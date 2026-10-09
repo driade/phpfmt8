@@ -310,8 +310,9 @@ python3.14 -W error::SyntaxWarning -m py_compile phpfmt.py diff_match_patch/pyth
 python3.14 -B -W error::SyntaxWarning -m unittest discover -s tests/python -v
 ```
 
-GitHub Actions runs these checks with Python 3.14 on Linux, macOS, and Windows,
-and with Python 3.8 on Linux and Windows.
+The package does not declare `.python-version`, so Python 3.3 is its default runtime
+in Sublime Text. GitHub Actions tests Python 3.3 on Windows, Python 3.8 on Linux
+and Windows, and Python 3.14 on Linux, macOS, and Windows.
 Python 3.14 checks all three syntax warnings reported in issue #102.
 Both versions test autocomplete, patch parsing, buffer updates, and error recovery.
 They replace the Sublime Text API with test doubles; they do not validate the real editor API.

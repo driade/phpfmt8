@@ -1,5 +1,4 @@
-import importlib.util
-from pathlib import Path
+import os
 import sys
 from types import ModuleType
 import unittest
@@ -7,7 +6,7 @@ from unittest.mock import Mock, patch
 import warnings
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 class View:
@@ -43,16 +42,17 @@ class PluginTests(unittest.TestCase):
         sublime = ModuleType("sublime")
         sublime.Region = lambda start, end: (start, end)
         sublime.load_settings = Mock(return_value={})
-        sublime.packages_path = Mock(return_value=str(ROOT.parent))
+        sublime.packages_path = Mock(return_value=os.path.dirname(ROOT))
         sublime_plugin = ModuleType("sublime_plugin")
         sublime_plugin.TextCommand = object
         sublime_plugin.EventListener = object
-        spec = importlib.util.spec_from_file_location("phpfmt_under_test", ROOT / "phpfmt.py")
-        cls.plugin = importlib.util.module_from_spec(spec)
+        cls.plugin = ModuleType("phpfmt_under_test")
+        cls.plugin.__file__ = os.path.join(ROOT, "phpfmt.py")
         original_path = sys.path[:]
         try:
             with patch.dict(sys.modules, sublime=sublime, sublime_plugin=sublime_plugin):
-                spec.loader.exec_module(cls.plugin)
+                with open(cls.plugin.__file__, "rb") as source:
+                    exec(compile(source.read(), cls.plugin.__file__, "exec"), cls.plugin.__dict__)
         finally:
             sys.path[:] = original_path
 
@@ -65,13 +65,14 @@ class PluginTests(unittest.TestCase):
 
     def test_sources_compile_without_syntax_warnings(self):
         for relative in ("phpfmt.py", "diff_match_patch/python3/diff_match_patch.py"):
-            with self.subTest(path=relative), warnings.catch_warnings():
+            with warnings.catch_warnings():
                 warnings.simplefilter("error", SyntaxWarning)
-                compile((ROOT / relative).read_bytes(), relative, "exec")
+                with open(os.path.join(ROOT, relative), "rb") as source:
+                    compile(source.read(), relative, "exec")
 
     def test_method_completion_escapes_dollars(self):
         view = Mock()
-        view.file_name.return_value = str(ROOT / "Example.php")
+        view.file_name.return_value = os.path.join(ROOT, "Example.php")
         view.scope_name.return_value = "source.php"
         process = Mock()
         process.communicate.return_value = (b'"method($first, $second)",method,Example,method\n', b'')
@@ -88,12 +89,11 @@ class PluginTests(unittest.TestCase):
                 ("@@ -1 +1 @@", (0, 1, 0, 1)),
                 ("@@ -0,0 +1,3 @@", (0, 0, 0, 3)),
                 ("@@ -12,3 +15,4 @@", (11, 3, 14, 4))):
-            with self.subTest(header=header):
-                parsed = dmp.patch_fromText(header + "\n+abc\n")
-                self.assertEqual(len(parsed), 1)
-                item = parsed[0]
-                self.assertEqual((item.start1, item.length1, item.start2, item.length2), coordinates)
-                self.assertEqual(item.diffs, [(dmp.DIFF_INSERT, "abc")])
+            parsed = dmp.patch_fromText(header + "\n+abc\n")
+            self.assertEqual(len(parsed), 1, header)
+            item = parsed[0]
+            self.assertEqual((item.start1, item.length1, item.start2, item.length2), coordinates, header)
+            self.assertEqual(item.diffs, [(dmp.DIFF_INSERT, "abc")], header)
 
     def test_invalid_patch_header_is_rejected(self):
         with self.assertRaises(ValueError):
@@ -114,7 +114,7 @@ class PluginTests(unittest.TestCase):
         self.view.text = "  "
         with patch.object(self.plugin, "_merge") as apply_changes:
             self.assertEqual(self.plugin.merge(self.view, -1, "new", self.edit), (False, ""))
-        apply_changes.assert_not_called()
+        self.assertEqual(apply_changes.call_count, 0)
         self.assert_tabs_restored()
 
     def test_merge_exception_restores_original_buffer(self):
