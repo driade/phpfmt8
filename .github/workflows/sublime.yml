@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: SublimeText/UnitTesting
-          ref: 4703db0082ca129088fe1cce67b7264f122cd834
+          ref: d1a2fad376752c1cebfd12f0a7132eead92275bb # UnitTesting 1.9.2
           path: .ci-unittesting
           persist-credentials: false
       - uses: actions/setup-python@v5
